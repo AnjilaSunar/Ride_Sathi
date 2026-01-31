@@ -1,0 +1,51 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}About Us | RideSathi{% endblock %}
+
+{% block content %}
+
+<!-- ABOUT MAIN SECTION -->
+<section class="about-main">
+
+    <!-- LEFT CONTENT -->
+    <div class="about-text">
+        <h2>Welcome to RideSathi</h2>
+        <p>
+            RideSathi is a bike rental management system.
+            Our platform connects riders with a wide range of bikes including scooters,
+            electric bikes, standard motorcycles, and off-road bikes.
+        </p>
+        <p>
+            We aim to simplify the rental process by providing a reliable, affordable,
+            and user-friendly system that allows users to browse and book bikes online.
+        </p>
+    </div>
+
+    <!-- RIGHT IMAGE -->
+    <div class="about-image">
+        <img src="{% static 'assets/image/bike5.jpg' %}" alt="About RideSathi">
+    </div>
+
+</section>
+
+<hr class="about-divider">
+
+<!-- FEATURES SECTION -->
+<section class="about-features">
+    <div class="feature-box">
+        <h3>Our Mission</h3>
+        <p>To make bike rentals simple, affordable, and accessible for everyone.</p>
+    </div>
+
+    <div class="feature-box">
+        <h3>Why Choose RideSathi</h3>
+        <p>Reliable bikes, fair pricing, and a smooth booking experience.</p>
+    </div>
+
+    <div class="feature-box">
+        <h3>Our Services</h3>
+        <p>Scooters, electric bikes, standard bikes, and off-road motorcycles.</p>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Home | RideSathi{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-text">
+        <h1>Ride Smart with RideSathi</h1>
+        <p>Easy, affordable and reliable bike rental system</p>
+        <a href="/bikes/" class="btn-primary">Browse Bikes</a>
+    </div>
+</section>
+
+<!-- TOP BOOKED BIKES -->
+<section class="top-bikes">
+    <h2>Top Booked Bikes</h2>
+
+    <div class="bike-grid">
+        <div class="bike-card">
+            <img src="{% static 'assets/image/electric.jpg' %}" alt="Bike 1">
+            <h3>Book Now</h3>
+        </div>
+
+        <div class="bike-card">
+            <img src="{% static 'assets/image/bike2.jpg' %}" alt="Bike">
+            <h3>Book Now</h3>
+        </div>
+
+        <div class="bike-card">
+            <img src="{% static 'assets/image/bike4.jpg' %}" alt="Bike">
+            <h3>Book Now</h3>
+        </div>
+
+        <div class="bike-card">
+            <img src="{% static 'assets/image/bike5.jpg' %}" alt="bike">
+            <h3>Book Now</h3>
+        </div>
+    </div>
+</section>
+
+<!-- BIKE CATEGORIES -->
+<section class="categories-section">
+    <h2>Bike Categories</h2>
+
+    <div class="categories-grid">
+        <div class="category-card">
+            <img src="{% static 'assets/image/scooter.jpg' %}">
+            <h3>Scooter</h3>
+            <a href="#" class="btn-secondary">View Bikes</a>
+        </div>
+
+        <div class="category-card">
+            <img src="{% static 'assets/image/electric.jpg' %}">
+            <h3>Electric</h3>
+            <a href="#" class="btn-secondary">View Bikes</a>
+        </div>
+
+        <div class="category-card">
+            <img src="{% static 'assets/image/standard.jpg' %}">
+            <h3>Standard</h3>
+            <a href="#" class="btn-secondary">View Bikes</a>
+        </div>
+
+        <div class="category-card">
+            <img src="{% static 'assets/image/offroad.jpg' %}">
+            <h3>Dirt / Off-road</h3>
+            <a href="#" class="btn-secondary">View Bikes</a>
+        </div>
+    </div>
+</section>
+
+
+{% endblock %}

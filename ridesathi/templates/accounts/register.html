@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register | RideSathi</title>
+
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/register.css' %}">
+</head>
+<body>
+
+<div class="auth-container">
+    <h2>Create Account</h2>
+
+    <form method="POST" onsubmit="return validatePasswords();">
+        {% csrf_token %}
+
+        <input type="text" name="username" placeholder="Username" required>
+        {% if username_error %}
+            <span class="field-error">{{ username_error }}</span>
+        {% endif %}
+
+        <input type="email" name="email" placeholder="Email" required>
+        {% if email_error %}
+            <span class="field-error">{{ email_error }}</span>
+        {% endif %}
+
+    
+
+        <input type="password" id="password1" name="password1" placeholder="Password" required>
+
+        <input type="password" id="password2" name="password2"
+               placeholder="Confirm Password" required>
+
+        <button type="submit" class="btn-register">Register</button>
+
+        <p class="auth-link">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </p>
+    </form>
+</div>
+
+<!-- PASSWORD VALIDATION SCRIPT -->
+<script>
+const p1 = document.getElementById("password1");
+const p2 = document.getElementById("password2");
+
+function validatePasswords() {
+    if (p1.value !== p2.value) {
+        p2.setCustomValidity("Passwords do not match");
+        p2.reportValidity();
+        return false;
+    } else {
+        p2.setCustomValidity("");
+        return true;
+    }
+}
+
+
+p2.addEventListener("input", () => {
+    if (p1.value === p2.value) {
+        p2.setCustomValidity("");
+    }
+});
+</script>
+
+{% if messages %}
+<div class="alert-container">
+    {% for message in messages %}
+        <div class="alert {{ message.tags }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+</body>
+</html>
