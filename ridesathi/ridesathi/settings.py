@@ -56,7 +56,7 @@ ROOT_URLCONF = 'ridesathi.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR, "templates"],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -81,6 +81,9 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+# NOTE: Our custom tables (users, bikes, bookings, payments, documents)
+# are in MySQL (XAMPP) and accessed using raw SQL via mysql.connector
+# directly inside views.py — see db_connection.py
 
 
 # Password validation
@@ -124,3 +127,5 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+DEFAULT_AUTO_FIELD = 'django.db.backends.sqlite3'
