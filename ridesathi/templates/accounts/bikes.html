@@ -1,7 +1,45 @@
 {% extends 'accounts/base.html' %}
+{% load static %}
 {% block title %}Bikes | RideSathi{% endblock %}
 
 {% block content %}
-<h2>Available Bikes</h2>
-<p>Bike listing page coming soon.</p>
+
+<section class="page-hero">
+    <h1>🏍️ Available Bikes</h1>
+    <p>Choose your perfect ride from our fleet</p>
+</section>
+
+<section class="bikes-section">
+    <div class="bike-grid">
+
+        {% if bikes %}
+            {% for bike in bikes %}
+            <div class="bike-card">
+                <!-- Bike Image -->
+                <div class="bike-img-wrap">
+                    <img src="{% static 'assets/image/' %}{{ bike.image }}"
+                         alt="{{ bike.name }}"
+                         onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+                    <span class="badge-available">✅ Available</span>
+                </div>
+
+                <!-- Bike Info -->
+                <div class="bike-info">
+                    <h3>{{ bike.name }}</h3>
+                    <p class="bike-category">📂 {{ bike.category }}</p>
+                    <p class="bike-price">💰 Rs. {{ bike.price_per_day }} / day</p>
+                    <p class="bike-desc">{{ bike.description|truncatechars:60 }}</p>
+
+                    <a href="{% url 'bike_detail' bike.id %}" class="btn-view">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+
+        {% else %}
+            <p class="no-bikes">No bikes available at the moment. Check back soon!</p>
+        {% endif %}
+
+    </div>
+</section>
+
 {% endblock %}

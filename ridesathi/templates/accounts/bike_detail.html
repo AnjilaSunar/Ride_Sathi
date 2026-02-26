@@ -1,0 +1,44 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}{{ bike.name }} | RideSathi{% endblock %}
+
+{% block content %}
+
+<section class="bike-detail-section">
+    <div class="bike-detail-card">
+
+        <!-- Bike Image -->
+        <div class="bike-detail-img">
+            <img src="{% static 'assets/image/' %}{{ bike.image }}"
+                 alt="{{ bike.name }}"
+                 onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+        </div>
+
+        <!-- Bike Info -->
+        <div class="bike-detail-info">
+            <h2>{{ bike.name }}</h2>
+            <p><strong>Category:</strong> {{ bike.category }}</p>
+            <p><strong>Price:</strong> Rs. {{ bike.price_per_day }} / day</p>
+            <p><strong>Status:</strong>
+                {% if bike.status == 'available' %}
+                    <span style="color: green;">✅ Available</span>
+                {% else %}
+                    <span style="color: red;">❌ Not Available</span>
+                {% endif %}
+            </p>
+            <p><strong>Description:</strong> {{ bike.description }}</p>
+
+            <div class="bike-detail-actions">
+                {% if request.session.user_id %}
+                    <a href="#" class="btn-primary">Book This Bike</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn-primary">Login to Book</a>
+                {% endif %}
+                <a href="{% url 'bikes' %}" class="btn-secondary">← Back to Bikes</a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -21,9 +21,48 @@ def home(request):
 
 # ─────────────────────────────────────────────
 # BIKES PAGE
+# What it does:
+#   1. Connects to MySQL
+#   2. Runs: SELECT * FROM bikes WHERE status = 'available'
+#   3. Passes the list of bikes to bikes.html template
 # ─────────────────────────────────────────────
 def bikes(request):
-    return render(request, "accounts/bikes.html")
+    conn   = get_db_connection()
+    cursor = conn.cursor(dictionary=True)  # dictionary=True = column names as keys
+
+    # Raw SQL: get all available bikes
+    cursor.execute("SELECT * FROM bikes WHERE status = 'available' ORDER BY id ASC")
+    all_bikes = cursor.fetchall()  # returns a list of dictionaries
+
+    cursor.close()
+    conn.close()
+
+    return render(request, "accounts/bikes.html", {"bikes": all_bikes})
+
+
+# ─────────────────────────────────────────────
+# BIKE DETAIL PAGE
+# What it does:
+#   1. Gets the bike id from the URL (e.g. /bikes/3/)
+#   2. Runs: SELECT * FROM bikes WHERE id = 3
+#   3. Shows details of that specific bike
+# ─────────────────────────────────────────────
+def bike_detail(request, bike_id):
+    conn   = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Raw SQL: get ONE bike by its id
+    cursor.execute("SELECT * FROM bikes WHERE id = %s", (bike_id,))
+    bike = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if not bike:
+        messages.error(request, "Bike not found.")
+        return redirect("bikes")
+
+    return render(request, "accounts/bike_detail.html", {"bike": bike})
 
 
 # ─────────────────────────────────────────────
