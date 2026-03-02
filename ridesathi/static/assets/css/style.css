@@ -491,3 +491,94 @@ body {
     .bikes-section                { padding: 30px 20px; }
 }
 
+/* ─── BOOKING PAGE ─── */
+.booking-section {
+    padding: 60px 40px;
+    background-color: #f8f8f8;
+}
+
+.booking-container {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.booking-bike-info {
+    text-align: center;
+    border-right: 1px solid #ddd;
+    padding-right: 40px;
+}
+
+.booking-bike-info img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-bottom: 20px;
+}
+
+.booking-bike-info h2 { font-size: 24px; margin-bottom: 10px; }
+
+.booking-form-box {
+    padding-left: 20px;
+}
+
+.booking-form-box h2 {
+    margin-bottom: 24px;
+    color: #c4161c;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.cost-summary {
+    background: #fdfdfd;
+    padding: 20px;
+    border: 1px dashed #c4161c;
+    border-radius: 4px;
+    margin: 24px 0;
+    text-align: center;
+}
+
+.cost-summary p { margin: 8px 0; font-size: 16px; }
+.cost-summary .final-cost { font-size: 20px; font-weight: bold; color: #c4161c; }
+
+.btn-block {
+    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-block:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .booking-container { grid-template-columns: 1fr; }
+    .booking-bike-info { border-right: none; border-bottom: 1px solid #ddd; padding-right: 0; padding-bottom: 30px; }
+    .booking-form-box  { padding-left: 0; padding-top: 30px; }
+}
+

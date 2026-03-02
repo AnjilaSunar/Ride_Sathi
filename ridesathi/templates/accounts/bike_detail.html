@@ -30,7 +30,7 @@
 
             <div class="bike-detail-actions">
                 {% if request.session.user_id %}
-                    <a href="#" class="btn-primary">Book This Bike</a>
+                    <a href="{% url 'book_bike' bike.id %}" class="btn-primary">Book This Bike</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn-primary">Login to Book</a>
                 {% endif %}

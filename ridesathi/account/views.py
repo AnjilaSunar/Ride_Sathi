@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 import hashlib  # used to hash passwords (basic security)
+from datetime import datetime  # NEW: used to calculate the number of days for booking
 from db_connection import get_db_connection  # our MySQL helper
 
 
@@ -181,3 +182,83 @@ def logout(request):
     request.session.flush()  # clears everything saved in session
     messages.success(request, "You have been logged out.")
     return redirect("login")
+
+
+# ─────────────────────────────────────────────
+# BOOK BIKE PAGE
+# What it does:
+#   1. Makes sure the user is logged in
+#   2. Gets the specific bike details
+#   3. On POST: calculates days between start & end date
+#   4. Checks if days are valid (> 0)
+#   5. Calculates total_cost (days * price_per_day)
+#   6. Runs: INSERT INTO bookings
+# ─────────────────────────────────────────────
+def book_bike(request, bike_id):
+    # 1. Must be logged in to book a bike
+    if "user_id" not in request.session:
+        messages.error(request, "Please log in to book a bike.")
+        return redirect("login")
+
+    # Connect to MySQL
+    conn   = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # 2. Get the bike details
+    cursor.execute("SELECT * FROM bikes WHERE id = %s", (bike_id,))
+    bike = cursor.fetchone()
+
+    if not bike:
+        cursor.close()
+        conn.close()
+        messages.error(request, "Bike not found.")
+        return redirect("bikes")
+
+    # Handle the form submission
+    if request.method == "POST":
+        start_date_str = request.POST.get("start_date")
+        end_date_str   = request.POST.get("end_date")
+
+        # Convert the string dates from the HTML form into real Python Dates
+        start_date = datetime.strptime(start_date_str, "%Y-%m-%d").date()
+        end_date   = datetime.strptime(end_date_str, "%Y-%m-%d").date()
+
+        # 3. Calculate how many days
+        # e.g., Jan 5 to Jan 7 = 2 days difference + 1 (so both days are counted) = 3 total days
+        delta = end_date - start_date
+        total_days = delta.days + 1
+
+        # 4. Check if the dates make sense
+        if total_days <= 0:
+            messages.error(request, "End date must be after start date.")
+            return redirect("book_bike", bike_id=bike_id)
+
+        # 5. Calculate total cost
+        total_cost = total_days * float(bike["price_per_day"])
+        user_id = request.session["user_id"]
+
+        # 6. Save the booking in MySQL using Raw SQL (INSERT)
+        cursor.execute(
+            """
+            INSERT INTO bookings (user_id, bike_id, start_date, end_date, total_days, total_cost, status) 
+            VALUES (%s, %s, %s, %s, %s, %s, 'pending')
+            """,
+            (user_id, bike_id, start_date, end_date, total_days, total_cost)
+        )
+        conn.commit()  # Make sure it literally saves!
+        
+        # We can grab the ID of the booking we just created (useful for payment later)
+        booking_id = cursor.lastrowid
+        cursor.close()
+        conn.close()
+
+        messages.success(request, f"Booking successful! Total cost is Rs. {total_cost}. Please proceed to payment.")
+        
+        # After booking, we will eventually redirect to a payment page.
+        # But for now, we just go back to home or a dashboard
+        return redirect("home") # We will change this to Payment later!
+
+    # GET request (just showing the page)
+    cursor.close()
+    conn.close()
+    return render(request, "accounts/book_bike.html", {"bike": bike})

@@ -1,0 +1,89 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Book {{ bike.name }} | RideSathi{% endblock %}
+
+{% block content %}
+<section class="booking-section">
+    <div class="booking-container">
+        <!-- Left Side: Bike Info -->
+        <div class="booking-bike-info">
+            <img src="{% static 'assets/image/' %}{{ bike.image }}" 
+                 alt="{{ bike.name }}"
+                 onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+            
+            <h2>{{ bike.name }}</h2>
+            <p><strong>Category:</strong> {{ bike.category }}</p>
+            <p><strong>Price per day:</strong> Rs. <span id="bike-price">{{ bike.price_per_day }}</span></p>
+        </div>
+
+        <!-- Right Side: Booking Form -->
+        <div class="booking-form-box">
+            <h2>Book Your Ride</h2>
+            
+            <form method="POST">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label>Start Date</label>
+                    <input type="date" id="start_date" name="start_date" required onchange="calculateCost()">
+                </div>
+
+                <div class="form-group">
+                    <label>End Date</label>
+                    <input type="date" id="end_date" name="end_date" required onchange="calculateCost()">
+                </div>
+                
+                <div class="cost-summary">
+                    <p>Total Days: <span id="total-days">0</span></p>
+                    <p class="final-cost">Total Cost: Rs. <span id="total-cost">0.00</span></p>
+                </div>
+
+                <button type="submit" class="btn-primary btn-block" id="book-btn" disabled>Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- JavaScript to calculatecost when user picks dates -->
+<script>
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Disable past dates in the calendar
+    document.getElementById("start_date").setAttribute("min", today);
+    document.getElementById("end_date").setAttribute("min", today);
+
+    function calculateCost() {
+        const startDateVal = document.getElementById("start_date").value;
+        const endDateVal = document.getElementById("end_date").value;
+        const pricePerDay = parseFloat(document.getElementById("bike-price").innerText);
+        const bookBtn = document.getElementById("book-btn");
+
+        if (startDateVal && endDateVal) {
+            const startStr = new Date(startDateVal);
+            const endStr = new Date(endDateVal);
+
+            // Calculate difference in milliseconds
+            const diffTime = endStr - startStr;
+            // Convert to days (+1 to include both start and end day)
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            if (diffDays > 0) {
+                document.getElementById("total-days").innerText = diffDays;
+                
+                const totalCost = (diffDays * pricePerDay).toFixed(2);
+                document.getElementById("total-cost").innerText = totalCost;
+                
+                // Enable the button
+                bookBtn.disabled = false;
+            } else {
+                document.getElementById("total-days").innerText = "Invalid Dates";
+                document.getElementById("total-cost").innerText = "0.00";
+                // Disable the button
+                bookBtn.disabled = true;
+            }
+        }
+    }
+</script>
+
+{% endblock %}
