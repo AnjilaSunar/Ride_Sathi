@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.files.storage import FileSystemStorage  # NEW: used to save uploaded files
 import hashlib  # used to hash passwords (basic security)
-from datetime import datetime  # NEW: used to calculate the number of days for booking
+from datetime import datetime  # used to calculate the number of days for booking
 from db_connection import get_db_connection  # our MySQL helper
 
 
@@ -262,3 +263,46 @@ def book_bike(request, bike_id):
     cursor.close()
     conn.close()
     return render(request, "accounts/book_bike.html", {"bike": bike})
+
+
+# ─────────────────────────────────────────────
+# DOCUMENT UPLOAD PAGE
+# What it does:
+#   1. Must be logged in
+#   2. Receives a file (like a photo of DL/ID)
+#   3. Saves the file to the 'media' folder
+#   4. Stores the file path inside the MySQL `documents` table
+# ─────────────────────────────────────────────
+def upload_document(request):
+    if "user_id" not in request.session:
+        messages.error(request, "Please log in to upload documents.")
+        return redirect("login")
+
+    if request.method == "POST" and request.FILES.get("document"):
+        # 1. Get the file and document type from the HTML form
+        user_id = request.session["user_id"]
+        doc_type = request.POST.get("doc_type")
+        uploaded_file = request.FILES["document"]
+
+        # 2. Save the file directly to the /media/ folder
+        fs = FileSystemStorage()
+        # Ensure filename is unique by adding timestamp or keeping it simple
+        filename = fs.save(uploaded_file.name, uploaded_file)
+        file_path = fs.url(filename) # e.g., /media/my_license.jpg
+
+        # 3. Store the path in MySQL using Raw SQL
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "INSERT INTO documents (user_id, doc_type, file_path) VALUES (%s, %s, %s)",
+            (user_id, doc_type, file_path)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        messages.success(request, "Document uploaded successfully!")
+        return redirect("home") # Or redirect to dashboard later
+
+    return render(request, "accounts/upload_document.html")

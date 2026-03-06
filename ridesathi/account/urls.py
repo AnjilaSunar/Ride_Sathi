@@ -10,4 +10,5 @@ urlpatterns = [
     path("register/",      views.register,    name="register"),
     path("logout/",        views.logout,      name="logout"),
     path("book/<int:bike_id>/", views.book_bike, name="book_bike"),
+    path("upload-document/", views.upload_document, name="upload_document"), # NEW
 ]
