@@ -1,0 +1,34 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Upload Document | RideSathi{% endblock %}
+
+{% block content %}
+<section class="upload-section">
+    <div class="upload-container">
+        <h2>📄 Upload Your Driving License / ID</h2>
+        <p>Before you can rent a bike, we need to verify your identity.</p>
+
+        <!-- IMPORTANT: enctype="multipart/form-data" is required for file uploads -->
+        <form method="POST" enctype="multipart/form-data" class="upload-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="doc_type">Document Type</label>
+                <select name="doc_type" id="doc_type" required>
+                    <option value="" disabled selected>Select an option</option>
+                    <option value="driving_license">Driving License</option>
+                    <option value="citizenship">Citizenship Card</option>
+                    <option value="passport">Passport</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="document">Choose File (Image or PDF)</label>
+                <input type="file" name="document" id="document" accept=".jpg, .jpeg, .png, .pdf" required>
+            </div>
+
+            <button type="submit" class="btn-primary btn-block" style="margin-top: 20px;">Upload Document</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
