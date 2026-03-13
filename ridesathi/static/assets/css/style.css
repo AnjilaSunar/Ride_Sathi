@@ -582,3 +582,41 @@ body {
     .booking-form-box  { padding-left: 0; padding-top: 30px; }
 }
 
+/* ─── DOCUMENT UPLOAD PAGE ─── */
+.upload-section {
+    padding: 80px 40px;
+    background-color: #f8f8f8;
+    min-height: 60vh;
+}
+
+.upload-container {
+    max-width: 500px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    text-align: left;
+}
+
+.upload-container h2 {
+    color: #c4161c;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.upload-container p {
+    text-align: center;
+    color: #666;
+    margin-bottom: 30px;
+}
+
+.upload-form select,
+.upload-form input[type="file"] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fafafa;
+}
+
