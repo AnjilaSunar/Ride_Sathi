@@ -255,9 +255,8 @@ def book_bike(request, bike_id):
 
         messages.success(request, f"Booking successful! Total cost is Rs. {total_cost}. Please proceed to payment.")
         
-        # After booking, we will eventually redirect to a payment page.
-        # But for now, we just go back to home or a dashboard
-        return redirect("home") # We will change this to Payment later!
+        # After booking, redirect to payment page with the new booking_id
+        return redirect("payment", booking_id=booking_id)
 
     # GET request (just showing the page)
     cursor.close()
@@ -306,3 +305,60 @@ def upload_document(request):
         return redirect("home") # Or redirect to dashboard later
 
     return render(request, "accounts/upload_document.html")
+
+
+# ─────────────────────────────────────────────
+# E-SEWA PAYMENT SIMULATION
+# What it does:
+#   1. Looks up the booking ID to get total_cost
+#   2. When they click 'Pay with eSewa':
+#      - INSERT into payments table (amount + booking_id)
+#      - UPDATE bookings table status to 'confirmed'
+#   3. Redirects to a success/invoice page (later)
+# ─────────────────────────────────────────────
+def payment(request, booking_id):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # Validate the booking
+    user_id = request.session["user_id"]
+    cursor.execute("SELECT * FROM bookings WHERE id = %s AND user_id = %s", (booking_id, user_id))
+    booking = cursor.fetchone()
+
+    if not booking:
+        cursor.close()
+        conn.close()
+        messages.error(request, "Booking not found.")
+        return redirect("bikes")
+
+    # If the user clicks "Pay" on the form
+    if request.method == "POST":
+        # 1. Create a payment record in MySQL
+        cursor.execute(
+            """
+            INSERT INTO payments (booking_id, user_id, amount, payment_method, payment_status)
+            VALUES (%s, %s, %s, 'eSewa', 'paid')
+            """,
+            (booking_id, user_id, booking["total_cost"])
+        )
+
+        # 2. Update the booking status from pending to confirmed
+        cursor.execute(
+            "UPDATE bookings SET status = 'confirmed' WHERE id = %s",
+            (booking_id,)
+        )
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        messages.success(request, "Payment successful via eSewa! Your booking is confirmed.")
+        
+        # We'll go to Invoice or Home depending on what we build next
+        return redirect("home") 
+
+    cursor.close()
+    conn.close()
+    return render(request, "accounts/payment.html", {"booking": booking})
