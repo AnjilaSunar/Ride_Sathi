@@ -18,7 +18,27 @@ def hash_password(password):
 # HOME PAGE
 # ─────────────────────────────────────────────
 def home(request):
-    return render(request, "accounts/index.html")
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # 1. Fetch 4 available bikes for the "Featured Bikes" section
+    cursor.execute("SELECT * FROM bikes WHERE status = 'available' LIMIT 4")
+    featured_bikes = cursor.fetchall()
+
+    # 2. Fetch distinct categories and one image for each from the database
+    # This prevents us from having hardcoded categories on the frontend.
+    cursor.execute("SELECT category, MIN(image) as image FROM bikes GROUP BY category LIMIT 4")
+    categories = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    context = {
+        "featured_bikes": featured_bikes,
+        "categories": categories
+    }
+    
+    return render(request, "accounts/index.html", context)
 
 
 # ─────────────────────────────────────────────

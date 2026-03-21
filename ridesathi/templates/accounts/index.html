@@ -14,62 +14,49 @@
 </section>
 
 <!-- TOP BOOKED BIKES -->
+<!-- TOP BOOKED BIKES (DYNAMIC FROM BACKEND) -->
 <section class="top-bikes">
-    <h2>Top Booked Bikes</h2>
+    <h2>Featured Bikes</h2>
+    <p class="section-subtitle">Choose from our most requested rides</p>
 
     <div class="bike-grid">
-        <div class="bike-card">
-            <img src="{% static 'assets/image/electric.jpg' %}" alt="Bike 1">
-            <h3>Book Now</h3>
-        </div>
-
-        <div class="bike-card">
-            <img src="{% static 'assets/image/bike2.jpg' %}" alt="Bike">
-            <h3>Book Now</h3>
-        </div>
-
-        <div class="bike-card">
-            <img src="{% static 'assets/image/bike4.jpg' %}" alt="Bike">
-            <h3>Book Now</h3>
-        </div>
-
-        <div class="bike-card">
-            <img src="{% static 'assets/image/bike5.jpg' %}" alt="bike">
-            <h3>Book Now</h3>
-        </div>
+        {% if featured_bikes %}
+            {% for bike in featured_bikes %}
+            <div class="bike-card">
+                <img src="{% static 'assets/image/' %}{{ bike.image }}" 
+                     alt="{{ bike.name }}"
+                     onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+                <h3>{{ bike.name }}</h3>
+                <p class="price-tag">Rs. {{ bike.price_per_day }} / Day</p>
+                <a href="{% url 'bike_detail' bike.id %}" class="btn-primary">View & Book</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; width: 100%;">No bikes currently available.</p>
+        {% endif %}
     </div>
 </section>
 
-<!-- BIKE CATEGORIES -->
+<!-- BIKE CATEGORIES (DYNAMIC FROM BACKEND) -->
 <section class="categories-section">
     <h2>Bike Categories</h2>
+    <p class="section-subtitle">Find the perfect type of ride</p>
 
     <div class="categories-grid">
-        <div class="category-card">
-            <img src="{% static 'assets/image/scooter.jpg' %}">
-            <h3>Scooter</h3>
-            <a href="#" class="btn-secondary">View Bikes</a>
-        </div>
-
-        <div class="category-card">
-            <img src="{% static 'assets/image/electric.jpg' %}">
-            <h3>Electric</h3>
-            <a href="#" class="btn-secondary">View Bikes</a>
-        </div>
-
-        <div class="category-card">
-            <img src="{% static 'assets/image/standard.jpg' %}">
-            <h3>Standard</h3>
-            <a href="#" class="btn-secondary">View Bikes</a>
-        </div>
-
-        <div class="category-card">
-            <img src="{% static 'assets/image/offroad.jpg' %}">
-            <h3>Dirt / Off-road</h3>
-            <a href="#" class="btn-secondary">View Bikes</a>
-        </div>
+        {% if categories %}
+            {% for cat in categories %}
+            <div class="category-card">
+                <img src="{% static 'assets/image/' %}{{ cat.image }}" 
+                     alt="{{ cat.category }}"
+                     onerror="this.src='{% static 'assets/image/scooter.jpg' %}'">
+                <h3>{{ cat.category }}</h3>
+                <a href="/bikes/" class="btn-secondary">View Bikes</a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center; width: 100%;">No categories currently available.</p>
+        {% endif %}
     </div>
 </section>
-
 
 {% endblock %}
