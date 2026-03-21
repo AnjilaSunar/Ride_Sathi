@@ -5,57 +5,49 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="hero">
-    <div class="hero-text">
-        <h1>Ride Smart with RideSathi</h1>
-        <p>Easy, affordable and reliable bike rental system</p>
-        <a href="/bikes/" class="btn-primary">Browse Bikes</a>
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title"><span class="text-red">Ride</span>Sathi</h1>
+        <p class="hero-desc">Easy, affordable and reliable bike rental system. Choose your bike, pick your dates, and get on the road.</p>
+        <a href="/bikes/" class="btn-solid-red btn-large">Browse Bikes</a>
     </div>
 </section>
 
-<!-- TOP BOOKED BIKES -->
-<!-- TOP BOOKED BIKES (DYNAMIC FROM BACKEND) -->
-<section class="top-bikes">
-    <h2>Featured Bikes</h2>
-    <p class="section-subtitle">Choose from our most requested rides</p>
+<!-- FEATURES SECTION -->
+<section class="features-section">
+    <div class="section-heading">
+        <span class="subtitle-red">WHY CHOOSE RIDESATHI</span>
+        <h2>Simple. Affordable. Reliable.</h2>
+        <p>Everything you need for a smooth bike rental experience in one platform.</p>
+    </div>
 
-    <div class="bike-grid">
-        {% if featured_bikes %}
-            {% for bike in featured_bikes %}
-            <div class="bike-card">
-                <img src="{% static 'assets/image/' %}{{ bike.image }}" 
-                     alt="{{ bike.name }}"
-                     onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
-                <h3>{{ bike.name }}</h3>
-                <p class="price-tag">Rs. {{ bike.price_per_day }} / Day</p>
-                <a href="{% url 'bike_detail' bike.id %}" class="btn-primary">View & Book</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p style="text-align: center; width: 100%;">No bikes currently available.</p>
-        {% endif %}
+    <div class="features-grid">
+        <div class="feature-card">
+            <span class="feature-badge">EASY BOOKING</span>
+            <p>Book your preferred bike in just a few simple steps. Select your bike, choose your dates, and confirm. No complicated process.</p>
+        </div>
+
+        <div class="feature-card">
+            <span class="feature-badge">AFFORDABLE PRICING</span>
+            <p>Competitive daily rental rates to fit every budget. Transparent pricing with no hidden charges. Pay only for what you use.</p>
+        </div>
+
+        <div class="feature-card">
+            <span class="feature-badge">SECURE SYSTEM</span>
+            <p>Your data and payments are fully protected. Verified bikes, documented rentals, and a reliable support system you can trust.</p>
+        </div>
     </div>
 </section>
 
-<!-- BIKE CATEGORIES (DYNAMIC FROM BACKEND) -->
-<section class="categories-section">
-    <h2>Bike Categories</h2>
-    <p class="section-subtitle">Find the perfect type of ride</p>
-
-    <div class="categories-grid">
-        {% if categories %}
-            {% for cat in categories %}
-            <div class="category-card">
-                <img src="{% static 'assets/image/' %}{{ cat.image }}" 
-                     alt="{{ cat.category }}"
-                     onerror="this.src='{% static 'assets/image/scooter.jpg' %}'">
-                <h3>{{ cat.category }}</h3>
-                <a href="/bikes/" class="btn-secondary">View Bikes</a>
-            </div>
-            {% endfor %}
-        {% else %}
-            <p style="text-align: center; width: 100%;">No categories currently available.</p>
-        {% endif %}
+<!-- CTA SECTION -->
+<section class="cta-section">
+    <div class="cta-content">
+        <h2>Ready to Start Your Journey?</h2>
+        <p>Join thousands of riders who trust RideSathi for their daily commute and weekend adventures. Register today for free.</p>
+        <div class="cta-buttons">
+            <a href="{% url 'register' %}" class="btn-solid-white">Create Free Account</a>
+            <a href="{% url 'bikes' %}" class="btn-outline-white">View Bikes</a>
+        </div>
     </div>
 </section>
 
