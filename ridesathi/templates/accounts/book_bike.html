@@ -3,42 +3,46 @@
 {% block title %}Book {{ bike.name }} | RideSathi{% endblock %}
 
 {% block content %}
-<section class="booking-section">
-    <div class="booking-container">
+<section class="booking-section" style="padding: 60px 5%; background-color: #f7f7f7; min-height: 80vh;">
+    <div class="booking-container" style="max-width: 1000px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-wrap: wrap;">
+        
         <!-- Left Side: Bike Info -->
-        <div class="booking-bike-info">
-            <img src="{% static 'assets/image/' %}{{ bike.image }}" 
-                 alt="{{ bike.name }}"
-                 onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+        <div class="booking-bike-info" style="flex: 1; min-width: 300px; padding: 40px; background-color: #fafafa; border-right: 1px solid #eee;">
+            <div style="width: 100%; height: 200px; overflow: hidden; border-radius: 8px; margin-bottom: 25px;">
+                <img src="{% static 'assets/image/' %}{{ bike.image }}" 
+                     alt="{{ bike.name }}"
+                     style="width: 100%; height: 100%; object-fit: cover;"
+                     onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+            </div>
             
-            <h2>{{ bike.name }}</h2>
-            <p><strong>Category:</strong> {{ bike.category }}</p>
-            <p><strong>Price per day:</strong> Rs. <span id="bike-price">{{ bike.price_per_day }}</span></p>
+            <h2 style="font-size: 24px; font-weight: 800; color: #222; margin-bottom: 15px;">{{ bike.name }}</h2>
+            <p style="margin: 0 0 10px 0; color: #555;"><strong style="color: #222;">Category:</strong> {{ bike.category }}</p>
+            <p style="margin: 0 0 10px 0; color: #555;"><strong style="color: #222;">Price per day:</strong> <span style="color: #c4161c; font-weight: 700;">Rs. <span id="bike-price">{{ bike.price_per_day }}</span></span></p>
         </div>
 
         <!-- Right Side: Booking Form -->
-        <div class="booking-form-box">
-            <h2>Book Your Ride</h2>
+        <div class="booking-form-box" style="flex: 1; min-width: 300px; padding: 40px;">
+            <h2 style="font-size: 24px; font-weight: 800; color: #222; margin-bottom: 25px;">Book Your Ride</h2>
             
             <form method="POST">
                 {% csrf_token %}
                 
-                <div class="form-group">
-                    <label>Start Date</label>
-                    <input type="date" id="start_date" name="start_date" required onchange="calculateCost()">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px;">Start Date</label>
+                    <input type="date" id="start_date" name="start_date" required onchange="calculateCost()" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px;">
                 </div>
 
-                <div class="form-group">
-                    <label>End Date</label>
-                    <input type="date" id="end_date" name="end_date" required onchange="calculateCost()">
+                <div class="form-group" style="margin-bottom: 30px;">
+                    <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px;">End Date</label>
+                    <input type="date" id="end_date" name="end_date" required onchange="calculateCost()" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px;">
                 </div>
                 
-                <div class="cost-summary">
-                    <p>Total Days: <span id="total-days">0</span></p>
-                    <p class="final-cost">Total Cost: Rs. <span id="total-cost">0.00</span></p>
+                <div class="cost-summary" style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin-bottom: 30px; border-left: 4px solid #c4161c;">
+                    <p style="margin: 0 0 10px 0; color: #555; font-size: 15px;">Total Days: <span id="total-days" style="font-weight: 700; color: #222;">0</span></p>
+                    <p class="final-cost" style="margin: 0; font-size: 18px; font-weight: 700; color: #222;">Total Cost: <span style="color: #c4161c;">Rs. <span id="total-cost">0.00</span></span></p>
                 </div>
 
-                <button type="submit" class="btn-primary btn-block" id="book-btn" disabled>Confirm Booking</button>
+                <button type="submit" class="btn-solid-red" id="book-btn" disabled style="width: 100%; padding: 14px; font-size: 16px; border: none; cursor: pointer;">Confirm Booking</button>
             </form>
         </div>
     </div>

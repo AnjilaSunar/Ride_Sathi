@@ -4,39 +4,43 @@
 
 {% block content %}
 
-<section class="page-hero">
-    <h1>🏍️ Available Bikes</h1>
-    <p>Choose your perfect ride from our fleet</p>
+<section class="page-hero" style="background-color: #f7f7f7; padding: 60px 20px; text-align: center; border-bottom: 1px solid #eaeaea;">
+    <h1 style="font-size: 36px; font-weight: 800; color: #222; margin-bottom: 10px;">Available Bikes</h1>
+    <p style="color: #666; font-size: 16px;">Choose your perfect ride from our fleet</p>
 </section>
 
-<section class="bikes-section">
-    <div class="bike-grid">
+<section class="bikes-section" style="padding: 60px 5%; background-color: #fff;">
+    <div class="bike-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
 
         {% if bikes %}
             {% for bike in bikes %}
-            <div class="bike-card">
+            <div class="bike-card" style="border: 1px solid #eee; border-radius: 8px; overflow: hidden; background-color: #fff; text-align: left; transition: box-shadow 0.3s ease;">
                 <!-- Bike Image -->
-                <div class="bike-img-wrap">
+                <div class="bike-img-wrap" style="height: 200px; background-color: #f0f0f0; overflow: hidden; position: relative;">
                     <img src="{% static 'assets/image/' %}{{ bike.image }}"
                          alt="{{ bike.name }}"
+                         style="width: 100%; height: 100%; object-fit: cover;"
                          onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
-                    <span class="badge-available">✅ Available</span>
+                    <span class="badge-available" style="position: absolute; top: 15px; right: 15px; background-color: #28a745; color: white; padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: 20px;">AVAILABLE</span>
                 </div>
 
                 <!-- Bike Info -->
-                <div class="bike-info">
-                    <h3>{{ bike.name }}</h3>
-                    <p class="bike-category">📂 {{ bike.category }}</p>
-                    <p class="bike-price">💰 Rs. {{ bike.price_per_day }} / day</p>
-                    <p class="bike-desc">{{ bike.description|truncatechars:60 }}</p>
-
-                    <a href="{% url 'bike_detail' bike.id %}" class="btn-view">View Details</a>
+                <div class="bike-info" style="padding: 25px;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 20px; font-weight: 700; color: #333;">{{ bike.name }}</h3>
+                    <p class="bike-category" style="margin: 0 0 15px 0; font-size: 13px; color: #888; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">{{ bike.category }}</p>
+                    
+                    <p class="bike-desc" style="color: #666; font-size: 14px; line-height: 1.5; margin-bottom: 25px; min-height: 42px;">{{ bike.description|truncatechars:60 }}</p>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f0f0f0; padding-top: 20px;">
+                        <span class="bike-price" style="color: #c4161c; font-weight: 700; font-size: 18px;">Rs. {{ bike.price_per_day }}<span style="font-size: 12px; color: #888;">/day</span></span>
+                        <a href="{% url 'bike_detail' bike.id %}" class="btn-solid-red" style="padding: 8px 16px; font-size: 13px;">View Details</a>
+                    </div>
                 </div>
             </div>
             {% endfor %}
 
         {% else %}
-            <p class="no-bikes">No bikes available at the moment. Check back soon!</p>
+            <p class="no-bikes" style="text-align: center; color: #666; font-size: 18px; width: 100%; grid-column: 1 / -1;">No bikes available at the moment. Check back soon!</p>
         {% endif %}
 
     </div>

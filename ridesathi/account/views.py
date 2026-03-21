@@ -273,10 +273,10 @@ def book_bike(request, bike_id):
         cursor.close()
         conn.close()
 
-        messages.success(request, f"Booking successful! Total cost is Rs. {total_cost}. Please proceed to payment.")
+        messages.success(request, f"Booking successful! Total cost is Rs. {total_cost}. Your booking is pending confirmation.")
         
-        # After booking, redirect to payment page with the new booking_id
-        return redirect("payment", booking_id=booking_id)
+        # After booking, redirect to home page per user's request to skip payment
+        return redirect("home")
 
     # GET request (just showing the page)
     cursor.close()
