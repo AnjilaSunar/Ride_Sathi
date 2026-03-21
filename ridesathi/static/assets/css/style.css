@@ -620,3 +620,69 @@ body {
     background: #fafafa;
 }
 
+/* ─── PAYMENT PAGE SIMULATION ─── */
+.payment-section {
+    padding: 80px 40px;
+    background-color: #f4f4f4;
+    min-height: 70vh;
+}
+
+.payment-container {
+    max-width: 450px;
+    margin: 0 auto;
+    background: white;
+    border-top: 5px solid #60bb46; /* eSewa green color */
+    border-radius: 6px;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.payment-header {
+    text-align: center;
+    border-bottom: 2px dashed #eee;
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.payment-header h1 { margin: 10px 0; }
+.payment-header img { 
+    height: 50px; 
+    object-fit: contain; 
+}
+
+.payment-details {
+    background: #fdfdfd;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.payment-details p {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+}
+
+.payment-details .amount {
+    font-size: 18px;
+    font-weight: bold;
+    color: #c4161c;
+}
+
+.btn-esewa {
+    width: 100%;
+    background-color: #60bb46; /* eSewa green */
+    color: white;
+    padding: 14px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.btn-esewa:hover {
+    background-color: #4b9436;
+}
+

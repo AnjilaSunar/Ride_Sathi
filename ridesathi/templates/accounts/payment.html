@@ -1,0 +1,43 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Payment | RideSathi{% endblock %}
+
+{% block content %}
+<section class="payment-section">
+    <div class="payment-container">
+        <!-- eSewa Logo Simulation -->
+        <div class="payment-header">
+            <!-- We will use a fallback text if eSewa logo image is not found -->
+            <img src="{% static 'assets/image/esewa_logo.png' %}" 
+                 alt="eSewa" 
+                 onerror="this.style.display='none'; document.getElementById('esewa-text').style.display='block';">
+            <h1 id="esewa-text" style="display:none; color: #60bb46;">eSewa Payment</h1>
+            <p>Secure payment Gateway Simulation</p>
+        </div>
+
+        <div class="payment-details">
+            <h3>Booking Summary</h3>
+            <p><strong>Total Days:</strong> {{ booking.total_days }}</p>
+            <p><strong>Total Amount to Pay:</strong> Rs. <span class="amount">{{ booking.total_cost }}</span></p>
+        </div>
+
+        <!-- The Payment Form that submits to our backend to do the raw SQL INSERT -->
+        <form method="POST" class="payment-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="esewa_id">eSewa Mobile Number / ID</label>
+                <input type="text" id="esewa_id" name="esewa_id" placeholder="98XXXXXXXX" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="••••••••" required>
+            </div>
+
+            <!-- This submits to the payment view we just wrote -->
+            <button type="submit" class="btn-esewa">Pay Rs. {{ booking.total_cost }}</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
