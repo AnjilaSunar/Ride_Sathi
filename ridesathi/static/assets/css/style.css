@@ -112,7 +112,6 @@ body {
 /* --- HERO SECTION --- */
 .hero-section {
     height: 85vh;
-    background-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 100%), url("/static/assets/image/bike8.jpg");
     background-size: cover;
     background-position: center;
     display: flex;

@@ -5,11 +5,11 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="hero-section">
+<section class="hero-section" style="background-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 100%), url('{% static 'assets/image/bike8.jpg' %}');">
     <div class="hero-content">
         <h1 class="hero-title"><span class="text-red">Ride</span>Sathi</h1>
         <p class="hero-desc">Easy, affordable and reliable bike rental system. Choose your bike, pick your dates, and get on the road.</p>
-        <a href="/bikes/" class="btn-solid-red btn-large">Browse Bikes</a>
+        <a href="{% url 'bikes' %}" class="btn-solid-red btn-large">Browse Bikes</a>
     </div>
 </section>
 
