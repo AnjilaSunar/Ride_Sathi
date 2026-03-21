@@ -13,19 +13,21 @@
     
     .filter-bar {
         background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
-        padding: 20px 25px; margin: 0 5% 40px 5%;
-        display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;
+        padding: 24px 30px; margin: 0 5% 40px 5%;
+        display: flex; gap: 30px; align-items: flex-end; flex-wrap: wrap;
     }
-    .filter-group { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 250px; }
-    .filter-label { font-size: 14px; color: #333; }
-    .search-input { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; outline: none; }
+    .search-col { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 10px; }
+    .filter-label { font-size: 14px; color: #333; font-weight: 500; }
+    .search-input { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 15px; outline: none; background: #f9fafb; color: #333; }
     .search-input:focus { border-color: #e42222; }
+    .search-input::placeholder { color: #9ca3af; }
     
-    .filter-toggles { display: flex; gap: 10px; align-items: center; }
-    .toggle-btn { padding: 10px 20px; border: 1px solid #d1d5db; background: #fff; color: #555; border-radius: 4px; font-size: 14px; cursor: pointer; }
-    .toggle-btn.active { border-color: #e42222; color: #e42222; background: #fff; }
+    .filter-col { display: flex; flex-direction: column; gap: 10px; }
+    .filter-toggles { display: flex; gap: 10px; }
+    .toggle-btn { padding: 12px 20px; border: 1px solid #d1d5db; background: #fff; color: #4b5563; border-radius: 4px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .toggle-btn.active { border-color: #ff5a5a; color: #e42222; }
     
-    .bikes-count { font-size: 14px; color: #666; margin-left: auto; align-self: center; }
+    .bikes-count { font-size: 14px; color: #6b7280; align-self: center; margin-left: auto; margin-bottom: 2px; }
 
     .bike-grid-figma {
         display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -54,8 +56,8 @@
     .bike-price-figma span { font-size: 13px; color: #6b7280; font-weight: 400; }
     
     .bike-actions { display: flex; gap: 10px; margin-top: auto; }
-    .btn-details { flex: 1; text-align: center; padding: 12px; border: 1px solid #d1d5db; border-radius: 4px; color: #333; font-weight: 500; font-size: 14px; background: #fff; }
-    .btn-book-now { flex: 1; text-align: center; padding: 12px; border: none; border-radius: 4px; background: #e42222; color: #fff; font-weight: 500; font-size: 14px; }
+    .btn-details { flex: 1; text-align: center; padding: 12px; border: 1px solid #d1d5db; border-radius: 4px; color: #333; font-weight: 500; font-size: 14px; background: #fff; text-decoration: none; }
+    .btn-book-now { flex: 1; text-align: center; padding: 12px; border: none; border-radius: 4px; background: #e42222; color: #fff; font-weight: 500; font-size: 14px; text-decoration: none; }
     .btn-book-now.disabled { background: #9ca3af; pointer-events: none; }
 </style>
 
@@ -66,22 +68,21 @@
 </div>
 
 <div class="filter-bar">
-    <div class="filter-group">
+    <div class="search-col">
         <label class="filter-label">Search by Name</label>
         <input type="text" id="searchInput" class="search-input" placeholder="e.g. Yamaha, Honda..." onkeyup="filterBikes()">
     </div>
     
-    <div class="filter-group" style="flex: 2; flex-direction: row; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 20px;">
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-            <label class="filter-label">Availability</label>
-            <div class="filter-toggles">
-                <button class="toggle-btn active" onclick="setFilter('all', this)">All</button>
-                <button class="toggle-btn" onclick="setFilter('available', this)">Available</button>
-                <button class="toggle-btn" onclick="setFilter('unavailable', this)">Unavailable</button>
-            </div>
+    <div class="filter-col">
+        <label class="filter-label">Availability</label>
+        <div class="filter-toggles">
+            <button class="toggle-btn active" onclick="setFilter('all', this)">All</button>
+            <button class="toggle-btn" onclick="setFilter('available', this)">Available</button>
+            <button class="toggle-btn" onclick="setFilter('unavailable', this)">Unavailable</button>
         </div>
-        <div class="bikes-count">Showing <strong id="visibleCount">{{ bikes|length }}</strong> of {{ bikes|length }} bikes</div>
     </div>
+    
+    <div class="bikes-count">Showing <strong id="visibleCount">{{ bikes|length }}</strong> of {{ bikes|length }} bikes</div>
 </div>
 
 <div class="bike-grid-figma" id="bikeGrid">
