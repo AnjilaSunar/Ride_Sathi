@@ -3,87 +3,154 @@
 {% block title %}Book {{ bike.name }} | RideSathi{% endblock %}
 
 {% block content %}
-<section class="booking-section" style="padding: 60px 5%; background-color: #f7f7f7; min-height: 80vh;">
-    <div class="booking-container" style="max-width: 1000px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-wrap: wrap;">
+<style>
+    body { background-color: #f4f6f9; font-family: 'Inter', sans-serif; }
+    .booking-section { padding: 60px 5%; display: flex; justify-content: center; min-height: 80vh; }
+    .booking-wrapper { max-width: 1000px; width: 100%; display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; }
+    
+    /* LEFT SIDE: FORM */
+    .booking-form-card { flex: 1; min-width: 320px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .booking-form-header { background: #c4161c; padding: 25px 30px; color: #fff; }
+    .booking-form-header h2 { margin: 0 0 5px 0; font-size: 22px; font-weight: 700; }
+    .booking-form-header p { margin: 0; font-size: 14px; opacity: 0.9; }
+    
+    .booking-form-body { padding: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 14px; color: #333; font-weight: 600; margin-bottom: 8px; }
+    .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; outline: none; background: #fff; }
+    .form-control:focus { border-color: #c4161c; }
+    .form-control[disabled] { background: #f3f4f6; color: #111; font-weight: 500; cursor: not-allowed; border-color: #e5e7eb; }
+    
+    .btn-submit { width: 100%; padding: 14px; background: #c4161c; color: #fff; font-size: 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
+    .btn-submit:hover { background: #a01217; }
+    .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+
+    /* RIGHT SIDE: BIKE INFO & COST */
+    .booking-summary-col { flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 20px; }
+    
+    .bike-preview-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .bike-preview-img { height: 220px; background: #eee; }
+    .bike-preview-img img { width: 100%; height: 100%; object-fit: cover; }
+    .bike-preview-body { padding: 20px; }
+    .bike-preview-title { font-size: 20px; font-weight: 800; color: #111; margin: 0 0 5px 0; }
+    .bike-preview-meta { font-size: 14px; color: #666; margin: 0 0 15px 0; }
+    .bike-preview-price { font-size: 18px; font-weight: 700; color: #c4161c; margin: 0; }
+    .bike-preview-price span { font-size: 14px; color: #666; font-weight: 400; }
+
+    .cost-calculation-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 25px; text-align: center; color: #555; }
+    .cost-calculation-box.active { text-align: left; background: #fff; border-color: #c4161c; }
+    .cost-detail { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 10px; color: #444; }
+    .cost-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; color: #111; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #d1d5db; }
+    .cost-total .total-val { color: #c4161c; }
+</style>
+
+<section class="booking-section">
+    <div class="booking-wrapper">
         
-        <!-- Left Side: Bike Info -->
-        <div class="booking-bike-info" style="flex: 1; min-width: 300px; padding: 40px; background-color: #fafafa; border-right: 1px solid #eee;">
-            <div style="width: 100%; height: 200px; overflow: hidden; border-radius: 8px; margin-bottom: 25px;">
-                <img src="{% static 'assets/image/' %}{{ bike.image }}" 
-                     alt="{{ bike.name }}"
-                     style="width: 100%; height: 100%; object-fit: cover;"
-                     onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+        <!-- LEFT SIDE: Booking Form -->
+        <div class="booking-form-card">
+            <div class="booking-form-header">
+                <h2>Booking Form</h2>
+                <p>Fill in your rental details</p>
             </div>
-            
-            <h2 style="font-size: 24px; font-weight: 800; color: #222; margin-bottom: 15px;">{{ bike.name }}</h2>
-            <p style="margin: 0 0 10px 0; color: #555;"><strong style="color: #222;">Category:</strong> {{ bike.category }}</p>
-            <p style="margin: 0 0 10px 0; color: #555;"><strong style="color: #222;">Price per day:</strong> <span style="color: #c4161c; font-weight: 700;">Rs. <span id="bike-price">{{ bike.price_per_day }}</span></span></p>
+            <div class="booking-form-body">
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Selected Bike</label>
+                        <input type="text" class="form-control" value="{{ bike.name }}" disabled>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="start_date" name="start_date" class="form-control" required onchange="calculateCost()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input type="date" id="end_date" name="end_date" class="form-control" required onchange="calculateCost()">
+                    </div>
+
+                    <button type="submit" class="btn-submit" id="book-btn" disabled>Confirm Booking</button>
+                </form>
+            </div>
         </div>
 
-        <!-- Right Side: Booking Form -->
-        <div class="booking-form-box" style="flex: 1; min-width: 300px; padding: 40px;">
-            <h2 style="font-size: 24px; font-weight: 800; color: #222; margin-bottom: 25px;">Book Your Ride</h2>
-            
-            <form method="POST">
-                {% csrf_token %}
-                
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px;">Start Date</label>
-                    <input type="date" id="start_date" name="start_date" required onchange="calculateCost()" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px;">
+        <!-- RIGHT SIDE: Bike Preview & Cost Summary -->
+        <div class="booking-summary-col">
+            <!-- Bike Card -->
+            <div class="bike-preview-card">
+                <div class="bike-preview-img">
+                    <img src="{% static 'assets/image/' %}{{ bike.image }}" alt="{{ bike.name }}" onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
                 </div>
+                <div class="bike-preview-body">
+                    <h2 class="bike-preview-title">{{ bike.name }}</h2>
+                    <p class="bike-preview-meta">{{ bike.category }} | 155cc</p>
+                    <p class="bike-preview-price">NPR {{ bike.price_per_day }} <span>/ day</span></p>
+                    <!-- Hidden price for JS calculation -->
+                    <span id="bike-price-val" style="display:none;">{{ bike.price_per_day }}</span>
+                </div>
+            </div>
 
-                <div class="form-group" style="margin-bottom: 30px;">
-                    <label style="display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px;">End Date</label>
-                    <input type="date" id="end_date" name="end_date" required onchange="calculateCost()" style="width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 15px;">
+            <!-- Cost Calculation -->
+            <div class="cost-calculation-box" id="cost-box">
+                <p style="margin: 0; font-size: 14px;" id="cost-placeholder">Select start and end dates to see the calculated cost.</p>
+                <div id="cost-details" style="display: none;">
+                    <div class="cost-detail">
+                        <span>Rate per day</span>
+                        <span>NPR <span id="calc-rate">{{ bike.price_per_day }}</span></span>
+                    </div>
+                    <div class="cost-detail">
+                        <span>Total Days</span>
+                        <span id="calc-days">0</span>
+                    </div>
+                    <div class="cost-total">
+                        <span>Total Cost</span>
+                        <span class="total-val">NPR <span id="calc-total">0</span></span>
+                    </div>
                 </div>
-                
-                <div class="cost-summary" style="background-color: #f9f9f9; padding: 20px; border-radius: 6px; margin-bottom: 30px; border-left: 4px solid #c4161c;">
-                    <p style="margin: 0 0 10px 0; color: #555; font-size: 15px;">Total Days: <span id="total-days" style="font-weight: 700; color: #222;">0</span></p>
-                    <p class="final-cost" style="margin: 0; font-size: 18px; font-weight: 700; color: #222;">Total Cost: <span style="color: #c4161c;">Rs. <span id="total-cost">0.00</span></span></p>
-                </div>
-
-                <button type="submit" class="btn-solid-red" id="book-btn" disabled style="width: 100%; padding: 14px; font-size: 16px; border: none; cursor: pointer;">Confirm Booking</button>
-            </form>
+            </div>
         </div>
+
     </div>
 </section>
 
 <!-- JavaScript to calculatecost when user picks dates -->
 <script>
-    // Get today's date in YYYY-MM-DD format
     const today = new Date().toISOString().split('T')[0];
-    
-    // Disable past dates in the calendar
     document.getElementById("start_date").setAttribute("min", today);
     document.getElementById("end_date").setAttribute("min", today);
 
     function calculateCost() {
         const startDateVal = document.getElementById("start_date").value;
         const endDateVal = document.getElementById("end_date").value;
-        const pricePerDay = parseFloat(document.getElementById("bike-price").innerText);
+        const pricePerDay = parseFloat(document.getElementById("bike-price-val").innerText);
         const bookBtn = document.getElementById("book-btn");
+        
+        const costBox = document.getElementById("cost-box");
+        const placeholder = document.getElementById("cost-placeholder");
+        const details = document.getElementById("cost-details");
 
         if (startDateVal && endDateVal) {
             const startStr = new Date(startDateVal);
             const endStr = new Date(endDateVal);
-
-            // Calculate difference in milliseconds
             const diffTime = endStr - startStr;
-            // Convert to days (+1 to include both start and end day)
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
             if (diffDays > 0) {
-                document.getElementById("total-days").innerText = diffDays;
+                document.getElementById("calc-days").innerText = diffDays;
+                document.getElementById("calc-total").innerText = (diffDays * pricePerDay).toFixed(2);
                 
-                const totalCost = (diffDays * pricePerDay).toFixed(2);
-                document.getElementById("total-cost").innerText = totalCost;
-                
-                // Enable the button
+                // Show calculations
+                costBox.classList.add('active');
+                placeholder.style.display = 'none';
+                details.style.display = 'block';
                 bookBtn.disabled = false;
             } else {
-                document.getElementById("total-days").innerText = "Invalid Dates";
-                document.getElementById("total-cost").innerText = "0.00";
-                // Disable the button
+                costBox.classList.remove('active');
+                placeholder.style.display = 'block';
+                placeholder.innerText = "Invalid Dates selected. End date must be after Start date.";
+                details.style.display = 'none';
                 bookBtn.disabled = true;
             }
         }

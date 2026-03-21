@@ -5,10 +5,12 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="hero-section" style="background-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 100%), url('{% static 'assets/image/bike8.jpg' %}');">
+<section class="hero-section"
+    style="background-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 100%), url('{% static 'assets/image/bike8.jpg' %}');">
     <div class="hero-content">
         <h1 class="hero-title"><span class="text-red">Ride</span>Sathi</h1>
-        <p class="hero-desc">Easy, affordable and reliable bike rental system. Choose your bike, pick your dates, and get on the road.</p>
+        <p class="hero-desc">Easy, affordable and reliable bike rental system. Choose your bike, pick your dates, and
+            get on the road.</p>
         <a href="{% url 'bikes' %}" class="btn-solid-red btn-large">Browse Bikes</a>
     </div>
 </section>
@@ -24,17 +26,20 @@
     <div class="features-grid">
         <div class="feature-card">
             <span class="feature-badge">EASY BOOKING</span>
-            <p>Book your preferred bike in just a few simple steps. Select your bike, choose your dates, and confirm. No complicated process.</p>
+            <p>Book your preferred bike in just a few simple steps. Select your bike, choose your dates, and confirm. No
+                complicated process.</p>
         </div>
 
         <div class="feature-card">
             <span class="feature-badge">AFFORDABLE PRICING</span>
-            <p>Competitive daily rental rates to fit every budget. Transparent pricing with no hidden charges. Pay only for what you use.</p>
+            <p>Competitive daily rental rates to fit every budget. Transparent pricing with no hidden charges. Pay only
+                for what you use.</p>
         </div>
 
         <div class="feature-card">
             <span class="feature-badge">SECURE SYSTEM</span>
-            <p>Your data and payments are fully protected. Verified bikes, documented rentals, and a reliable support system you can trust.</p>
+            <p>Your data and payments are fully protected. Verified bikes, documented rentals, and a reliable support
+                system you can trust.</p>
         </div>
     </div>
 </section>
@@ -43,7 +48,8 @@
 <section class="cta-section">
     <div class="cta-content">
         <h2>Ready to Start Your Journey?</h2>
-        <p>Join thousands of riders who trust RideSathi for their daily commute and weekend adventures. Register today for free.</p>
+        <p>Join thousands of riders who trust RideSathi for their daily commute and weekend adventures. Register today
+            for free.</p>
         <div class="cta-buttons">
             <a href="{% url 'register' %}" class="btn-solid-white">Create Free Account</a>
             <a href="{% url 'bikes' %}" class="btn-outline-white">View Bikes</a>
