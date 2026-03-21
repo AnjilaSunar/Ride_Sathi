@@ -9,7 +9,7 @@
     .bikes-page-header { background-color: #f4f6f9; padding: 40px 5% 20px 5%; }
     .breadcrumb { font-size: 14px; color: #666; margin-bottom: 15px; }
     .bikes-title { font-size: 36px; font-weight: 800; color: #111; margin-bottom: 10px; }
-    .bikes-subtitle { color: #555; font-size: 16px; margin-bottom: 30px; }
+    .bikes-subtitle { color: #555; margin-bottom: 30px; font-size: 16px; }
     
     .filter-bar {
         background: #fff; border: 1px solid #e5e7eb; border-radius: 8px;
@@ -17,13 +17,13 @@
         display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 20px;
     }
     .filter-group { display: flex; flex-direction: column; gap: 8px; flex: 1; min-width: 250px; }
-    .filter-label { font-size: 13px; font-weight: 600; color: #444; }
-    .search-input { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 14px; outline: none; transition: border-color 0.2s; }
-    .search-input:focus { border-color: #c4161c; }
+    .filter-label { font-size: 14px; color: #333; }
+    .search-input { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 14px; outline: none; }
+    .search-input:focus { border-color: #e42222; }
     
     .filter-toggles { display: flex; gap: 10px; align-items: center; }
-    .toggle-btn { padding: 10px 20px; border: 1px solid #d1d5db; background: #fff; color: #444; border-radius: 6px; font-size: 14px; cursor: pointer; font-weight: 500; transition: all 0.2s; }
-    .toggle-btn.active { border-color: #c4161c; color: #c4161c; background: #fdf2f2; }
+    .toggle-btn { padding: 10px 20px; border: 1px solid #d1d5db; background: #fff; color: #555; border-radius: 4px; font-size: 14px; cursor: pointer; }
+    .toggle-btn.active { border-color: #e42222; color: #e42222; background: #fff; }
     
     .bikes-count { font-size: 14px; color: #666; margin-left: auto; align-self: center; }
 
@@ -33,33 +33,29 @@
     }
     
     .bike-card-figma {
-        background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; overflow: hidden;
-        display: flex; flex-direction: column; transition: transform 0.2s, box-shadow 0.2s;
+        background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden;
+        display: flex; flex-direction: column;
     }
-    .bike-card-figma:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.06); }
     
     .bike-img-container { height: 210px; position: relative; background: #eee; }
     .bike-img-container img { width: 100%; height: 100%; object-fit: cover; }
     
-    .badge-status { position: absolute; top: 12px; left: 12px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .badge-status { position: absolute; top: 12px; left: 12px; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
     .badge-status.available { background: #dcfce7; color: #166534; }
     .badge-status.unavailable { background: #fee2e2; color: #991b1b; }
     
-    .badge-category { position: absolute; top: 12px; right: 12px; padding: 5px 12px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 20px; font-size: 12px; font-weight: 600; }
+    .badge-category { position: absolute; top: 12px; right: 12px; padding: 5px 12px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 4px; font-size: 12px; font-weight: 500; }
 
     .bike-card-body { padding: 20px; display: flex; flex-direction: column; flex-grow: 1; }
     .bike-name { font-size: 18px; font-weight: 700; color: #111; margin: 0 0 6px 0; }
-    .bike-meta { font-size: 13px; color: #6b7280; margin: 0 0 15px 0; }
+    .bike-meta { font-size: 13px; color: #666; margin: 0 0 15px 0; }
     
-    .bike-price-figma { font-size: 18px; font-weight: 800; color: #c4161c; margin: 0 0 24px 0; }
-    .bike-price-figma span { font-size: 13px; color: #6b7280; font-weight: 500; }
+    .bike-price-figma { font-size: 18px; font-weight: 700; color: #e42222; margin: 0 0 24px 0; }
+    .bike-price-figma span { font-size: 13px; color: #6b7280; font-weight: 400; }
     
     .bike-actions { display: flex; gap: 10px; margin-top: auto; }
-    .btn-details { flex: 1; text-align: center; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; color: #374151; font-weight: 600; font-size: 13px; background: #fff;  transition: background 0.2s; }
-    .btn-details:hover { background: #f9fafb; color: #111; border-color: #9ca3af; }
-    
-    .btn-book-now { flex: 1; text-align: center; padding: 10px; border: none; border-radius: 6px; background: #c4161c; color: #fff; font-weight: 600; font-size: 13px; transition: background 0.2s; }
-    .btn-book-now:hover { background: #a01217; color: #fff; }
+    .btn-details { flex: 1; text-align: center; padding: 12px; border: 1px solid #d1d5db; border-radius: 4px; color: #333; font-weight: 500; font-size: 14px; background: #fff; }
+    .btn-book-now { flex: 1; text-align: center; padding: 12px; border: none; border-radius: 4px; background: #e42222; color: #fff; font-weight: 500; font-size: 14px; }
     .btn-book-now.disabled { background: #9ca3af; pointer-events: none; }
 </style>
 

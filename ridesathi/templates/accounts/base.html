@@ -16,14 +16,12 @@
         <div class="logo">
             <a href="/"><span class="logo-red">Ride</span><span class="logo-dark">Sathi</span></a>
         </div>
-
         <nav class="nav-center">
-            <a href="{% url 'home' %}" class="active">Home</a>
-            <a href="{% url 'bikes' %}">Bikes</a>
-            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
+            <a href="{% url 'bikes' %}" class="{% if request.resolver_match.url_name == 'bikes' %}active{% endif %}">Bikes</a>
+            <a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
             <a href="#">Dashboard</a>
         </nav>
-
         <div class="nav-right">
             {% if request.session.user_id %}
                 <span class="nav-user">{{ request.session.username }}</span>
