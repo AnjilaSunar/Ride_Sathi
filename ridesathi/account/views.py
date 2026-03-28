@@ -508,6 +508,28 @@ def payment_success(request):
 
 
 # ─────────────────────────────────────────────
+# MY BOOKINGS (USER DASHBOARD)
+# ─────────────────────────────────────────────
+def my_bookings(request):
+    if "user_id" not in request.session:
+        return redirect("login")
+
+    user_id = request.session["user_id"]
+    with connection.cursor() as cursor:
+        # Fetch all bookings for this user, join with bikes to get model/category
+        cursor.execute("""
+            SELECT bk.*, b.model, b.category, b.image 
+            FROM bookings bk
+            JOIN bikes b ON bk.bike_id = b.id
+            WHERE bk.user_id = %s
+            ORDER BY bk.created_at DESC
+        """, [user_id])
+        bookings = dictfetchall(cursor)
+
+    return render(request, "accounts/my_bookings.html", {"bookings": bookings})
+
+
+# ─────────────────────────────────────────────
 # PAYMENT FAILURE CALLBACK
 # ─────────────────────────────────────────────
 def payment_failure(request):

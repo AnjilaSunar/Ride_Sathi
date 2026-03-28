@@ -16,12 +16,11 @@
         <div class="logo">
             <a href="/"><span class="logo-red">Ride</span><span class="logo-dark">Sathi</span></a>
         </div>
-        <nav class="nav-center">
-            <a href="{% url 'home' %}" class="{% if request.resolver_match.url_name == 'home' %}active{% endif %}">Home</a>
-            <a href="{% url 'bikes' %}" class="{% if request.resolver_match.url_name == 'bikes' %}active{% endif %}">Bikes</a>
-            <a href="{% url 'about' %}" class="{% if request.resolver_match.url_name == 'about' %}active{% endif %}">About</a>
-            <a href="#">Dashboard</a>
-        </nav>
+            {% if request.session.user_role == 'admin' %}
+                <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Admin</a>
+            {% elif request.session.user_id %}
+                <a href="{% url 'my_bookings' %}" class="{% if request.resolver_match.url_name == 'my_bookings' %}active{% endif %}">My Bookings</a>
+            {% endif %}
         <div class="nav-right">
             {% if request.session.user_id %}
                 <span class="nav-user">{{ request.session.username }}</span>
@@ -65,7 +64,11 @@
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'bikes' %}">Available Bikes</a>
             <a href="{% url 'about' %}">About Us</a>
-            <a href="#">Dashboard</a>
+            {% if request.session.user_role == 'admin' %}
+                <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+            {% elif request.session.user_id %}
+                <a href="{% url 'my_bookings' %}">My Bookings</a>
+            {% endif %}
         </div>
 
         <div class="footer-col contact-col">

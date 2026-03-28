@@ -1,0 +1,126 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}My Bookings | RideSathi{% endblock %}
+
+{% block content %}
+<style>
+    body { background-color: #f7f9fc; font-family: 'Outfit', sans-serif; }
+    
+    .dashboard-container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+    
+    .dashboard-header { margin-bottom: 40px; }
+    .dashboard-header h1 { font-size: 36px; font-weight: 900; color: #111; margin-bottom: 8px; }
+    .dashboard-header p { color: #666; font-size: 16px; }
+
+    .bookings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
+
+    .booking-card {
+        background: #fff; border: 1px solid #e0e6ed; border-radius: 16px; overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: transform 0.3s;
+    }
+    .booking-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.06); }
+
+    .booking-card-header { position: relative; height: 180px; }
+    .booking-card-header img { width: 100%; height: 100%; object-fit: cover; }
+    
+    .status-badge {
+        position: absolute; top: 15px; right: 15px; padding: 6px 14px; border-radius: 50px;
+        font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .status-pending { background: #fef9c3; color: #854d0e; }
+    .status-confirmed, .status-paid { background: #dcfce7; color: #15803d; }
+    .status-cancelled { background: #fee2e2; color: #b91c1c; }
+
+    .booking-card-body { padding: 25px; }
+    .booking-title { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    .booking-id { font-size: 12px; color: #999; font-weight: 500; }
+
+    .info-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #666; }
+    .info-label { font-weight: 500; }
+    .info-value { color: #111; font-weight: 600; }
+
+    .booking-footer { 
+        padding-top: 20px; margin-top: 15px; border-top: 1px solid #f0f0f0;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .total-price { font-size: 18px; font-weight: 800; color: #111; }
+    .total-price span { font-size: 12px; color: #666; font-weight: 400; }
+
+    .btn-details {
+        padding: 8px 16px; border-radius: 8px; border: 1.5px solid #111; color: #111;
+        text-decoration: none; font-size: 12px; font-weight: 700; transition: 0.2s;
+    }
+    .btn-details:hover { background: #111; color: #fff; }
+
+    .empty-state { text-align: center; padding: 80px 20px; background: #fff; border-radius: 16px; border: 2px dashed #e0e6ed; }
+    .empty-state h3 { font-size: 24px; font-weight: 800; color: #111; margin-bottom: 15px; }
+    .empty-state p { color: #666; margin-bottom: 25px; }
+    .btn-explore { 
+        display: inline-block; padding: 12px 30px; background: #e42222; color: #fff; 
+        text-decoration: none; border-radius: 8px; font-weight: 700; transition: 0.3s;
+    }
+    .btn-explore:hover { background: #c4161c; transform: scale(1.05); }
+</style>
+
+<section class="dashboard-container">
+    <div class="dashboard-header">
+        <h1>My Bookings</h1>
+        <p>Manage your active rentals and view transaction history.</p>
+    </div>
+
+    {% if bookings %}
+    <div class="bookings-grid">
+        {% for b in bookings %}
+        <div class="booking-card">
+            <div class="booking-card-header">
+                <img src="{{ b.image }}" alt="{{ b.model }}" onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
+                <span class="status-badge status-{{ b.status }}">
+                    {{ b.status }}
+                </span>
+            </div>
+            <div class="booking-card-body">
+                <div class="booking-title">
+                    {{ b.model }}
+                    <span class="booking-id">#BS-{{ b.id }}</span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="info-label">Start Date</span>
+                    <span class="info-value">{{ b.start_date }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">End Date</span>
+                    <span class="info-value">{{ b.end_date }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Duration</span>
+                    <span class="info-value">{{ b.total_days }} Day{% if b.total_days != 1 %}s{% endif %}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Documents</span>
+                    <span class="info-value" style="text-transform: capitalize;">{{ b.doc_type }} Uploaded</span>
+                </div>
+
+                <div class="booking-footer">
+                    <div class="total-price">
+                        <span>Paid:</span> NPR {{ b.total_cost }}
+                    </div>
+                    {% if b.status == 'pending' %}
+                    <a href="{% url 'payment' b.id %}" class="btn-details" style="background: #e42222; border-color: #e42222; color: #fff;">Pay Now</a>
+                    {% else %}
+                    <a href="#" class="btn-details">View Details</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <h3>No bookings yet!</h3>
+        <p>You haven't rented any bikes yet. Explore our fleet and start your journey today.</p>
+        <a href="{% url 'bikes' %}" class="btn-explore">Explore Fleet</a>
+    </div>
+    {% endif %}
+</section>
+{% endblock %}
