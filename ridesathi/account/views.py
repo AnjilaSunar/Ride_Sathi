@@ -1,9 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.core.files.storage import FileSystemStorage  # NEW: used to save uploaded files
-import hashlib  # used to hash passwords (basic security)
-from datetime import datetime  # used to calculate the number of days for booking
-from django.db import connection  # Use Django's built-in DB connection from settings.py
+from django.core.files.storage import FileSystemStorage
+import hashlib
+import hmac
+import base64
+import uuid
+from datetime import datetime
+from django.db import connection
 
 
 # ─────────────────────────────────────────────
@@ -59,40 +62,66 @@ def home(request):
 
 # ─────────────────────────────────────────────
 # BIKES PAGE
-# What it does:
-#   1. Connects to MySQL
-#   2. Runs: SELECT * FROM bikes WHERE status = 'available'
-#   3. Passes the list of bikes to bikes.html template
+# Handles: Search (q), Category Filter (category), and Sorting (sort)
 # ─────────────────────────────────────────────
 def bikes(request):
-    # Get the current date to check real-time availability
-    today = datetime.now().date()
+    # 1. Get query parameters from the URL
+    query    = request.GET.get('q', '')
+    category = request.GET.get('category', '')
+    sort     = request.GET.get('sort', 'id_asc')
+    today    = datetime.now().date()
     
+    # 2. Base SQL Query (with real-time availability check)
+    sql = """
+        SELECT b.*, 
+        (SELECT COUNT(*) FROM bookings bk 
+         WHERE bk.bike_id = b.id 
+         AND bk.status != 'cancelled' 
+         AND %s BETWEEN bk.start_date AND bk.end_date) as is_booked_now
+        FROM bikes b
+        WHERE b.status != 'out_of_service'
+    """
+    params = [today]
+
+    # 3. Dynamic Filtering (Search & Category)
+    if query:
+        sql += " AND (b.model LIKE %s OR b.description LIKE %s)"
+        params.extend([f"%{query}%", f"%{query}%"])
+    
+    if category:
+        sql += " AND b.category = %s"
+        params.append(category)
+
+    # 4. Dynamic Sorting
+    if sort == 'price_asc':
+        sql += " ORDER BY b.price_per_day ASC"
+    elif sort == 'price_desc':
+        sql += " ORDER BY b.price_per_day DESC"
+    else:
+        sql += " ORDER BY b.id ASC"
+
     with connection.cursor() as cursor:
-        # Raw SQL: Get all bikes that aren't out of service
-        # Also join with bookings to see if they are currently occupied
-        cursor.execute("""
-            SELECT b.*, 
-            (SELECT COUNT(*) FROM bookings bk 
-             WHERE bk.bike_id = b.id 
-             AND bk.status != 'cancelled' 
-             AND %s BETWEEN bk.start_date AND bk.end_date) as is_booked_now
-            FROM bikes b
-            WHERE b.status != 'out_of_service'
-            ORDER BY b.id ASC
-        """, [today])
-        
+        cursor.execute(sql, params)
         all_bikes = dictfetchall(cursor)
         
-        # Manually update the status field based on real-time data for the template
+        # 4.1 Fetch available categories for the sidebar (Real dynamic data)
+        cursor.execute("SELECT DISTINCT category FROM bikes")
+        category_rows = cursor.fetchall()
+        categories = [row[0] for row in category_rows]
+        
+        # Real-time status update for UI tags
         for bike in all_bikes:
             if bike['is_booked_now'] > 0:
                 bike['status'] = 'booked'
-            else:
-                # Keep original status (available or maintenance)
-                pass
 
-    return render(request, "accounts/bikes.html", {"bikes": all_bikes})
+    context = {
+        "bikes": all_bikes,
+        "categories": categories,
+        "current_search": query,
+        "current_category": category,
+        "current_sort": sort
+    }
+    return render(request, "accounts/bikes.html", context)
 
 
 # ─────────────────────────────────────────────
@@ -392,51 +421,95 @@ def upload_document(request):
 
 
 # ─────────────────────────────────────────────
-# E-SEWA PAYMENT SIMULATION
-# What it does:
-#   1. Looks up the booking ID to get total_cost
-#   2. When they click 'Pay with eSewa':
-#      - INSERT into payments table (amount + booking_id)
-#      - UPDATE bookings table status to 'confirmed'
-#   3. Redirects to a success/invoice page (later)
+# PAYMENT PAGE (e-Sewa v2 Integration)
 # ─────────────────────────────────────────────
 def payment(request, booking_id):
     if "user_id" not in request.session:
         return redirect("login")
 
+    # Retrieve booking details using Raw SQL
     with connection.cursor() as cursor:
-        # Validate the booking
-        user_id = request.session["user_id"]
-        cursor.execute("SELECT * FROM bookings WHERE id = %s AND user_id = %s", [booking_id, user_id])
+        cursor.execute("SELECT * FROM bookings WHERE id = %s", [booking_id])
         booking = dictfetchone(cursor)
 
-        if not booking:
-            messages.error(request, "Booking not found.")
-            return redirect("bikes")
+    if not booking:
+        messages.error(request, "Booking not found.")
+        return redirect("bikes")
 
-        # If the user clicks "Pay" on the form
-        if request.method == "POST":
-            # 1. Create a payment record in MySQL
-            cursor.execute(
-                """
-                INSERT INTO payments (booking_id, user_id, amount, payment_method, payment_status)
-                VALUES (%s, %s, %s, 'eSewa', 'paid')
-                """,
-                [booking_id, user_id, booking["total_cost"]]
-            )
+    # e-Sewa v2 requirement: transaction_uuid and signature
+    # Signature formula: secret_key + total_amount,transaction_uuid,product_code
+    
+    total_amount = str(booking["total_cost"])
+    # Unique ID for this specific transaction attempt
+    transaction_uuid = f"{booking_id}-{uuid.uuid4().hex[:6]}"
+    product_code = "EPAYTEST"
+    secret_key = "8g8M8t8P8m8_965_"  # Standard e-Sewa Test Secret Key
+    
+    # Message to sign as per e-Sewa documentation
+    message = f"total_amount={total_amount},transaction_uuid={transaction_uuid},product_code={product_code}"
+    
+    # Generate HMAC-SHA256 signature
+    hash_val = hmac.new(secret_key.encode(), message.encode(), hashlib.sha256).digest()
+    signature = base64.b64encode(hash_val).decode()
 
-            # 2. Update the booking status from pending to confirmed
-            cursor.execute(
-                "UPDATE bookings SET status = 'confirmed' WHERE id = %s",
-                [booking_id]
-            )
+    context = {
+        "booking": booking,
+        "transaction_uuid": transaction_uuid,
+        "signature": signature,
+        "product_code": product_code,
+    }
+    return render(request, "accounts/payment.html", context)
 
-            messages.success(request, "Payment successful via eSewa! Your booking is confirmed.")
-            
-            # Fetch the updated booking for the success page
-            cursor.execute("SELECT * FROM bookings WHERE id = %s", [booking_id])
-            confirmed_booking = dictfetchone(cursor)
-            
-            return render(request, "accounts/booking_success.html", {"booking": confirmed_booking})
 
-    return render(request, "accounts/payment.html", {"booking": booking})
+# ─────────────────────────────────────────────
+# PAYMENT SUCCESS CALLBACK
+# ─────────────────────────────────────────────
+def payment_success(request):
+    # e-Sewa redirects with 'data' parameter (Base64 encoded JSON)
+    data = request.GET.get("data")
+    if not data:
+        messages.error(request, "Invalid payment response received.")
+        return redirect("bikes")
+
+    # Decode the Base64 response
+    import json
+    decoded_json = base64.b64decode(data).decode()
+    decoded_data = json.loads(decoded_json)
+    
+    # Extract details (e-Sewa returns transaction_uuid, status, total_amount, etc.)
+    transaction_uuid = decoded_data.get("transaction_uuid")
+    booking_id = transaction_uuid.split("-")[0]
+
+    # Update booking status to 'confirmed' and mark as paid
+    with connection.cursor() as cursor:
+        cursor.execute(
+            "UPDATE bookings SET status = 'confirmed' WHERE id = %s",
+            [booking_id]
+        )
+        
+        # Also log the payment in the 'payments' table
+        user_id = request.session.get("user_id")
+        cursor.execute(
+            """
+            INSERT INTO payments (booking_id, user_id, amount, payment_method, payment_status)
+            VALUES (%s, %s, %s, 'eSewa', 'paid')
+            """,
+            [booking_id, user_id, decoded_data.get("total_amount")]
+        )
+
+    messages.success(request, f"Payment successful! Your booking #{booking_id} is now confirmed.")
+    
+    # Fetch final details for the success page
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM bookings WHERE id = %s", [booking_id])
+        booking = dictfetchone(cursor)
+
+    return render(request, "accounts/booking_success.html", {"booking": booking})
+
+
+# ─────────────────────────────────────────────
+# PAYMENT FAILURE CALLBACK
+# ─────────────────────────────────────────────
+def payment_failure(request):
+    messages.error(request, "Payment failed or was cancelled by the user.")
+    return redirect("bikes")
