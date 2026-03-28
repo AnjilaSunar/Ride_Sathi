@@ -317,14 +317,27 @@ def book_bike(request, bike_id):
                 messages.error(request, "Sorry, this bike is already booked for these selected dates. Please choose different dates.")
                 return redirect("book_bike", bike_id=bike_id)
 
+        # 5.6 Handle Document Upload & Contact Details
+        phone    = request.POST.get("phone")
+        address  = request.POST.get("address")
+        doc_type = request.POST.get("doc_type")
+        document = request.FILES.get("document")
+        document_path = ""
+
+        if document:
+            # Save file to media/documents/
+            fs = FileSystemStorage(location='media/documents/')
+            filename = fs.save(document.name, document)
+            document_path = f"documents/{filename}"
+
         # 6. Save the booking in MySQL using Raw SQL (INSERT)
         with connection.cursor() as cursor:
             cursor.execute(
                 """
-                INSERT INTO bookings (user_id, bike_id, start_date, end_date, total_days, total_cost, status) 
-                VALUES (%s, %s, %s, %s, %s, %s, 'pending')
+                INSERT INTO bookings (user_id, bike_id, start_date, end_date, total_days, total_cost, status, phone, address, doc_type, document_path) 
+                VALUES (%s, %s, %s, %s, %s, %s, 'pending', %s, %s, %s, %s)
                 """,
-                [user_id, bike_id, start_date, end_date, total_days, total_cost]
+                [user_id, bike_id, start_date, end_date, total_days, total_cost, phone, address, doc_type, document_path]
             )
             
             # Grabbing the ID from Django's cursor
