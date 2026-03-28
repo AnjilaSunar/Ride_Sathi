@@ -13,4 +13,8 @@ urlpatterns = [
     path("upload-document/", views.upload_document, name="upload_document"),
     path("payment/<int:booking_id>/", views.payment, name="payment"), # NEW
     path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
+    
+    # Password Reset
+    path("forgot-password/", views.forgot_password, name="forgot_password"),
+    path("reset-password/", views.reset_password, name="reset_password"),
 ]
