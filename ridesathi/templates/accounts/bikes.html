@@ -74,18 +74,16 @@
                 <div class="row g-4">
                     {% if bikes %}
                         {% for bike in bikes %}
-                        <div class="col-xl-4 col-lg-6 col-md-12">
+                        <div class="col-xl-4 col-md-6 mb-4">
                             <div class="system-card h-100 p-0 overflow-hidden">
                                 <!-- Image Wrapper -->
-                                <div style="position: relative; height: 220px; overflow: hidden; background: #eee;">
+                                <div class="bike-img-container">
                                     <img src="{% if bike.image %}{{ bike.image }}{% else %}{% static 'assets/image/standard.jpg' %}{% endif %}"
                                          alt="{{ bike.model }}" 
-                                         class="w-100 h-100 object-fit-cover transition-transform" 
-                                         style="transition: 0.5s ease;"
                                          onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
                                     
                                     <span class="badge-system {% if bike.status == 'available' %}badge-available{% else %}badge-booked{% endif %}" 
-                                          style="position: absolute; top: 15px; left: 15px;">
+                                          style="position: absolute; top: 20px; left: 20px;">
                                         {% if bike.status == 'available' %}Available{% else %}Reserved{% endif %}
                                     </span>
                                 </div>
@@ -93,8 +91,8 @@
                                 <!-- Card Body -->
                                 <div class="p-4">
                                     <div class="text-uppercase small fw-bold text-red mb-1">{{ bike.category }}</div>
-                                    <h5 class="card-title h4 mb-2">{{ bike.model }}</h5>
-                                    <p class="text-muted small mb-4" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; height: 3em;">
+                                    <h5 class="h4 mb-2">{{ bike.model }}</h5>
+                                    <p class="text-muted small mb-4" style="height: 3em; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
                                         {{ bike.description|default:"Experience premium mobility with RideSathi. Each vehicle is verified for safety and quality." }}
                                     </p>
 
@@ -107,17 +105,17 @@
                                         <div class="row g-2">
                                             <div class="col-6 mb-1">
                                                 <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">Transmission</div>
-                                                <div class="small fw-bold">{% if bike.category == 'Scooter' or bike.category == 'Electric' %}Automatic{% else %}Manual{% endif %}</div>
+                                                <div class="small fw-bold text-dark">{% if bike.category == 'Scooter' or bike.category == 'Electric' %}Automatic{% else %}Manual{% endif %}</div>
                                             </div>
                                             <div class="col-6 mb-1">
                                                 <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">Engine/Power</div>
-                                                <div class="small fw-bold">
+                                                <div class="small fw-bold text-dark">
                                                     {% if bike.category == 'Electric' %}Smart Electric{% else %}Certified Fuel{% endif %}
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">Best For</div>
-                                                <div class="small fw-bold">
+                                                <div class="small fw-bold text-dark">
                                                     {% if bike.category == 'Scooter' %}City Commute{% elif bike.category == 'Electric' %}Eco-Commute{% elif bike.category == 'Standard' %}Highway & City{% elif bike.category == 'Dirt/Off-road' %}Adventure & Trails{% endif %}
                                                 </div>
                                             </div>
@@ -129,17 +127,6 @@
                                         {% if bike.status == 'available' %}
                                             {% if request.session.user_id %}
                                                 <a href="{% url 'book_bike' bike.id %}" class="btn-solid-red flex-grow-1 text-center">Book Now</a>
-{% else %}
-<a href="{% url 'login' %}" class="btn-solid-red flex-grow-1 text-center">Login</a>
-{% endif %}
-{% else %}
-<button class="btn btn-light border flex-grow-1 fw-bold text-muted cursor-not-allowed" disabled>Reserved</button>
-{% endif %}
-</div>
-</div>
-</div>
-</div>
-{% endfor %}
 {% else %}
 <div class="col-12 text-center py-5">
 <div class="system-card py-5">

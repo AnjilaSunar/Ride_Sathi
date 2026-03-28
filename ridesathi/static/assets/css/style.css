@@ -1,167 +1,181 @@
 /* 
-    RideSathi Refined "Smart System" Light Theme 
-    Base: Bootstrap + Custom Styling
+    RideSathi Refined "Smart System" Light Theme (Bootstrap-First)
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap');
 
 :root {
     --primary-red: #c4161c;
     --primary-red-hover: #a01015;
     --bg-light: #ffffff;
     --bg-alt: #f8f9fa;
-    --text-dark: #1a1a1a;
-    --text-muted: #6c757d;
-    --border-color: #dee2e6;
-    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    --card-shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.08);
+    --text-dark: #121212;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 body {
     background-color: var(--bg-light);
     color: var(--text-dark);
     font-family: 'Inter', sans-serif;
-    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Outfit', sans-serif;
-    font-weight: 700;
+    color: var(--text-dark);
 }
 
-/* ── COMMON UI COMPONENTS ── */
+/* ── OVERRIDES ── */
+.container-fluid { max-width: 1600px; }
 
-/* Buttons */
+/* ── BUTTONS ── */
 .btn-solid-red {
-    background-color: var(--primary-red);
-    color: #fff;
+    background: var(--primary-red);
+    color: #fff !important;
     border: none;
-    border-radius: 8px;
-    font-weight: 600;
-    padding: 10px 24px;
-    transition: all 0.3s ease;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     display: inline-block;
+    border: 1px solid transparent;
 }
 
 .btn-solid-red:hover {
-    background-color: var(--primary-red-hover);
-    color: #fff;
+    background: var(--primary-red-hover);
     transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(196, 22, 28, 0.2);
+    box-shadow: 0 10px 20px rgba(196, 22, 28, 0.2);
 }
 
 .btn-outline-red {
-    background-color: transparent;
-    color: var(--primary-red);
+    background: transparent;
+    color: var(--primary-red) !important;
     border: 2px solid var(--primary-red);
-    border-radius: 8px;
-    font-weight: 600;
-    padding: 8px 22px;
+    padding: 10px 26px;
+    border-radius: 12px;
+    font-weight: 700;
     transition: all 0.3s ease;
     text-decoration: none;
     display: inline-block;
 }
 
 .btn-outline-red:hover {
-    background-color: var(--primary-red);
-    color: #fff;
+    background: var(--primary-red);
+    color: #fff !important;
 }
 
-/* Cards */
+/* ── CARDS ── */
 .system-card {
     background: #fff;
     border: 1px solid var(--border-color);
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 24px;
     box-shadow: var(--card-shadow);
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .system-card:hover {
     box-shadow: var(--card-shadow-hover);
 }
 
-/* ── LAYOUT ── */
-
-/* Sidebar Navigation (Dashboard) */
-.dashboard-sidebar {
-    background: #fff;
-    border-right: 1px solid var(--border-color);
-    height: 100vh;
-    padding: 30px 20px;
-    position: sticky;
-    top: 0;
-}
-
-.sidebar-link {
+/* ── AUTH PAGES ── */
+.auth-wrapper {
+    min-height: 90vh;
     display: flex;
     align-items: center;
-    padding: 12px 18px;
-    color: var(--text-muted);
-    text-decoration: none;
-    border-radius: 10px;
+    justify-content: center;
+    background-color: var(--bg-alt);
+    padding: 40px 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 480px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 48px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-dark);
     margin-bottom: 8px;
-    font-weight: 500;
+}
+
+.form-control {
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    font-size: 15px;
     transition: all 0.2s;
 }
 
-.sidebar-link:hover, .sidebar-link.active {
-    background: rgba(196, 22, 28, 0.05);
-    color: var(--primary-red);
+.form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 4px rgba(196, 22, 28, 0.1);
 }
 
-/* ── eSewa Integration ── */
-.payment-card {
-    max-width: 500px;
-    margin: 40px auto;
-    background: #fff;
-    border-top: 5px solid #60bb46; /* eSewa Green */
-    border-radius: 12px;
-    padding: 30px;
-    box-shadow: var(--card-shadow);
+/* ── BIKES LISTING ── */
+.bike-img-container {
+    height: 240px;
+    overflow: hidden;
+    background: #f1f5f9;
 }
 
-.btn-esewa {
-    background-color: #60bb46;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 14px;
+.bike-img-container img {
     width: 100%;
-    font-weight: 700;
-    transition: background 0.2s;
+    height: 100%;
+    object-fit: contain; /* Professional look for products */
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.btn-esewa:hover {
-    background-color: #4b9436;
+.system-card:hover .bike-img-container img {
+    transform: scale(1.08);
 }
 
-/* ── UTILITIES ── */
-.text-red { color: var(--primary-red); }
-.bg-light-red { background-color: rgba(196, 22, 28, 0.05); }
+/* Sidebar Filter */
+.filter-sidebar {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 24px;
+    position: sticky;
+    top: 100px;
+}
 
-/* Custom Breadcrumb */
-.system-breadcrumb {
-    padding: 20px 0;
-    font-size: 14px;
+.filter-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
     color: var(--text-muted);
+    margin-bottom: 20px;
 }
 
-.system-breadcrumb a {
-    color: var(--primary-red);
-    text-decoration: none;
-    font-weight: 600;
-}
-
-/* Badges */
+/* ── BADGES ── */
 .badge-system {
-    padding: 6px 14px;
-    border-radius: 50px;
-    font-size: 12px;
-    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
-.badge-available { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
-.badge-booked    { background: rgba(239, 68, 68, 0.1);  color: #ef4444; }
+.badge-available { background: #dcfce7; color: #15803d; }
+.badge-booked    { background: #fee2e2; color: #b91c1c; }
+
+/* ── UTILITIES ── */
+.text-red { color: var(--primary-red); }
+.spacer-y { padding: 80px 0; }
+
+/* Remove unwanted default black or grey backgrounds */
+.bg-dark, .btn-dark, footer.dark-footer {
+    display: none !important;
+}
