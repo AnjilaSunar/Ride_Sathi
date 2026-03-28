@@ -107,26 +107,26 @@
                                         {% if bike.status == 'available' %}
                                             {% if request.session.user_id %}
                                                 <a href="{% url 'book_bike' bike.id %}" class="btn-solid-red flex-grow-1 text-center">Book Now</a>
-                                            {% else %}
-                                                <a href="{% url 'login' %}" class="btn-solid-red flex-grow-1 text-center">Login</a>
-                                            {% endif %}
-                                        {% else %}
-                                            <button class="btn btn-light border flex-grow-1 fw-bold text-muted cursor-not-allowed" disabled>Reserved</button>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    {% else %}
-                        <div class="col-12 text-center py-5">
-                            <div class="system-card py-5">
-                                <h3 class="h4">No matching rides found</h3>
-                                <p class="text-muted mb-4">Try adjusting your filters or search terms.</p>
-                                <a href="{% url 'bikes' %}" class="btn-solid-red">Browse All Rides</a>
-                            </div>
-                        </div>
-                    {% endif %}
+{% else %}
+<a href="{% url 'login' %}" class="btn-solid-red flex-grow-1 text-center">Login</a>
+{% endif %}
+{% else %}
+<button class="btn btn-light border flex-grow-1 fw-bold text-muted cursor-not-allowed" disabled>Reserved</button>
+{% endif %}
+</div>
+</div>
+</div>
+</div>
+{% endfor %}
+{% else %}
+<div class="col-12 text-center py-5">
+<div class="system-card py-5">
+<h3 class="h4">No matching rides found</h3>
+<p class="text-muted mb-4">Try adjusting your filters or search terms.</p>
+<a href="{% url 'bikes' %}" class="btn-solid-red">Browse All Rides</a>
+</div>
+</div>
+{% endif %}
                 </div>
             </main>
 
