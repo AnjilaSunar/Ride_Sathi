@@ -81,14 +81,16 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ridesathi_db',
         'USER': 'root',
-        'PASSWORD': '', 
-        'HOST': 'localhost',
+        'PASSWORD': '',          # XAMPP MySQL default: no password
+        'HOST': '127.0.0.1',
         'PORT': '3306',
+        'OPTIONS': {
+            'unix_socket': '',   # Force TCP, not socket (XAMPP on Mac)
+        },
     }
 }
-# NOTE: Our custom tables (users, bikes, bookings, payments, documents)
-# are in MySQL (XAMPP) and accessed using raw SQL via mysql.connector
-# directly inside views.py — see db_connection.py
+# NOTE: All app tables (users, bikes, bookings, payments, documents)
+# are accessed via raw SQL using get_db_connection() in db_connection.py
 
 
 # Password validation
