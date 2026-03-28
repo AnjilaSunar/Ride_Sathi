@@ -273,10 +273,10 @@ def book_bike(request, bike_id):
         cursor.close()
         conn.close()
 
-        messages.success(request, f"Booking successful! Total cost is Rs. {total_cost}. Your booking is pending confirmation.")
+        messages.success(request, f"Booking successful! Proceed to payment to confirm your bike rental.")
         
-        # After booking, redirect to home page per user's request to skip payment
-        return redirect("home")
+        # Redirect to the payment page to complete the booking
+        return redirect("payment", booking_id=booking_id)
 
     # GET request (just showing the page)
     cursor.close()
@@ -376,8 +376,14 @@ def payment(request, booking_id):
 
         messages.success(request, "Payment successful via eSewa! Your booking is confirmed.")
         
-        # We'll go to Invoice or Home depending on what we build next
-        return redirect("home") 
+        # Fetch the updated booking for the success page
+        cursor2 = conn.cursor(dictionary=True)
+        cursor2.execute("SELECT * FROM bookings WHERE id = %s", (booking_id,))
+        confirmed_booking = cursor2.fetchone()
+        cursor2.close()
+        conn.close()
+        
+        return render(request, "accounts/booking_success.html", {"booking": confirmed_booking})
 
     cursor.close()
     conn.close()

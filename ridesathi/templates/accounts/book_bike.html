@@ -1,6 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
-{% block title %}Book {{ bike.name }} | RideSathi{% endblock %}
+{% block title %}Book {{ bike.model }} | RideSathi{% endblock %}
 
 {% block content %}
 <style>
@@ -58,7 +58,7 @@
                     {% csrf_token %}
                     <div class="form-group">
                         <label>Selected Bike</label>
-                        <input type="text" class="form-control" value="{{ bike.name }}" disabled>
+                        <input type="text" class="form-control" value="{{ bike.model }}" disabled>
                     </div>
                     
                     <div class="form-group">
@@ -81,10 +81,10 @@
             <!-- Bike Card -->
             <div class="bike-preview-card">
                 <div class="bike-preview-img">
-                    <img src="{% static 'assets/image/' %}{{ bike.image }}" alt="{{ bike.name }}" onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+                    <img src="{{ bike.image }}" alt="{{ bike.model }}" onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
                 </div>
                 <div class="bike-preview-body">
-                    <h2 class="bike-preview-title">{{ bike.name }}</h2>
+                    <h2 class="bike-preview-title">{{ bike.model }}</h2>
                     <p class="bike-preview-meta">{{ bike.category }} | 155cc</p>
                     <p class="bike-preview-price">NPR {{ bike.price_per_day }} <span>/ day</span></p>
                     <!-- Hidden price for JS calculation -->

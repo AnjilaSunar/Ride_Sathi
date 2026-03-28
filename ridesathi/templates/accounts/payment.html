@@ -3,41 +3,200 @@
 {% block title %}Payment | RideSathi{% endblock %}
 
 {% block content %}
+<style>
+    body { background: #0f0f0f; font-family: 'Inter', sans-serif; }
+
+    .payment-section {
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
+    }
+
+    .payment-card {
+        background: #1a1a1a;
+        border: 1px solid #2a2a2a;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 460px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0,0,0,0.6);
+    }
+
+    /* eSewa Header */
+    .esewa-header {
+        background: linear-gradient(135deg, #60bb46 0%, #3d8b2a 100%);
+        padding: 30px;
+        text-align: center;
+    }
+    .esewa-logo {
+        font-size: 28px;
+        font-weight: 900;
+        color: #fff;
+        letter-spacing: -1px;
+    }
+    .esewa-logo span { color: #d9f5cf; }
+    .esewa-sub { color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px; }
+
+    /* Booking Summary */
+    .booking-summary {
+        background: #111;
+        margin: 0 24px;
+        border-radius: 10px;
+        padding: 18px 20px;
+        margin-top: 24px;
+    }
+    .booking-summary h4 {
+        color: #888;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin: 0 0 12px 0;
+    }
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid #222;
+        font-size: 14px;
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-row .label { color: #888; }
+    .summary-row .value { color: #fff; font-weight: 600; }
+    .summary-row.total .label { color: #bbb; font-weight: 700; font-size: 15px; }
+    .summary-row.total .value { color: #60bb46; font-size: 18px; font-weight: 900; }
+
+    /* Form */
+    .payment-form-body { padding: 24px; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+        display: block;
+        font-size: 12px;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+        font-weight: 600;
+    }
+    .form-group input {
+        width: 100%;
+        padding: 13px 16px;
+        background: #111;
+        border: 1px solid #333;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 15px;
+        outline: none;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+    .form-group input:focus { border-color: #60bb46; }
+    .form-group input::placeholder { color: #555; }
+
+    .btn-pay {
+        width: 100%;
+        padding: 16px;
+        background: linear-gradient(135deg, #60bb46, #3d8b2a);
+        color: #fff;
+        font-size: 16px;
+        font-weight: 700;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: opacity 0.2s, transform 0.1s;
+        letter-spacing: 0.3px;
+    }
+    .btn-pay:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-pay:active { transform: none; }
+
+    .secure-note {
+        text-align: center;
+        color: #555;
+        font-size: 12px;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    .secure-note::before {
+        content: "🔒";
+        font-size: 13px;
+    }
+
+    .cancel-link {
+        display: block;
+        text-align: center;
+        color: #555;
+        font-size: 13px;
+        text-decoration: none;
+        padding: 12px 0 0 0;
+    }
+    .cancel-link:hover { color: #888; }
+</style>
+
 <section class="payment-section">
-    <div class="payment-container">
-        <!-- eSewa Logo Simulation -->
-        <div class="payment-header">
-            <!-- We will use a fallback text if eSewa logo image is not found -->
-            <img src="{% static 'assets/image/esewa_logo.png' %}" 
-                 alt="eSewa" 
-                 onerror="this.style.display='none'; document.getElementById('esewa-text').style.display='block';">
-            <h1 id="esewa-text" style="display:none; color: #60bb46;">eSewa Payment</h1>
-            <p>Secure payment Gateway Simulation</p>
+    <div class="payment-card">
+
+        <!-- eSewa Header -->
+        <div class="esewa-header">
+            <div class="esewa-logo">e<span>Sewa</span></div>
+            <p class="esewa-sub">Secure Payment Gateway · Simulation</p>
         </div>
 
-        <div class="payment-details">
-            <h3>Booking Summary</h3>
-            <p><strong>Total Days:</strong> {{ booking.total_days }}</p>
-            <p><strong>Total Amount to Pay:</strong> Rs. <span class="amount">{{ booking.total_cost }}</span></p>
+        <!-- Booking Summary -->
+        <div class="booking-summary">
+            <h4>Booking Summary</h4>
+            <div class="summary-row">
+                <span class="label">Booking #</span>
+                <span class="value">#{{ booking.id }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="label">Duration</span>
+                <span class="value">{{ booking.total_days }} day{% if booking.total_days != 1 %}s{% endif %}</span>
+            </div>
+            <div class="summary-row">
+                <span class="label">Start Date</span>
+                <span class="value">{{ booking.start_date }}</span>
+            </div>
+            <div class="summary-row">
+                <span class="label">End Date</span>
+                <span class="value">{{ booking.end_date }}</span>
+            </div>
+            <div class="summary-row total">
+                <span class="label">Total Amount</span>
+                <span class="value">NPR {{ booking.total_cost }}</span>
+            </div>
         </div>
 
-        <!-- The Payment Form that submits to our backend to do the raw SQL INSERT -->
-        <form method="POST" class="payment-form">
-            {% csrf_token %}
-            
-            <div class="form-group">
-                <label for="esewa_id">eSewa Mobile Number / ID</label>
-                <input type="text" id="esewa_id" name="esewa_id" placeholder="98XXXXXXXX" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" placeholder="••••••••" required>
-            </div>
+        <!-- Payment Form -->
+        <div class="payment-form-body">
+            <form method="POST">
+                {% csrf_token %}
 
-            <!-- This submits to the payment view we just wrote -->
-            <button type="submit" class="btn-esewa">Pay Rs. {{ booking.total_cost }}</button>
-        </form>
+                <div class="form-group">
+                    <label>eSewa Mobile Number</label>
+                    <input type="text" name="esewa_id" id="esewa_id" placeholder="98XXXXXXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label>eSewa Password</label>
+                    <input type="password" name="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn-pay">
+                    Pay NPR {{ booking.total_cost }}
+                </button>
+
+                <span class="secure-note">SSL Encrypted · 256-bit secure connection</span>
+                <a href="{% url 'home' %}" class="cancel-link">Cancel and go back</a>
+            </form>
+        </div>
+
     </div>
 </section>
 {% endblock %}
