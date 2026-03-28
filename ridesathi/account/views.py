@@ -1,9 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.core.mail import send_mail
 from django.core.files.storage import FileSystemStorage  # NEW: used to save uploaded files
 import hashlib  # used to hash passwords (basic security)
-import random
 from datetime import datetime  # used to calculate the number of days for booking
 from django.db import connection  # Use Django's built-in DB connection from settings.py
 
@@ -202,77 +200,6 @@ def logout(request):
     request.session.flush()  # clears everything saved in session
     messages.success(request, "You have been logged out.")
     return redirect("login")
-
-# ─────────────────────────────────────────────
-# FORGOT PASSWORD (OTP Generation)
-# ─────────────────────────────────────────────
-def forgot_password(request):
-    if request.method == "POST":
-        email = request.POST.get("email")
-        
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT id FROM users WHERE email = %s", [email])
-            user = cursor.fetchone()
-            
-        if user:
-            # Generate a 6-digit OTP
-            otp = str(random.randint(100000, 999999))
-            # Store in session for verification
-            request.session["reset_email"] = email
-            request.session["reset_otp"] = otp
-            
-            # ATTEMPT TO SEND REAL EMAIL
-            try:
-                subject = "RideSathi - Password Reset OTP"
-                message = f"Hello,\n\nYour OTP for resetting your RideSathi password is: {otp}\n\nDo not share this code with anyone."
-                send_mail(subject, message, 'ridesathi.nepal@gmail.com', [email], fail_silently=False)
-                
-                messages.success(request, f"OTP sent to {email}. Please check your inbox.")
-            except Exception as e:
-                # Fallback if the user hasn't configured Gmail App Passwords yet (so FYP testing doesn't break)
-                print(f"FAILED TO SEND EMAIL: {e}")
-                messages.info(request, f"TEST OTP (Email failed, update settings.py later): {otp}")
-                
-            return redirect("reset_password")
-        else:
-            messages.error(request, "Email not found in our system.")
-            
-    return render(request, "accounts/forgot_password.html")
-
-# ─────────────────────────────────────────────
-# RESET PASSWORD (OTP Verification & Update)
-# ─────────────────────────────────────────────
-def reset_password(request):
-    # Make sure they went through forgot_password first
-    if "reset_email" not in request.session:
-        messages.error(request, "Please enter your email first to receive an OTP.")
-        return redirect("forgot_password")
-        
-    if request.method == "POST":
-        entered_otp = request.POST.get("otp")
-        new_password = request.POST.get("new_password")
-        
-        # Verify OTP
-        if entered_otp == request.session.get("reset_otp"):
-            email = request.session["reset_email"]
-            hashed_pw = hash_password(new_password)
-            
-            with connection.cursor() as cursor:
-                cursor.execute(
-                    "UPDATE users SET password = %s WHERE email = %s",
-                    [hashed_pw, email]
-                )
-                
-            # Clean up session
-            del request.session["reset_email"]
-            del request.session["reset_otp"]
-            
-            messages.success(request, "Password reset successfully! Please login.")
-            return redirect("login")
-        else:
-            messages.error(request, "Invalid OTP.")
-            
-    return render(request, "accounts/reset_password.html")
 
 
 # ─────────────────────────────────────────────
