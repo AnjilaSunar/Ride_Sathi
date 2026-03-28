@@ -3,36 +3,45 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | RideSathi</title>
-
-    <!-- Login CSS -->
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/login.css' %}">
 </head>
-<body>
+<body class="login-page">
 
-<div class="auth-container">
-    <h2>Login</h2>
+    <div class="login-card">
+        <h2>Welcome Back</h2>
+        <p>Login to manage your premium rides.</p>
 
-    {% if messages %}
-        {% for message in messages %}
-            <p class="error-msg">{{ message }}</p>
-        {% endfor %}
-    {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <div style="background: rgba(196, 22, 28, 0.05); color: #c4161c; padding: 15px; border-radius: 12px; font-size: 14px; font-weight: 600; margin-bottom: 25px; border: 1px solid rgba(196, 22, 28, 0.1);">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
-    <form method="POST">
-        {% csrf_token %}
+        <form method="POST">
+            {% csrf_token %}
 
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" placeholder="Enter your username" required autofocus>
+            </div>
 
-        <button type="submit">Login</button>
-    </form>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" placeholder="Enter your password" required>
+            </div>
 
-    <p class="auth-link">
-        Don’t have an account?
-        <a href="{% url 'register' %}">Register</a>
-    </p>
-</div>
+            <button type="submit" class="btn-login">Sign In →</button>
+        </form>
+
+        <div class="auth-footer">
+            Don’t have an account? <a href="{% url 'register' %}">Create Account</a>
+        </div>
+    </div>
 
 </body>
 </html>

@@ -3,78 +3,88 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register | RideSathi</title>
-
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/register.css' %}">
 </head>
-<body>
+<body class="register-page">
 
-<div class="auth-container">
-    <h2>Create Account</h2>
+    <div class="register-card">
+        <h2>Join RideSathi</h2>
+        <p>Create your account to start your adventure.</p>
 
-    <form method="POST" onsubmit="return validatePasswords();">
-        {% csrf_token %}
+        <form method="POST" onsubmit="return validatePasswords();">
+            {% csrf_token %}
 
-        <input type="text" name="username" placeholder="Username" required>
-        {% if username_error %}
-            <span class="field-error">{{ username_error }}</span>
-        {% endif %}
+            <div class="form-grid">
+                <div class="form-group full">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Choose a username" required>
+                    {% if username_error %}
+                        <span style="color: #c4161c; font-size: 11px; font-weight: 700; display: block; margin-top: 5px;">{{ username_error }}</span>
+                    {% endif %}
+                </div>
 
-        <input type="email" name="email" placeholder="Email" required>
-        {% if email_error %}
-            <span class="field-error">{{ email_error }}</span>
-        {% endif %}
+                <div class="form-group full">
+                    <label>Email Address</label>
+                    <input type="email" name="email" placeholder="Enter your email" required>
+                    {% if email_error %}
+                        <span style="color: #c4161c; font-size: 11px; font-weight: 700; display: block; margin-top: 5px;">{{ email_error }}</span>
+                    {% endif %}
+                </div>
 
-    
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password1" name="password1" placeholder="Create password" required>
+                </div>
 
-        <input type="password" id="password1" name="password1" placeholder="Password" required>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="password2" name="password2" placeholder="Repeat password" required>
+                </div>
+            </div>
 
-        <input type="password" id="password2" name="password2"
-               placeholder="Confirm Password" required>
+            <button type="submit" class="btn-register">Create Account →</button>
 
-        <button type="submit" class="btn-register">Register</button>
+            <div class="auth-footer">
+                Already have an account? <a href="{% url 'login' %}">Sign In</a>
+            </div>
+        </form>
+    </div>
 
-        <p class="auth-link">
-            Already have an account? <a href="{% url 'login' %}">Login</a>
-        </p>
-    </form>
-</div>
+    <!-- PASSWORD VALIDATION SCRIPT -->
+    <script>
+    const p1 = document.getElementById("password1");
+    const p2 = document.getElementById("password2");
 
-<!-- PASSWORD VALIDATION SCRIPT -->
-<script>
-const p1 = document.getElementById("password1");
-const p2 = document.getElementById("password2");
-
-function validatePasswords() {
-    if (p1.value !== p2.value) {
-        p2.setCustomValidity("Passwords do not match");
-        p2.reportValidity();
-        return false;
-    } else {
-        p2.setCustomValidity("");
-        return true;
+    function validatePasswords() {
+        if (p1.value !== p2.value) {
+            p2.setCustomValidity("Passwords do not match");
+            p2.reportValidity();
+            return false;
+        } else {
+            p2.setCustomValidity("");
+            return true;
+        }
     }
-}
 
+    p2.addEventListener("input", () => {
+        if (p1.value === p2.value) {
+            p2.setCustomValidity("");
+        }
+    });
+    </script>
 
-p2.addEventListener("input", () => {
-    if (p1.value === p2.value) {
-        p2.setCustomValidity("");
-    }
-});
-</script>
-
-{% if messages %}
-<div class="alert-container">
-    {% for message in messages %}
-        <div class="alert {{ message.tags }}">
-            {{ message }}
+    {% if messages %}
+        <div style="position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);">
+            {% for message in messages %}
+                <div style="background: rgba(196, 22, 28, 0.9); backdrop-filter: blur(10px); color: #fff; padding: 12px 30px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 10px 30px rgba(196, 22, 28, 0.3);">
+                    {{ message }}
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
-</div>
-{% endif %}
-
+    {% endif %}
 
 </body>
 </html>
