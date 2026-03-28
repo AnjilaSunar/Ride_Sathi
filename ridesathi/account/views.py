@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.core.files.storage import FileSystemStorage  # NEW: used to save uploaded files
 import hashlib  # used to hash passwords (basic security)
 from datetime import datetime  # used to calculate the number of days for booking
-from db_connection import get_db_connection  # our MySQL helper
+from django.db import connection  # Use Django's built-in DB connection from settings.py
 
 
 # ─────────────────────────────────────────────
@@ -13,25 +13,41 @@ from db_connection import get_db_connection  # our MySQL helper
 def hash_password(password):
     return hashlib.md5(password.encode()).hexdigest()
 
+# ─────────────────────────────────────────────
+# Helper: Return all rows from a cursor as a dict
+# ─────────────────────────────────────────────
+def dictfetchall(cursor):
+    "Return all rows from a cursor as a dict"
+    columns = [col[0] for col in cursor.description]
+    return [
+        dict(zip(columns, row))
+        for row in cursor.fetchall()
+    ]
+
+# ─────────────────────────────────────────────
+# Helper: Return one row from a cursor as a dict
+# ─────────────────────────────────────────────
+def dictfetchone(cursor):
+    "Return one row from a cursor as a dict safely"
+    row = cursor.fetchone()
+    if row is None:
+        return None
+    columns = [col[0] for col in cursor.description]
+    return dict(zip(columns, row))
+
 
 # ─────────────────────────────────────────────
 # HOME PAGE
 # ─────────────────────────────────────────────
 def home(request):
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    with connection.cursor() as cursor:
+        # 1. Fetch 4 available bikes for the "Featured Bikes" section
+        cursor.execute("SELECT * FROM bikes WHERE status = 'available' LIMIT 4")
+        featured_bikes = dictfetchall(cursor)
 
-    # 1. Fetch 4 available bikes for the "Featured Bikes" section
-    cursor.execute("SELECT * FROM bikes WHERE status = 'available' LIMIT 4")
-    featured_bikes = cursor.fetchall()
-
-    # 2. Fetch distinct categories and one image for each from the database
-    # This prevents us from having hardcoded categories on the frontend.
-    cursor.execute("SELECT category, MIN(image) as image FROM bikes GROUP BY category LIMIT 4")
-    categories = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
+        # 2. Fetch distinct categories and one image for each from the database
+        cursor.execute("SELECT category, MIN(image) as image FROM bikes GROUP BY category LIMIT 4")
+        categories = dictfetchall(cursor)
 
     context = {
         "featured_bikes": featured_bikes,
@@ -49,15 +65,10 @@ def home(request):
 #   3. Passes the list of bikes to bikes.html template
 # ─────────────────────────────────────────────
 def bikes(request):
-    conn   = get_db_connection()
-    cursor = conn.cursor(dictionary=True)  # dictionary=True = column names as keys
-
-    # Raw SQL: get all available bikes
-    cursor.execute("SELECT * FROM bikes WHERE status = 'available' ORDER BY id ASC")
-    all_bikes = cursor.fetchall()  # returns a list of dictionaries
-
-    cursor.close()
-    conn.close()
+    with connection.cursor() as cursor:
+        # Raw SQL: get all available bikes
+        cursor.execute("SELECT * FROM bikes WHERE status = 'available' ORDER BY id ASC")
+        all_bikes = dictfetchall(cursor)
 
     return render(request, "accounts/bikes.html", {"bikes": all_bikes})
 
@@ -70,15 +81,10 @@ def bikes(request):
 #   3. Shows details of that specific bike
 # ─────────────────────────────────────────────
 def bike_detail(request, bike_id):
-    conn   = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    # Raw SQL: get ONE bike by its id
-    cursor.execute("SELECT * FROM bikes WHERE id = %s", (bike_id,))
-    bike = cursor.fetchone()
-
-    cursor.close()
-    conn.close()
+    with connection.cursor() as cursor:
+        # Raw SQL: get ONE bike by its id
+        cursor.execute("SELECT * FROM bikes WHERE id = %s", [bike_id])
+        bike = dictfetchone(cursor)
 
     if not bike:
         messages.error(request, "Bike not found.")
@@ -113,37 +119,29 @@ def register(request):
             messages.error(request, "Passwords do not match.")
             return redirect("register")
 
-        # Step 2: Connect to MySQL
-        conn   = get_db_connection()
-        cursor = conn.cursor()
+        # Step 2: Use Django's Database connection
+        with connection.cursor() as cursor:
+            # Step 3: Check if username already exists
+            cursor.execute("SELECT id FROM users WHERE username = %s", [username])
+            if cursor.fetchone():
+                messages.error(request, "Username already exists.")
+                return redirect("register")
 
-        # Step 3: Check if username already exists
-        cursor.execute("SELECT id FROM users WHERE username = %s", (username,))
-        if cursor.fetchone():
-            messages.error(request, "Username already exists.")
-            cursor.close()
-            conn.close()
-            return redirect("register")
-
-        # Step 4: Check if email already exists
-        cursor.execute("SELECT id FROM users WHERE email = %s", (email,))
-        if cursor.fetchone():
-            messages.error(request, "Email already exists.")
-            cursor.close()
-            conn.close()
-            return redirect("register")
+            # Step 4: Check if email already exists
+            cursor.execute("SELECT id FROM users WHERE email = %s", [email])
+            if cursor.fetchone():
+                messages.error(request, "Email already exists.")
+                return redirect("register")
 
         # Step 5: Hash the password before saving
         hashed_pw = hash_password(password1)
 
         # Step 6: Insert new user into `users` table
-        cursor.execute(
-            "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
-            (username, email, hashed_pw)
-        )
-        conn.commit()  # save the change to database
-        cursor.close()
-        conn.close()
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO users (username, email, password) VALUES (%s, %s, %s)",
+                [username, email, hashed_pw]
+            )
 
         messages.success(request, "Account created successfully! Please login.")
         return redirect("login")
@@ -168,18 +166,14 @@ def login(request):
         # Hash the entered password to match what is in the database
         hashed_pw = hash_password(password)
 
-        # Connect to MySQL
-        conn   = get_db_connection()
-        cursor = conn.cursor(dictionary=True)  # dictionary=True gives us column names
-
-        # Raw SQL: Find user with matching username AND password
-        cursor.execute(
-            "SELECT * FROM users WHERE username = %s AND password = %s",
-            (username, hashed_pw)
-        )
-        user = cursor.fetchone()  # gets the first matching row
-        cursor.close()
-        conn.close()
+        # Connect to MySQL using Django's connection
+        with connection.cursor() as cursor:
+            # Raw SQL: Find user with matching username AND password
+            cursor.execute(
+                "SELECT * FROM users WHERE username = %s AND password = %s",
+                [username, hashed_pw]
+            )
+            user = dictfetchone(cursor)
 
         if user:
             # Save user info in session (so we know who is logged in)
@@ -221,19 +215,15 @@ def book_bike(request, bike_id):
         messages.error(request, "Please log in to book a bike.")
         return redirect("login")
 
-    # Connect to MySQL
-    conn   = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
-
-    # 2. Get the bike details
-    cursor.execute("SELECT * FROM bikes WHERE id = %s", (bike_id,))
-    bike = cursor.fetchone()
-
-    if not bike:
-        cursor.close()
-        conn.close()
-        messages.error(request, "Bike not found.")
-        return redirect("bikes")
+    # Connect to MySQL using Django natively
+    with connection.cursor() as cursor:
+        # 2. Get the bike details
+        cursor.execute("SELECT * FROM bikes WHERE id = %s", [bike_id])
+        bike = dictfetchone(cursor)
+        
+        if not bike:
+            messages.error(request, "Bike not found.")
+            return redirect("bikes")
 
     # Handle the form submission
     if request.method == "POST":
@@ -259,19 +249,18 @@ def book_bike(request, bike_id):
         user_id = request.session["user_id"]
 
         # 6. Save the booking in MySQL using Raw SQL (INSERT)
-        cursor.execute(
-            """
-            INSERT INTO bookings (user_id, bike_id, start_date, end_date, total_days, total_cost, status) 
-            VALUES (%s, %s, %s, %s, %s, %s, 'pending')
-            """,
-            (user_id, bike_id, start_date, end_date, total_days, total_cost)
-        )
-        conn.commit()  # Make sure it literally saves!
-        
-        # We can grab the ID of the booking we just created (useful for payment later)
-        booking_id = cursor.lastrowid
-        cursor.close()
-        conn.close()
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                INSERT INTO bookings (user_id, bike_id, start_date, end_date, total_days, total_cost, status) 
+                VALUES (%s, %s, %s, %s, %s, %s, 'pending')
+                """,
+                [user_id, bike_id, start_date, end_date, total_days, total_cost]
+            )
+            
+            # Grabbing the ID from Django's cursor
+            cursor.execute("SELECT LAST_INSERT_ID()")
+            booking_id = cursor.fetchone()[0]
 
         messages.success(request, f"Booking successful! Proceed to payment to confirm your bike rental.")
         
@@ -279,8 +268,6 @@ def book_bike(request, bike_id):
         return redirect("payment", booking_id=booking_id)
 
     # GET request (just showing the page)
-    cursor.close()
-    conn.close()
     return render(request, "accounts/book_bike.html", {"bike": bike})
 
 
@@ -309,17 +296,12 @@ def upload_document(request):
         filename = fs.save(uploaded_file.name, uploaded_file)
         file_path = fs.url(filename) # e.g., /media/my_license.jpg
 
-        # 3. Store the path in MySQL using Raw SQL
-        conn = get_db_connection()
-        cursor = conn.cursor()
-
-        cursor.execute(
-            "INSERT INTO documents (user_id, doc_type, file_path) VALUES (%s, %s, %s)",
-            (user_id, doc_type, file_path)
-        )
-        conn.commit()
-        cursor.close()
-        conn.close()
+        # 3. Store the path using Django's connection
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO documents (user_id, doc_type, file_path) VALUES (%s, %s, %s)",
+                [user_id, doc_type, file_path]
+            )
 
         messages.success(request, "Document uploaded successfully!")
         return redirect("home") # Or redirect to dashboard later
@@ -340,51 +322,39 @@ def payment(request, booking_id):
     if "user_id" not in request.session:
         return redirect("login")
 
-    conn = get_db_connection()
-    cursor = conn.cursor(dictionary=True)
+    with connection.cursor() as cursor:
+        # Validate the booking
+        user_id = request.session["user_id"]
+        cursor.execute("SELECT * FROM bookings WHERE id = %s AND user_id = %s", [booking_id, user_id])
+        booking = dictfetchone(cursor)
 
-    # Validate the booking
-    user_id = request.session["user_id"]
-    cursor.execute("SELECT * FROM bookings WHERE id = %s AND user_id = %s", (booking_id, user_id))
-    booking = cursor.fetchone()
+        if not booking:
+            messages.error(request, "Booking not found.")
+            return redirect("bikes")
 
-    if not booking:
-        cursor.close()
-        conn.close()
-        messages.error(request, "Booking not found.")
-        return redirect("bikes")
+        # If the user clicks "Pay" on the form
+        if request.method == "POST":
+            # 1. Create a payment record in MySQL
+            cursor.execute(
+                """
+                INSERT INTO payments (booking_id, user_id, amount, payment_method, payment_status)
+                VALUES (%s, %s, %s, 'eSewa', 'paid')
+                """,
+                [booking_id, user_id, booking["total_cost"]]
+            )
 
-    # If the user clicks "Pay" on the form
-    if request.method == "POST":
-        # 1. Create a payment record in MySQL
-        cursor.execute(
-            """
-            INSERT INTO payments (booking_id, user_id, amount, payment_method, payment_status)
-            VALUES (%s, %s, %s, 'eSewa', 'paid')
-            """,
-            (booking_id, user_id, booking["total_cost"])
-        )
+            # 2. Update the booking status from pending to confirmed
+            cursor.execute(
+                "UPDATE bookings SET status = 'confirmed' WHERE id = %s",
+                [booking_id]
+            )
 
-        # 2. Update the booking status from pending to confirmed
-        cursor.execute(
-            "UPDATE bookings SET status = 'confirmed' WHERE id = %s",
-            (booking_id,)
-        )
-        conn.commit()
-        cursor.close()
-        conn.close()
+            messages.success(request, "Payment successful via eSewa! Your booking is confirmed.")
+            
+            # Fetch the updated booking for the success page
+            cursor.execute("SELECT * FROM bookings WHERE id = %s", [booking_id])
+            confirmed_booking = dictfetchone(cursor)
+            
+            return render(request, "accounts/booking_success.html", {"booking": confirmed_booking})
 
-        messages.success(request, "Payment successful via eSewa! Your booking is confirmed.")
-        
-        # Fetch the updated booking for the success page
-        cursor2 = conn.cursor(dictionary=True)
-        cursor2.execute("SELECT * FROM bookings WHERE id = %s", (booking_id,))
-        confirmed_booking = cursor2.fetchone()
-        cursor2.close()
-        conn.close()
-        
-        return render(request, "accounts/booking_success.html", {"booking": confirmed_booking})
-
-    cursor.close()
-    conn.close()
     return render(request, "accounts/payment.html", {"booking": booking})

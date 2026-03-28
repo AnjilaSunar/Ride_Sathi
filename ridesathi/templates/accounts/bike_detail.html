@@ -1,6 +1,6 @@
 {% extends 'accounts/base.html' %}
 {% load static %}
-{% block title %}{{ bike.name }} | RideSathi{% endblock %}
+{% block title %}{{ bike.model }} | RideSathi{% endblock %}
 
 {% block content %}
 
@@ -9,15 +9,16 @@
 
         <!-- Bike Image -->
         <div class="bike-detail-img" style="flex: 1; min-width: 300px; background-color: #f0f0f0;">
-            <img src="{% static 'assets/image/' %}{{ bike.image }}"
-                 alt="{{ bike.name }}"
+            <img src="{{ bike.image }}"
+                 alt="{{ bike.model }}"
                  style="width: 100%; height: 100%; object-fit: cover;"
-                 onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+                 data-fallback-src="{% static 'assets/image/standard.jpg' %}"
+                 onerror="this.src=this.dataset.fallbackSrc">
         </div>
 
         <!-- Bike Info -->
         <div class="bike-detail-info" style="flex: 1; min-width: 300px; padding: 40px;">
-            <h2 style="font-size: 28px; font-weight: 800; color: #222; margin-bottom: 20px;">{{ bike.name }}</h2>
+            <h2 style="font-size: 28px; font-weight: 800; color: #222; margin-bottom: 20px;">{{ bike.model }}</h2>
             
             <div style="margin-bottom: 30px;">
                 <p style="margin: 0 0 10px 0; color: #555;"><strong style="color: #222;">Category:</strong> {{ bike.category }}</p>
