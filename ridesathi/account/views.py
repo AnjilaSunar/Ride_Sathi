@@ -65,10 +65,32 @@ def home(request):
 #   3. Passes the list of bikes to bikes.html template
 # ─────────────────────────────────────────────
 def bikes(request):
+    # Get the current date to check real-time availability
+    today = datetime.now().date()
+    
     with connection.cursor() as cursor:
-        # Raw SQL: get all available bikes
-        cursor.execute("SELECT * FROM bikes WHERE status = 'available' ORDER BY id ASC")
+        # Raw SQL: Get all bikes that aren't out of service
+        # Also join with bookings to see if they are currently occupied
+        cursor.execute("""
+            SELECT b.*, 
+            (SELECT COUNT(*) FROM bookings bk 
+             WHERE bk.bike_id = b.id 
+             AND bk.status != 'cancelled' 
+             AND %s BETWEEN bk.start_date AND bk.end_date) as is_booked_now
+            FROM bikes b
+            WHERE b.status != 'out_of_service'
+            ORDER BY b.id ASC
+        """, [today])
+        
         all_bikes = dictfetchall(cursor)
+        
+        # Manually update the status field based on real-time data for the template
+        for bike in all_bikes:
+            if bike['is_booked_now'] > 0:
+                bike['status'] = 'booked'
+            else:
+                # Keep original status (available or maintenance)
+                pass
 
     return render(request, "accounts/bikes.html", {"bikes": all_bikes})
 
@@ -81,14 +103,28 @@ def bikes(request):
 #   3. Shows details of that specific bike
 # ─────────────────────────────────────────────
 def bike_detail(request, bike_id):
+    today = datetime.now().date()
     with connection.cursor() as cursor:
         # Raw SQL: get ONE bike by its id
-        cursor.execute("SELECT * FROM bikes WHERE id = %s", [bike_id])
+        # Join with bookings to see if currently booked
+        cursor.execute("""
+            SELECT b.*, 
+            (SELECT COUNT(*) FROM bookings bk 
+             WHERE bk.bike_id = b.id 
+             AND bk.status != 'cancelled' 
+             AND %s BETWEEN bk.start_date AND bk.end_date) as is_booked_now
+            FROM bikes b
+            WHERE b.id = %s
+        """, [today, bike_id])
         bike = dictfetchone(cursor)
 
     if not bike:
         messages.error(request, "Bike not found.")
         return redirect("bikes")
+        
+    # Real-time status update
+    if bike['is_booked_now'] > 0:
+        bike['status'] = 'booked'
 
     return render(request, "accounts/bike_detail.html", {"bike": bike})
 
@@ -261,6 +297,25 @@ def book_bike(request, bike_id):
         # 5. Calculate total cost
         total_cost = total_days * float(bike["price_per_day"])
         user_id = request.session["user_id"]
+
+        # 5.5 Prevent Double Booking (Overlap Check)
+        with connection.cursor() as cursor:
+            # An overlap happens if: existing_start <= new_end AND existing_end >= new_start
+            cursor.execute(
+                """
+                SELECT id FROM bookings 
+                WHERE bike_id = %s 
+                  AND status != 'cancelled'
+                  AND start_date <= %s 
+                  AND end_date >= %s
+                """,
+                [bike_id, end_date, start_date]
+            )
+            conflict = cursor.fetchone()
+            
+            if conflict:
+                messages.error(request, "Sorry, this bike is already booked for these selected dates. Please choose different dates.")
+                return redirect("book_bike", bike_id=bike_id)
 
         # 6. Save the booking in MySQL using Raw SQL (INSERT)
         with connection.cursor() as cursor:
