@@ -11,25 +11,35 @@
 <body>
 
 <!-- HEADER -->
-<header class="site-header">
-    <div class="header-container">
+<header class="site-header" style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 1000;">
+    <div class="header-container" style="max-width: 1400px; margin: 0 auto; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center;">
         <div class="logo">
-            <a href="/"><span class="logo-red">Ride</span><span class="logo-dark">Sathi</span></a>
+            <a href="/" style="text-decoration: none; font-size: 26px; font-weight: 900; letter-spacing: -1px;">
+                <span style="color: #c4161c;">Ride</span><span style="color: #333;">Sathi</span>
+            </a>
         </div>
-            {% if request.session.user_role == 'admin' %}
-                <a href="{% url 'admin_dashboard' %}" class="{% if request.resolver_match.url_name == 'admin_dashboard' %}active{% endif %}">Admin</a>
-            {% elif request.session.user_id %}
-                <a href="{% url 'my_bookings' %}" class="{% if request.resolver_match.url_name == 'my_bookings' %}active{% endif %}">My Bookings</a>
-            {% endif %}
-        <div class="nav-right">
-            {% if request.session.user_id %}
-                <span class="nav-user">{{ request.session.username }}</span>
-                <a href="{% url 'logout' %}" class="btn-outline-red">Logout</a>
-            {% else %}
-                <a href="{% url 'login' %}" class="btn-outline-red">Login</a>
-                <a href="{% url 'register' %}" class="btn-solid-red">Register</a>
-            {% endif %}
-            <button class="btn-dark-mode">Dark Mode</button>
+        
+        <div style="display: flex; align-items: center; gap: 30px;">
+            <div class="nav-links" style="display: flex; gap: 25px;">
+                <a href="{% url 'home' %}" style="color: #555; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#555'">Home</a>
+                <a href="{% url 'bikes' %}" style="color: #555; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#555'">Bikes</a>
+                <a href="{% url 'about' %}" style="color: #555; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#555'">About</a>
+                {% if request.session.user_role == 'admin' %}
+                    <a href="{% url 'admin_dashboard' %}" style="color: #c4161c; text-decoration: none; font-size: 14px; font-weight: 700;">Admin</a>
+                {% elif request.session.user_id %}
+                    <a href="{% url 'my_bookings' %}" style="color: #555; text-decoration: none; font-size: 14px; font-weight: 600; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#555'">My Bookings</a>
+                {% endif %}
+            </div>
+
+            <div class="nav-right" style="display: flex; align-items: center; gap: 15px;">
+                {% if request.session.user_id %}
+                    <span style="color: #333; font-weight: 600; font-size: 14px;">{{ request.session.username }}</span>
+                    <a href="{% url 'logout' %}" style="border: 1.5px solid rgba(0,0,0,0.1); color: #333; padding: 8px 20px; text-decoration: none; border-radius: 50px; font-size: 13px; font-weight: 700; transition: all 0.3s;" onmouseover="this.style.borderColor='#c4161c'; this.style.color='#c4161c'" onmouseout="this.style.borderColor='rgba(0,0,0,0.1)'; this.style.color='#333'">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" style="color: #333; text-decoration: none; font-size: 14px; font-weight: 700; padding: 8px 20px;">Login</a>
+                    <a href="{% url 'register' %}" style="background: #c4161c; color: #fff; padding: 10px 24px; text-decoration: none; border-radius: 50px; font-size: 14px; font-weight: 800; transition: transform 0.3s, box-shadow 0.3s; display: inline-block;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(196,22,28,0.2)'" onmouseout="this.style.transform='none'; this.style.boxShadow='none'">Register</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 </header>
@@ -50,38 +60,40 @@
 </main>
 
 <!-- FOOTER -->
-<footer class="site-footer">
-    <div class="footer-container">
+<footer class="site-footer" style="background: #fcfcfc; padding: 100px 5% 40px; border-top: 1px solid #eee; color: #333;">
+    <div class="footer-container" style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px;">
         <div class="footer-col">
-            <div class="logo">
-                <a href="/"><span class="logo-red">Ride</span><span class="logo-dark">Sathi</span></a>
+            <div class="logo" style="margin-bottom: 25px;">
+                <a href="/" style="text-decoration: none; font-size: 28px; font-weight: 900;"><span style="color: #c4161c;">Ride</span><span style="color: #333;">Sathi</span></a>
             </div>
-            <p>Smart Bike Rental System. Your trusted companion for affordable and reliable bike rentals in Kathmandu.</p>
+            <p style="color: #777; line-height: 1.8; font-size: 15px; max-width: 320px;">Premium Bike Rental System in Kathmandu. We provide the best fleet for your adventures and daily commutes with unmatched reliability.</p>
         </div>
 
         <div class="footer-col">
-            <h4>QUICK LINKS</h4>
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'bikes' %}">Available Bikes</a>
-            <a href="{% url 'about' %}">About Us</a>
-            {% if request.session.user_role == 'admin' %}
-                <a href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
-            {% elif request.session.user_id %}
-                <a href="{% url 'my_bookings' %}">My Bookings</a>
-            {% endif %}
+            <h4 style="font-size: 14px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 25px; color: #333; text-transform: uppercase;">Company</h4>
+            <a href="{% url 'home' %}" style="display: block; color: #777; text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#777'">Home</a>
+            <a href="{% url 'about' %}" style="display: block; color: #777; text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#777'">About Us</a>
+            <a href="#" style="display: block; color: #777; text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#777'">Privacy Policy</a>
+        </div>
+
+        <div class="footer-col">
+            <h4 style="font-size: 14px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 25px; color: #333; text-transform: uppercase;">Rentals</h4>
+            <a href="{% url 'bikes' %}" style="display: block; color: #777; text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#777'">Available Bikes</a>
+            <a href="{% url 'my_bookings' %}" style="display: block; color: #777; text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#777'">My Bookings</a>
+            <a href="#" style="display: block; color: #777; text-decoration: none; font-size: 15px; margin-bottom: 12px; transition: color 0.3s;" onmouseover="this.style.color='#c4161c'" onmouseout="this.style.color='#777'">How it Works</a>
         </div>
 
         <div class="footer-col contact-col">
-            <h4>CONTACT</h4>
-            <p>info@ridesathi.com</p>
-            <p>+977-9800000000</p>
-            <p>Kathmandu, Nepal</p>
+            <h4 style="font-size: 14px; font-weight: 800; letter-spacing: 1.5px; margin-bottom: 25px; color: #333; text-transform: uppercase;">Contact</h4>
+            <p style="color: #777; font-size: 15px; margin-bottom: 12px;">info@ridesathi.com</p>
+            <p style="color: #777; font-size: 15px; margin-bottom: 12px;">+977-9800000000</p>
+            <p style="color: #777; font-size: 15px;">Kathmandu, Nepal</p>
         </div>
     </div>
 
-    <div class="footer-bottom">
-        <div class="footer-left">2026 RideSathi. All rights reserved.</div>
-        <div class="footer-right">Final Year Project - Smart Bike Rental System</div>
+    <div class="footer-bottom" style="max-width: 1400px; margin: 80px auto 0; padding-top: 30px; border-top: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; color: #999; font-size: 13px;">
+        <div>&copy; 2026 RideSathi. All rights reserved.</div>
+        <div style="font-weight: 600;">Designed with &hearts; for Riders</div>
     </div>
 </footer>
 

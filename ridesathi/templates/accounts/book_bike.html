@@ -4,174 +4,215 @@
 
 {% block content %}
 <style>
-    body { background-color: #f4f6f9; font-family: 'Inter', sans-serif; }
-    .booking-section { padding: 60px 5%; display: flex; justify-content: center; min-height: 80vh; }
-    .booking-wrapper { max-width: 1000px; width: 100%; display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; }
-    
-    /* LEFT SIDE: FORM */
-    .booking-form-card { flex: 1; min-width: 320px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    .booking-form-header { background: #c4161c; padding: 25px 30px; color: #fff; }
-    .booking-form-header h2 { margin: 0 0 5px 0; font-size: 22px; font-weight: 700; }
-    .booking-form-header p { margin: 0; font-size: 14px; opacity: 0.9; }
-    
-    .booking-form-body { padding: 30px; }
-    .form-group { margin-bottom: 20px; }
-    .form-group label { display: block; font-size: 14px; color: #333; font-weight: 600; margin-bottom: 8px; }
-    .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; outline: none; background: #fff; transition: border-color 0.2s; }
-    .form-control:focus { border-color: #c4161c; }
-    .form-control[disabled] { background: #f3f4f6; color: #111; font-weight: 500; cursor: not-allowed; border-color: #e5e7eb; }
-    
-    .btn-submit { width: 100%; padding: 14px; background: #c4161c; color: #fff; font-size: 16px; font-weight: 600; border: none; border-radius: 6px; cursor: pointer; margin-top: 10px; transition: background 0.2s; }
-    .btn-submit:hover { background: #a01217; }
-    .btn-submit:disabled { background: #9ca3af; cursor: not-allowed; }
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
-    /* RIGHT SIDE: BIKE INFO & COST */
-    .booking-summary-col { flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 20px; }
-    
-    .bike-preview-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    .bike-preview-img { height: 220px; background: #eee; }
-    .bike-preview-img img { width: 100%; height: 100%; object-fit: cover; }
-    .bike-preview-body { padding: 20px; }
-    .bike-preview-title { font-size: 20px; font-weight: 800; color: #111; margin: 0 0 5px 0; }
-    .bike-preview-meta { font-size: 14px; color: #666; margin: 0 0 15px 0; }
-    .bike-preview-price { font-size: 18px; font-weight: 700; color: #c4161c; margin: 0; }
-    .bike-preview-price span { font-size: 14px; color: #666; font-weight: 400; }
+    .booking-page { 
+        background: #ffffff; 
+        font-family: 'Outfit', sans-serif; 
+        min-height: 100vh;
+        color: #1a1a1a;
+        padding: 80px 5%;
+    }
 
-    .cost-calculation-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 25px; text-align: center; color: #555; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-    .cost-calculation-box.active { text-align: left; background: #fff; border-color: #c4161c; }
-    .cost-detail { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 10px; color: #444; }
-    .cost-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; color: #111; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #d1d5db; }
-    .cost-total .total-val { color: #c4161c; }
+    .booking-wrapper { 
+        max-width: 1200px; 
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 60px;
+        align-items: start;
+    }
+
+    /* ── FORM CARD ── */
+    .p-form-card {
+        background: #ffffff;
+        border: 1px solid #eee;
+        border-radius: 40px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+    }
+    .p-form-header {
+        background: linear-gradient(135deg, #c4161c, #a01015);
+        padding: 50px;
+        color: #fff;
+    }
+    .p-form-header h2 { margin: 0 0 10px; font-size: 32px; font-weight: 900; }
+    .p-form-header p { margin: 0; font-size: 16px; opacity: 0.9; font-weight: 500; }
+
+    .p-form-body { padding: 50px; }
+    
+    .p-group { margin-bottom: 30px; }
+    .p-group label { display: block; font-size: 12px; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
+    
+    .p-input {
+        width: 100%; padding: 18px 24px; 
+        background: #f8f9fa; 
+        border: 1px solid #eee;
+        border-radius: 18px; color: #1a1a1a; font-size: 16px; font-family: inherit;
+        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); box-sizing: border-box;
+    }
+    .p-input:focus { border-color: #c4161c; background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(196, 22, 28, 0.05); }
+    .p-input::placeholder { color: #ccc; }
+
+    .p-btn-submit {
+        width: 100%; padding: 22px; background: #c4161c; color: #fff;
+        font-size: 18px; font-weight: 800; border: none; border-radius: 20px;
+        cursor: pointer; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); margin-top: 15px;
+        box-shadow: 0 15px 35px rgba(196, 22, 28, 0.25);
+    }
+    .p-btn-submit:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(196, 22, 28, 0.4); background: #a01015; }
+    .p-btn-submit:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; box-shadow: none; }
+
+    /* ── SUMMARY SIDE ── */
+    .p-summary-side { display: flex; flex-direction: column; gap: 30px; }
+
+    .p-bike-mini {
+        background: #ffffff; border: 1px solid #eee;
+        border-radius: 30px; overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    .p-bike-mini img { width: 100%; height: 250px; object-fit: cover; }
+    .p-bike-mini-info { padding: 35px; }
+    .p-mini-title { font-size: 24px; font-weight: 900; margin-bottom: 8px; color: #111; }
+    .p-mini-meta { color: #888; font-size: 15px; margin-bottom: 20px; font-weight: 500; }
+    .p-mini-price { font-size: 20px; font-weight: 800; color: #c4161c; }
+
+    .p-cost-box {
+        background: #fdfdfd; border: 1px solid #eee;
+        border-radius: 30px; padding: 40px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    }
+    .p-cost-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; color: #666; font-weight: 500; }
+    .p-cost-total { 
+        display: flex; justify-content: space-between; margin-top: 25px; 
+        padding-top: 25px; border-top: 2px dashed #eee;
+        font-size: 24px; font-weight: 900; color: #111;
+    }
+    .p-cost-total span:last-child { color: #c4161c; }
+
+    @media (max-width: 1000px) {
+        .booking-wrapper { grid-template-columns: 1fr; }
+    }
 </style>
 
-<section class="booking-section">
+<div class="booking-page">
     <div class="booking-wrapper">
-        
-        <!-- LEFT SIDE: Booking Form -->
-        <div class="booking-form-card">
-            <div class="booking-form-header">
-                <h2>Booking Details</h2>
-                <p>Please provide your information for verification</p>
+        <!-- Form -->
+        <div class="p-form-card">
+            <div class="p-form-header">
+                <h2>Reservation</h2>
+                <p>Complete the details below to secure your ride.</p>
             </div>
-            <div class="booking-form-body">
+            <div class="p-form-body">
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    
-                    <div style="display: flex; gap: 15px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Start Date</label>
-                            <input type="date" id="start_date" name="start_date" class="form-control" required onchange="calculateCost()">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="p-group">
+                            <label>Pick-up Date</label>
+                            <input type="date" id="start_date" name="start_date" class="p-input" required onchange="calculateCost()">
                         </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>End Date</label>
-                            <input type="date" id="end_date" name="end_date" class="form-control" required onchange="calculateCost()">
+                        <div class="p-group">
+                            <label>Return Date</label>
+                            <input type="date" id="end_date" name="end_date" class="p-input" required onchange="calculateCost()">
                         </div>
                     </div>
 
-                    <div class="form-group">
+                    <div class="p-group">
                         <label>Phone Number</label>
-                        <input type="text" name="phone" class="form-control" placeholder="98XXXXXXXX" required>
+                        <input type="text" name="phone" class="p-input" placeholder="+977 98XXXXXXXX" required>
                     </div>
 
-                    <div class="form-group">
-                        <label>Current Address</label>
-                        <textarea name="address" class="form-control" rows="2" placeholder="Kathmandu, Nepal" required></textarea>
+                    <div class="p-group">
+                        <label>Residential Address</label>
+                        <textarea name="address" class="p-input" rows="2" placeholder="Your current location in Kathmandu" required></textarea>
                     </div>
 
-                    <div style="display: flex; gap: 15px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Document Type</label>
-                            <select name="doc_type" class="form-control" required>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="p-group">
+                            <label>ID Document</label>
+                            <select name="doc_type" class="p-input" required>
                                 <option value="driving_license">Driving License</option>
                                 <option value="citizenship">Citizenship Card</option>
                                 <option value="passport">Passport</option>
                             </select>
                         </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Upload Document</label>
-                            <input type="file" name="document" class="form-control" accept=".jpg, .jpeg, .png, .pdf" required>
+                        <div class="p-group">
+                            <label>Upload File</label>
+                            <input type="file" name="document" class="p-input" accept=".jpg, .jpeg, .png, .pdf" required>
                         </div>
                     </div>
 
-                    <p style="font-size: 12px; color: #666; margin-top: -10px; margin-bottom: 20px;">* Your identity is shared with us for safety and verification purposes.</p>
+                    <p style="font-size: 13px; color: #999; margin: 10px 0 35px; line-height: 1.6;">* We process your verification data securely in compliance with the local safety standards.</p>
 
-                    <button type="submit" class="btn-submit" id="book-btn" disabled>Confirm Booking</button>
+                    <button type="submit" class="p-btn-submit" id="book-btn" disabled>Confirm Reservation →</button>
                 </form>
             </div>
         </div>
 
-        <!-- RIGHT SIDE: Bike Preview & Cost Summary -->
-        <div class="booking-summary-col">
-            <!-- Bike Card -->
-            <div class="bike-preview-card">
-                <div class="bike-preview-img">
-                    <img src="{{ bike.image }}" alt="{{ bike.model }}" onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
-                </div>
-                <div class="bike-preview-body">
-                    <h2 class="bike-preview-title">{{ bike.model }}</h2>
-                    <p class="bike-preview-meta">{{ bike.category }} | Premium Model</p>
-                    <p class="bike-preview-price">NPR {{ bike.price_per_day }} <span>/ day</span></p>
+        <!-- Summary -->
+        <div class="p-summary-side">
+            <div class="p-bike-mini">
+                <img src="{{ bike.image }}" alt="{{ bike.model }}" onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
+                <div class="p-bike-mini-info">
+                    <h3 class="p-mini-title">{{ bike.model }}</h3>
+                    <p class="p-mini-meta">{{ bike.category }} · Premium Fleet</p>
+                    <p class="p-mini-price">Rs. {{ bike.price_per_day|floatformat:0 }} <span>/ day</span></p>
                     <span id="bike-price-val" style="display:none;">{{ bike.price_per_day }}</span>
                 </div>
             </div>
 
-            <!-- Cost Calculation Box -->
-            <div class="cost-calculation-box" id="cost-box">
-                <p style="margin: 0; font-size: 14px;" id="cost-placeholder">Select your dates to see the total cost.</p>
+            <div class="p-cost-box" id="cost-box">
+                <div id="cost-placeholder" style="text-align: center; color: #999; font-size: 15px; font-weight: 500;">
+                    Select your journey dates to view the pricing summary
+                </div>
                 <div id="cost-details" style="display: none;">
-                    <div class="cost-detail">
-                        <span>Daily Rate</span>
-                        <span>NPR <span id="calc-rate">{{ bike.price_per_day }}</span></span>
+                    <div class="p-cost-row">
+                        <span>Daily Rental Rate</span>
+                        <span>Rs. {{ bike.price_per_day|floatformat:0 }}</span>
                     </div>
-                    <div class="cost-detail">
-                        <span>Number of Days</span>
-                        <span id="calc-days">0</span>
+                    <div class="p-cost-row">
+                        <span>Journey Duration</span>
+                        <span><span id="calc-days">0</span> Days</span>
                     </div>
-                    <div class="cost-total">
-                        <span>Calculated Total</span>
-                        <span class="total-val">NPR <span id="calc-total">0</span></span>
+                    <div class="p-cost-total">
+                        <span>Total Estimated</span>
+                        <span>Rs. <span id="calc-total">0</span></span>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
-</section>
+</div>
 
 <script>
-    // Set minimal dates for the date pickers
-    const todayStr = new Date().toISOString().split('T')[0];
-    document.getElementById("start_date").setAttribute("min", todayStr);
-    document.getElementById("end_date").setAttribute("min", todayStr);
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("start_date").setAttribute("min", today);
+    document.getElementById("end_date").setAttribute("min", today);
 
     function calculateCost() {
-        const startVal = document.getElementById("start_date").value;
-        const endVal = document.getElementById("end_date").value;
-        const pricePerDay = parseFloat(document.getElementById("bike-price-val").innerText);
-        const bookBtn = document.getElementById("book-btn");
-        const costBox = document.getElementById("cost-box");
+        const start = document.getElementById("start_date").value;
+        const end = document.getElementById("end_date").value;
+        const price = parseFloat(document.getElementById("bike-price-val").innerText);
+        const btn = document.getElementById("book-btn");
         const placeholder = document.getElementById("cost-placeholder");
         const details = document.getElementById("cost-details");
 
-        if (startVal && endVal) {
-            const startDate = new Date(startVal);
-            const endDate = new Date(endVal);
-            const diffTime = endDate - startDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+        if (start && end) {
+            const d1 = new Date(start);
+            const d2 = new Date(end);
+            const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
 
-            if (diffDays > 0) {
-                document.getElementById("calc-days").innerText = diffDays;
-                document.getElementById("calc-total").innerText = (diffDays * pricePerDay).toFixed(2);
-                costBox.classList.add('active');
+            if (diff > 0) {
+                document.getElementById("calc-days").innerText = diff;
+                document.getElementById("calc-total").innerText = (diff * price).toLocaleString();
                 placeholder.style.display = 'none';
                 details.style.display = 'block';
-                bookBtn.disabled = false;
+                btn.disabled = false;
             } else {
-                costBox.classList.remove('active');
                 placeholder.style.display = 'block';
-                placeholder.innerText = "End date must be after Start date.";
+                placeholder.innerText = "Check-out date must be after check-in date";
                 details.style.display = 'none';
-                bookBtn.disabled = true;
+                btn.disabled = true;
             }
         }
     }

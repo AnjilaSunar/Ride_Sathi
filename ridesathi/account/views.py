@@ -530,6 +530,56 @@ def my_bookings(request):
 
 
 # ─────────────────────────────────────────────
+# ADMIN DASHBOARD
+# ─────────────────────────────────────────────
+def admin_dashboard(request):
+    if request.session.get("user_role") != "admin":
+        messages.error(request, "Access denied. Admins only.")
+        return redirect("home")
+
+    with connection.cursor() as cursor:
+        # Fetch all bookings with user and bike details
+        cursor.execute("""
+            SELECT bk.*, u.username, b.model, b.category 
+            FROM bookings bk
+            JOIN users u ON bk.user_id = u.id
+            JOIN bikes b ON bk.bike_id = b.id
+            ORDER BY bk.created_at DESC
+        """)
+        bookings = dictfetchall(cursor)
+
+        # Get some stats for the dashboard
+        cursor.execute("SELECT COUNT(*) FROM bookings WHERE status='pending'")
+        pending_count = cursor.fetchone()[0]
+        
+        cursor.execute("SELECT SUM(total_cost) FROM bookings WHERE status='confirmed'")
+        total_revenue = cursor.fetchone()[0] or 0
+
+    context = {
+        "bookings": bookings,
+        "pending_count": pending_count,
+        "total_revenue": total_revenue
+    }
+    return render(request, "accounts/admin_dashboard.html", context)
+
+
+# ─────────────────────────────────────────────
+# ACTION: CONFIRM/CANCEL BOOKING
+# ─────────────────────────────────────────────
+def confirm_booking(request, booking_id, action):
+    if request.session.get("user_role") != "admin":
+        return redirect("home")
+
+    new_status = 'confirmed' if action == 'confirm' else 'cancelled'
+    
+    with connection.cursor() as cursor:
+        cursor.execute("UPDATE bookings SET status = %s WHERE id = %s", [new_status, booking_id])
+    
+    messages.success(request, f"Booking #{booking_id} has been {new_status}.")
+    return redirect("admin_dashboard")
+
+
+# ─────────────────────────────────────────────
 # PAYMENT FAILURE CALLBACK
 # ─────────────────────────────────────────────
 def payment_failure(request):

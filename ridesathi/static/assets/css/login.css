@@ -1,57 +1,108 @@
-/* AUTH (LOGIN & REGISTER) */
-.auth-container {
-    max-width: 420px;
-    margin: 80px auto;
-    padding: 30px;
+/* PREMIUM LIGHT LOGIN STYLES */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+.login-page {
+    background-color: #ffffff;
+    font-family: 'Outfit', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 450px;
     background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    padding: 60px;
+    border-radius: 40px;
+    border: 1px solid #eee;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.05);
     text-align: center;
 }
 
-/* Title */
-.auth-container h2 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    font-weight: 600;
+.login-card h2 {
+    font-size: 36px;
+    font-weight: 900;
+    margin-bottom: 15px;
+    color: #111;
+    letter-spacing: -1.5px;
 }
 
-/* Input fields */
-.auth-container input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
+.login-card p {
+    color: #888;
+    font-size: 16px;
+    margin-bottom: 40px;
+    font-weight: 500;
 }
 
-/* Button */
-.auth-container button {
+.form-group {
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+    padding-left: 5px;
+}
+
+.form-group input {
     width: 100%;
-    padding: 12px;
-    background-color: #c4161c;
-    color: #ffffff;
+    padding: 18px 25px;
+    background: #f8f9fa;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    color: #1a1a1a;
+    font-family: inherit;
+    font-size: 16px;
+    transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    border-color: #c4161c;
+    background: #fff;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(196, 22, 28, 0.05);
+}
+
+.btn-login {
+    width: 100%;
+    padding: 22px;
+    background: #c4161c;
+    color: #fff;
     border: none;
-    border-radius: 4px;
-    font-size: 15px;
+    border-radius: 20px;
+    font-size: 18px;
+    font-weight: 800;
     cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+    margin-top: 10px;
+    box-shadow: 0 15px 35px rgba(196, 22, 28, 0.25);
 }
 
-/* Link section */
-.auth-link {
-    margin-top: 15px;
-    font-size: 14px;
+.btn-login:hover {
+    background: #a01015;
+    transform: translateY(-5px);
+    box-shadow: 0 25px 50px rgba(196, 22, 28, 0.4);
 }
 
-.auth-link a {
+.auth-footer {
+    margin-top: 40px;
+    color: #777;
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.auth-footer a {
     color: #c4161c;
     text-decoration: none;
-}
-
-/* Error message */
-.error-msg {
-    color: red;
-    margin-bottom: 10px;
-    font-size: 14px;
+    font-weight: 700;
 }

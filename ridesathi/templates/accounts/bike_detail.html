@@ -3,52 +3,250 @@
 {% block title %}{{ bike.model }} | RideSathi{% endblock %}
 
 {% block content %}
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
-<section class="bike-detail-section" style="padding: 60px 5%; background-color: #f7f7f7; min-height: 80vh;">
-    <div class="bike-detail-card" style="max-width: 1000px; margin: 0 auto; background: white; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; display: flex; flex-wrap: wrap;">
+    .premium-detail-page {
+        background-color: #ffffff;
+        font-family: 'Outfit', sans-serif;
+        color: #1a1a1a;
+        padding-bottom: 100px;
+    }
 
-        <!-- Bike Image -->
-        <div class="bike-detail-img" style="flex: 1; min-width: 300px; background-color: #f0f0f0;">
-            <img src="{{ bike.image }}"
-                 alt="{{ bike.model }}"
-                 style="width: 100%; height: 100%; object-fit: cover;"
-                 data-fallback-src="{% static 'assets/image/standard.jpg' %}"
-                 onerror="this.src=this.dataset.fallbackSrc">
-        </div>
+    /* ── BREADCRUMB ── */
+    .p-breadcrumb {
+        padding: 40px 5%;
+        font-size: 14px;
+        font-weight: 500;
+        color: #888;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    .p-breadcrumb a { color: #888; text-decoration: none; transition: 0.3s; }
+    .p-breadcrumb a:hover { color: #c4161c; }
+    .p-breadcrumb span { margin: 0 12px; opacity: 0.5; }
 
-        <!-- Bike Info -->
-        <div class="bike-detail-info" style="flex: 1; min-width: 300px; padding: 40px;">
-            <h2 style="font-size: 28px; font-weight: 800; color: #222; margin-bottom: 20px;">{{ bike.model }}</h2>
-            
-            <div style="margin-bottom: 30px;">
-                <p style="margin: 0 0 10px 0; color: #555;"><strong style="color: #222;">Category:</strong> {{ bike.category }}</p>
-                <p style="margin: 0 0 10px 0; color: #c4161c; font-size: 20px;"><strong>Rs. {{ bike.price_per_day }}</strong> <span style="font-size: 14px; color: #888; font-weight: normal;">/ day</span></p>
-                <p style="margin: 0 0 10px 0; color: #555;">
-                    <strong style="color: #222;">Status:</strong>
-                    {% if bike.status == 'available' %}
-                        <span style="color: #28a745; font-weight: 600;">Available</span>
-                    {% else %}
-                        <span style="color: #dc3545; font-weight: 600;">Not Available</span>
-                    {% endif %}
-                </p>
-            </div>
-            
-            <div style="margin-bottom: 40px;">
-                <h4 style="font-size: 16px; color: #222; margin-bottom: 10px;">Description</h4>
-                <p style="color: #666; line-height: 1.6; font-size: 15px;">{{ bike.description }}</p>
-            </div>
+    .detail-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 5%;
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 80px;
+        align-items: start;
+    }
 
-            <div class="bike-detail-actions" style="display: flex; gap: 15px;">
-                {% if request.session.user_id %}
-                    <a href="{% url 'book_bike' bike.id %}" class="btn-solid-red" style="flex: 1; text-align: center; padding: 12px 20px;">Book This Bike</a>
-                {% else %}
-                    <a href="{% url 'login' %}" class="btn-solid-red" style="flex: 1; text-align: center; padding: 12px 20px;">Login to Book</a>
-                {% endif %}
-                <a href="{% url 'bikes' %}" class="btn-outline-red" style="flex: 1; text-align: center; padding: 12px 20px;">Back to Bikes</a>
-            </div>
-        </div>
+    /* ── LEFT SIDE: IMAGE ── */
+    .p-image-section {
+        position: sticky;
+        top: 100px;
+    }
+    .p-main-image {
+        width: 100%;
+        height: 650px;
+        border-radius: 40px;
+        overflow: hidden;
+        background: #f8f9fa;
+        position: relative;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+        border: 1px solid #eee;
+    }
+    .p-main-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .p-main-image:hover img { transform: scale(1.05); }
 
+    .p-status-badge {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        padding: 12px 28px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        background: #fff;
+        color: #333;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        z-index: 2;
+        border: 1px solid #eee;
+    }
+    .badge-available { color: #22c55e; }
+    .badge-booked { color: #ef4444; }
+
+    /* ── RIGHT SIDE: INFO ── */
+    .p-info-section { padding-top: 20px; }
+    
+    .p-category {
+        font-size: 14px;
+        font-weight: 700;
+        color: #c4161c;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        margin-bottom: 20px;
+        display: inline-block;
+        padding: 4px 0;
+        border-bottom: 2px solid #c4161c;
+    }
+    .p-title {
+        font-size: clamp(40px, 4vw, 64px);
+        font-weight: 900;
+        letter-spacing: -2px;
+        margin-bottom: 35px;
+        line-height: 1;
+        color: #111;
+    }
+
+    .p-specs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 50px;
+    }
+    .p-spec-card {
+        padding: 25px 20px;
+        background: #ffffff;
+        border: 1px solid #eee;
+        border-radius: 24px;
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    }
+    .p-spec-card:hover { transform: translateY(-8px); border-color: #c4161c; box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
+    .p-spec-label { font-size: 11px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; display: block; }
+    .p-spec-value { font-size: 18px; font-weight: 800; color: #1a1a1a; }
+
+    .p-description { margin-bottom: 60px; }
+    .p-description h3 { font-size: 20px; font-weight: 900; margin-bottom: 20px; color: #1a1a1a; }
+    .p-description p { font-size: 17px; line-height: 1.9; color: #666; font-weight: 400; }
+
+    .p-pricing-card {
+        padding: 45px;
+        background: #fdfdfd;
+        border-radius: 40px;
+        border: 1px solid #eee;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.03);
+    }
+    .p-price-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 35px; }
+    .p-price-label { font-size: 18px; font-weight: 600; color: #555; }
+    .p-price-val { font-size: 48px; font-weight: 900; color: #c4161c; letter-spacing: -1px; }
+    .p-price-val span { font-size: 18px; color: #888; font-weight: 500; }
+
+    .p-btn-reserve {
+        display: block; width: 100%; padding: 24px; 
+        background: #c4161c; color: #fff;
+        text-align: center; text-decoration: none;
+        border-radius: 24px; font-size: 20px; font-weight: 800;
+        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 0 15px 35px rgba(196, 22, 28, 0.25);
+    }
+    .p-btn-reserve:hover { 
+        background: #a01015; 
+        transform: translateY(-5px);
+        box-shadow: 0 25px 50px rgba(196, 22, 28, 0.4);
+    }
+    .p-btn-booked {
+        background: #f3f4f6; color: #9ca3af; box-shadow: none; cursor: not-allowed;
+    }
+    .p-btn-booked:hover { transform: none; background: #f3f4f6; box-shadow: none; }
+
+    .feature-list {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px;
+    }
+    .feature-item {
+        display: flex; align-items: center; gap: 12px; font-size: 15px; color: #555; font-weight: 500;
+    }
+    .feature-check { color: #c4161c; font-weight: 900; font-size: 18px; }
+
+    @media (max-width: 1000px) {
+        .detail-wrapper { grid-template-columns: 1fr; gap: 50px; }
+        .p-image-section { position: static; }
+        .p-main-image { height: 450px; }
+        .p-title { font-size: 40px; }
+    }
+</style>
+
+<div class="premium-detail-page">
+    <!-- Breadcrumb -->
+    <div class="p-breadcrumb">
+        <a href="{% url 'home' %}">Home</a> <span>/</span> 
+        <a href="{% url 'bikes' %}">Bikes</a> <span>/</span> 
+        <span style="color: #c4161c; opacity: 1;">{{ bike.model }}</span>
     </div>
-</section>
 
+    <div class="detail-wrapper">
+        <!-- Image Section -->
+        <div class="p-image-section">
+            <div class="p-main-image">
+                <span class="p-status-badge {% if bike.is_booked_now %}badge-booked{% else %}badge-available{% endif %}">
+                    {% if bike.is_booked_now %}Currently Booked{% else %}Available Today{% endif %}
+                </span>
+                <img src="{{ bike.image }}" alt="{{ bike.model }}" onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
+            </div>
+        </div>
+
+        <!-- Info Section -->
+        <div class="p-info-section">
+            <span class="p-category">{{ bike.category }}</span>
+            <h1 class="p-title">{{ bike.model }}</h1>
+
+            <div class="p-specs-grid">
+                <div class="p-spec-card">
+                    <span class="p-spec-label">Displacement</span>
+                    <span class="p-spec-value">150cc</span>
+                </div>
+                <div class="p-spec-card">
+                    <span class="p-spec-label">Transmission</span>
+                    <span class="p-spec-value">Manual</span>
+                </div>
+                <div class="p-spec-card">
+                    <span class="p-spec-label">Fleet Status</span>
+                    <span class="p-spec-value">Premium</span>
+                </div>
+            </div>
+
+            <div class="p-description">
+                <h3>Vechicle Narrative</h3>
+                <p>{{ bike.description|default:"Master the streets with this exceptional machine. Meticulously maintained and engineered for peak urban performance, it offers a blend of power and precision that transforms every commute into an adventure. Experience the RideSathi standard." }}</p>
+            </div>
+
+            <div class="p-pricing-card">
+                <div class="p-price-row">
+                    <span class="p-price-label">Daily Rental Rate</span>
+                    <div class="p-price-val">Rs. {{ bike.price_per_day|floatformat:0 }} <span>/ day</span></div>
+                </div>
+                
+                {% if not bike.is_booked_now %}
+                    <a href="{% url 'book_bike' bike.id %}" class="p-btn-reserve">Reserve This Vechicle</a>
+                {% else %}
+                    <button class="p-btn-reserve p-btn-booked" disabled>Fully Scheduled</button>
+                    <p style="text-align: center; font-size: 13px; color: #999; margin-top: 20px;">Currently out on the road. Please select another model.</p>
+                {% endif %}
+            </div>
+
+            <div style="padding: 0 10px;">
+                <p style="font-size: 15px; color: #1a1a1a; margin-bottom: 25px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;">Sathi Benefits:</p>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <span class="feature-check">✓</span> Professional Helmet
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-check">✓</span> Roadside Assistance
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-check">✓</span> Transparent Pricing
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-check">✓</span> Verified Security
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

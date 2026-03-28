@@ -4,183 +4,396 @@
 
 {% block content %}
 
+<!-- ========== TOAST NOTIFICATION SYSTEM ========== -->
+{% if messages %}
+<div id="toast-container">
+    {% for message in messages %}
+    <div class="toast toast-{{ message.tags }}" role="alert">
+        <div class="toast-icon">
+            {% if message.tags == 'success' %}✓{% elif message.tags == 'error' %}✕{% else %}ℹ{% endif %}
+        </div>
+        <div class="toast-body">{{ message }}</div>
+        <button class="toast-close" onclick="this.parentElement.remove()">×</button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
 <style>
-    body { background-color: #f7f9fc; font-family: 'Outfit', sans-serif; overflow-x: hidden; }
-    
-    .bikes-container { display: flex; gap: 40px; padding: 40px 5%; max-width: 1400px; margin: 0 auto; }
-    
-    /* Sidebar Styling */
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #ffffff; font-family: 'Outfit', sans-serif; color: #1a1a1a; min-height: 100vh; }
+
+    /* ── TOAST NOTIFICATIONS ── */
+    #toast-container {
+        position: fixed; top: 90px; right: 24px; z-index: 9999;
+        display: flex; flex-direction: column; gap: 12px;
+        pointer-events: none;
+    }
+    .toast {
+        display: flex; align-items: center; gap: 14px;
+        background: #ffffff; border-radius: 14px; padding: 16px 20px;
+        border: 1px solid #eee; min-width: 320px; max-width: 420px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+        pointer-events: all;
+    }
+    @keyframes toastIn { from { opacity:0; transform: translateX(80px) scale(0.9); } to { opacity:1; transform:translateX(0) scale(1); } }
+    .toast-icon {
+        width: 36px; height: 36px; border-radius: 50%; display: flex;
+        align-items: center; justify-content: center;
+        font-size: 16px; font-weight: 700; flex-shrink: 0;
+    }
+    .toast-success .toast-icon { background: rgba(34,197,94,0.1); color: #22c55e; border: 1.5px solid #22c55e; }
+    .toast-error   .toast-icon { background: rgba(239,68,68,0.1);  color: #ef4444;  border: 1.5px solid #ef4444; }
+    .toast-info    .toast-icon { background: rgba(99,102,241,0.1); color: #818cf8; border: 1.5px solid #818cf8; }
+    .toast-body { font-size: 14px; color: #555; flex-grow: 1; line-height: 1.5; font-weight: 500; }
+    .toast-close {
+        background: none; border: none; color: #ccc; font-size: 20px;
+        cursor: pointer; flex-shrink: 0; line-height: 1; padding: 0 4px; transition: color 0.2s;
+    }
+    .toast-close:hover { color: #111; }
+
+    /* ── HERO SEARCH SECTION ── */
+    .bikes-hero {
+        background: #fdfdfd;
+        border-bottom: 1px solid #eee; padding: 80px 5% 70px;
+        position: relative; overflow: hidden;
+    }
+    .hero-label {
+        display: inline-block; background: rgba(196, 22, 28, 0.05); color: #c4161c;
+        border: 1px solid rgba(196, 22, 28, 0.1); border-radius: 50px;
+        padding: 6px 18px; font-size: 12px; font-weight: 700; letter-spacing: 1.5px;
+        text-transform: uppercase; margin-bottom: 25px;
+    }
+    .hero-title {
+        font-size: clamp(36px, 5vw, 64px); font-weight: 900; line-height: 1;
+        color: #111; margin-bottom: 15px; letter-spacing: -2px;
+    }
+    .hero-title span { color: #c4161c; }
+    .hero-sub { color: #888; font-size: 18px; margin-bottom: 45px; max-width: 550px; font-weight: 500; }
+
+    /* Big search bar */
+    .hero-search-wrap {
+        display: flex; background: #ffffff; border: 1.5px solid #eee;
+        border-radius: 20px; overflow: hidden; max-width: 700px;
+        transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+    .hero-search-wrap:focus-within { border-color: #c4161c; box-shadow: 0 20px 50px rgba(196, 22, 28, 0.1); transform: translateY(-2px); }
+    .hero-search-wrap input {
+        flex-grow: 1; background: transparent; border: none; outline: none;
+        padding: 22px 30px; font-size: 17px; color: #111; font-family: 'Outfit', sans-serif;
+        font-weight: 500;
+    }
+    .hero-search-wrap input::placeholder { color: #bbb; }
+    .hero-search-btn {
+        padding: 0 40px; background: #c4161c; border: none; color: #fff;
+        font-size: 16px; font-weight: 800; cursor: pointer; transition: background 0.3s;
+        font-family: 'Outfit', sans-serif;
+    }
+    .hero-search-btn:hover { background: #a01015; }
+
+    /* Category pills */
+    .category-pills { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 40px; }
+    .pill {
+        padding: 10px 24px; border-radius: 100px; border: 1.5px solid #eee;
+        color: #777; font-size: 14px; font-weight: 600; cursor: pointer;
+        text-decoration: none; transition: all 0.3s; background: #fff;
+    }
+    .pill:hover { border-color: #c4161c; color: #c4161c; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+    .pill.active { background: #c4161c; border-color: #c4161c; color: #fff; box-shadow: 0 10px 20px rgba(196, 22, 28, 0.2); }
+
+    /* ── MAIN LAYOUT ── */
+    .bikes-layout { display: flex; gap: 0; max-width: 1400px; margin: 0 auto; padding-bottom: 100px; }
+
+    /* ── SIDEBAR ── */
     .filter-sidebar {
-        width: 300px; flex-shrink: 0;
-        background: #fff; border-radius: 16px; border: 1px solid #e0e6ed;
-        padding: 30px; height: fit-content; position: sticky; top: 100px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        width: 300px; flex-shrink: 0; background: #ffffff; border-right: 1px solid #f0f0f0;
+        padding: 60px 40px; position: sticky; top: 100px; max-height: calc(100vh - 100px);
+        overflow-y: auto;
     }
-    .sidebar-title { font-size: 20px; font-weight: 800; color: #111; margin-bottom: 24px; border-bottom: 2px solid #f0f0f0; padding-bottom: 15px; }
-    .filter-group { margin-bottom: 30px; }
-    .filter-group-label { font-size: 14px; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 15px; display: block; }
-    
-    .search-box { position: relative; margin-bottom: 10px; }
-    .search-input { width: 100%; padding: 12px 15px; border: 1px solid #dee2e6; border-radius: 8px; font-size: 14px; outline: none; transition: 0.3s; background: #fafafa; }
-    .search-input:focus { border-color: #e42222; background: #fff; box-shadow: 0 0 0 4px rgba(228, 34, 34, 0.1); }
-    
-    .category-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
-    .category-item a { 
-        display: block; padding: 10px 15px; border-radius: 8px; color: #444; font-size: 14px; text-decoration: none; transition: 0.2s; font-weight: 500;
+    .sidebar-title { font-size: 12px; font-weight: 800; color: #bbb; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
+    .filter-group { margin-bottom: 45px; }
+    .filter-label { font-size: 12px; font-weight: 800; color: #111; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 18px; display: block; }
+
+    .sb-search {
+        width: 100%; background: #f8f9fa; border: 1px solid #eee; border-radius: 14px;
+        padding: 14px 20px; font-size: 15px; color: #111; outline: none; font-family: 'Outfit', sans-serif;
+        transition: all 0.3s;
     }
-    .category-item a:hover { background: #fee2e2; color: #e42222; }
-    .category-item.active a { background: #e42222; color: #fff; }
+    .sb-search:focus { border-color: #c4161c; background: #fff; box-shadow: 0 0 0 4px rgba(196, 22, 28, 0.05); }
 
-    .sort-select { width: 100%; padding: 12px; border: 1px solid #dee2e6; border-radius: 8px; background: #fafafa; font-size: 14px; outline: none; cursor: pointer; }
-
-    /* Bike Grid Styling */
-    .bike-content { flex-grow: 1; }
-    .bikes-header-info { margin-bottom: 30px; display: flex; justify-content: space-between; align-items: flex-end; }
-    .results-count { font-size: 15px; color: #666; }
-    .results-count strong { color: #111; }
-
-    .bike-grid-modern {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 30px;
+    .sb-select {
+        width: 100%; background: #f8f9fa; border: 1px solid #eee; border-radius: 14px;
+        padding: 14px 20px; font-size: 15px; color: #111; outline: none; font-family: 'Outfit', sans-serif;
+        cursor: pointer; appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat; background-position: right 18px center;
+        transition: all 0.3s;
     }
-    
-    .bike-card-modern {
-        background: #fff; border: 1px solid #e0e6ed; border-radius: 16px; overflow: hidden;
-        transition: transform 0.3s, box-shadow 0.3s; position: relative;
-    }
-    .bike-card-modern:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0,0,0,0.08); }
-    
-    .bike-image-box { height: 220px; width: 100%; position: relative; background: #f8f9fa; }
-    .bike-image-box img { width: 100%; height: 100%; object-fit: cover; }
-    
-    .status-tag { position: absolute; top: 15px; left: 15px; padding: 6px 14px; border-radius: 50px; font-size: 11px; font-weight: 700; text-transform: uppercase; }
-    .status-tag.available { background: #dcfce7; color: #15803d; }
-    .status-tag.booked { background: #fee2e2; color: #b91c1c; }
-    
-    .bike-body-modern { padding: 25px; }
-    .bike-category-sm { font-size: 11px; font-weight: 700; color: #e42222; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
-    .bike-model-md { font-size: 21px; font-weight: 800; color: #111; margin-bottom: 8px; line-height: 1.2; }
-    
-    .bike-price-tag { font-size: 22px; font-weight: 800; color: #111; margin-bottom: 25px; display: flex; align-items: baseline; gap: 4px; }
-    .bike-price-tag span { font-size: 13px; color: #666; font-weight: 400; }
+    .sb-select:focus { border-color: #c4161c; background: #fff; }
 
-    .bike-actions-row { display: flex; gap: 12px; }
-    .btn-action { flex: 1; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 13px; transition: 0.2s; text-align: center; }
-    .btn-view { border: 1.5px solid #111; color: #111; background: transparent; }
-    .btn-view:hover { background: #111; color: #fff; }
-    .btn-book { background: #e42222; color: #fff; border: 1.5px solid #e42222; }
-    .btn-book:hover { background: #c4161c; border-color: #c4161c; }
-    .btn-book.disabled { background: #ccc; border-color: #ccc; pointer-events: none; }
+    .cat-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .cat-item a {
+        display: block; padding: 12px 18px; border-radius: 12px; color: #777;
+        font-size: 15px; font-weight: 600; text-decoration: none; transition: all 0.3s;
+    }
+    .cat-item a:hover { color: #111; background: #f8f9fa; }
+    .cat-item.active a { color: #c4161c; background: rgba(196, 22, 28, 0.05); font-weight: 800; }
+
+    .btn-apply {
+        width: 100%; padding: 16px; background: #111; color: #fff; border: none;
+        border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer;
+        font-family: 'Outfit', sans-serif; margin-top: 10px; transition: all 0.3s;
+    }
+    .btn-apply:hover { background: #000; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+    .btn-clear { display: block; text-align: center; margin-top: 20px; color: #aaa; font-size: 13px; font-weight: 600; text-decoration: none; transition: color 0.3s; }
+    .btn-clear:hover { color: #c4161c; }
+
+    /* ── BIKE CONTENT ── */
+    .bike-content { flex-grow: 1; padding: 60px 5%; background: #ffffff; }
+
+    .content-header {
+        display: flex; justify-content: space-between; align-items: baseline;
+        margin-bottom: 45px; flex-wrap: wrap; gap: 20px;
+    }
+    .content-header h1 { font-size: 32px; font-weight: 900; color: #111; letter-spacing: -1px; }
+    .results-badge {
+        font-size: 15px; color: #999; font-weight: 500;
+    }
+    .results-badge strong { color: #111; font-weight: 800; }
+
+    /* ── BIKE GRID ── */
+    .bike-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 35px; }
+
+    .bike-card {
+        background: #ffffff; border: 1px solid #eee; border-radius: 30px;
+        overflow: hidden; transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+    }
+    .bike-card:hover {
+        transform: translateY(-12px); border-color: #c4161c;
+        box-shadow: 0 30px 60px rgba(0,0,0,0.08);
+    }
+
+    /* Image */
+    .card-img { position: relative; height: 260px; overflow: hidden; background: #f8f9fa; }
+    .card-img img {
+        width: 100%; height: 100%; object-fit: cover;
+        transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .bike-card:hover .card-img img { transform: scale(1.1); }
+
+    /* Status badge */
+    .status-badge {
+        position: absolute; top: 20px; left: 20px; z-index: 2;
+        padding: 8px 18px; border-radius: 100px; font-size: 11px; font-weight: 800;
+        text-transform: uppercase; letter-spacing: 1px; background: #fff;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+    .badge-available { color: #22c55e; }
+    .badge-booked    { color: #ef4444; }
+
+    /* Price floating on image */
+    .card-price-float {
+        position: absolute; bottom: 20px; right: 20px; z-index: 2;
+        background: #ffffff; border-radius: 100px;
+        padding: 10px 20px; font-size: 18px; font-weight: 900; color: #111;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .card-price-float span { font-size: 12px; font-weight: 500; color: #888; margin-left: 2px; }
+
+    /* Card body */
+    .card-body { padding: 30px; }
+    .card-cat {
+        font-size: 11px; font-weight: 800; color: #c4161c;
+        text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px;
+    }
+    .card-title { font-size: 24px; font-weight: 900; color: #111; margin-bottom: 10px; line-height: 1.1; letter-spacing: -0.5px; }
+    .card-desc { font-size: 15px; color: #666; line-height: 1.7; margin-bottom: 30px; font-weight: 400; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+    /* Card actions */
+    .card-actions { display: flex; gap: 15px; }
+    .btn-details {
+        flex: 1; padding: 15px; border-radius: 16px; text-align: center;
+        font-size: 14px; font-weight: 800; text-decoration: none; transition: all 0.3s;
+        border: 2px solid #eee; color: #111; background: #fff;
+    }
+    .btn-details:hover { border-color: #111; background: #111; color: #fff; }
+    .btn-rent {
+        flex: 1.5; padding: 15px; border-radius: 16px; text-align: center;
+        font-size: 14px; font-weight: 800; text-decoration: none; transition: all 0.3s;
+        background: #c4161c; color: #fff; border: 2px solid #c4161c;
+        box-shadow: 0 10px 20px rgba(196, 22, 28, 0.15);
+    }
+    .btn-rent:hover { background: #a01015; border-color: #a01015; transform: translateY(-3px); box-shadow: 0 15px 30px rgba(196, 22, 28, 0.25); }
+    .btn-unavailable {
+        flex: 1.5; padding: 15px; border-radius: 16px; text-align: center;
+        font-size: 14px; font-weight: 800; background: #f3f4f6; color: #9ca3af;
+        border: 2px solid #f3f4f6; cursor: not-allowed;
+    }
+
+    /* Empty state */
+    .empty-state {
+        grid-column: 1/-1; padding: 100px 50px; text-align: center;
+        background: #fdfdfd; border: 2px dashed #eee; border-radius: 40px;
+    }
+    .empty-icon { font-size: 60px; margin-bottom: 25px; display: block; filter: grayscale(1); opacity: 0.3; }
+    .empty-state h3 { font-size: 28px; font-weight: 900; color: #111; margin-bottom: 15px; }
+    .empty-state p { color: #888; font-size: 17px; margin-bottom: 40px; }
+    .btn-reset {
+        display: inline-block; padding: 18px 40px; background: #c4161c; color: #fff;
+        border-radius: 18px; text-decoration: none; font-weight: 800; transition: all 0.3s;
+    }
+    .btn-reset:hover { background: #a01015; box-shadow: 0 10px 25px rgba(196, 22, 28, 0.2); }
 
     @media (max-width: 900px) {
-        .bikes-container { flex-direction: column; }
-        .filter-sidebar { width: 100%; position: static; }
+        .bikes-layout { flex-direction: column; }
+        .filter-sidebar { width: 100%; position: static; max-height: none; border-right: none; border-bottom: 1px solid #eee; padding: 40px 5%; }
+        .bike-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); padding: 40px 5%; }
+        .bike-content { padding: 40px 0; }
+        .content-header { padding: 0 5%; }
     }
 </style>
 
-<div class="bikes-container">
-    <!-- FILTER SIDEBAR -->
-    <aside class="filter-sidebar">
-        <h2 class="sidebar-title">Filters</h2>
-        
-        <form id="filterForm" action="{% url 'bikes' %}" method="GET">
-            <!-- Search -->
-            <div class="filter-group">
-                <label class="filter-group-label">Search Bike</label>
-                <div class="search-box">
-                    <input type="text" name="q" class="search-input" placeholder="Model or brand..." value="{{ current_search }}">
-                </div>
-            </div>
+<!-- HERO SEARCH -->
+<section class="bikes-hero">
+    <div class="hero-label">Verified Sathi Fleet 🏍</div>
+    <h1 class="hero-title">Select Your <span>Next Adventure</span></h1>
+    <p class="hero-sub">Explore the finest selection of motorcycles and scooters in Kathmandu, curated for reliability.</p>
 
-            <!-- Sort -->
+    <form action="{% url 'bikes' %}" method="GET">
+        <div class="hero-search-wrap">
+            <input type="text" name="q" placeholder="Enter model or category…" value="{{ current_search }}">
+            <input type="hidden" name="category" value="{{ current_category }}">
+            <input type="hidden" name="sort" value="{{ current_sort }}">
+            <button type="submit" class="hero-search-btn">Find Ride →</button>
+        </div>
+    </form>
+
+    <!-- Category Pills -->
+    <div class="category-pills">
+        <a href="?sort={{ current_sort }}&q={{ current_search }}" class="pill {% if not current_category or current_category == 'all' %}active{% endif %}">All Categories</a>
+        {% for cat in categories %}
+        <a href="?category={{ cat }}&sort={{ current_sort }}&q={{ current_search }}" class="pill {% if current_category == cat %}active{% endif %}">{{ cat }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- MAIN LAYOUT -->
+<div class="bikes-layout">
+
+    <!-- SIDEBAR FILTERS -->
+    <aside class="filter-sidebar">
+        <div class="sidebar-title">Personalize Feed</div>
+
+        <form id="filterForm" action="{% url 'bikes' %}" method="GET">
             <div class="filter-group">
-                <label class="filter-group-label">Sort By</label>
-                <select name="sort" class="sort-select" onchange="this.form.submit()">
-                    <option value="id_asc" {% if current_sort == 'id_asc' %}selected{% endif %}>Default Sorting</option>
-                    <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
-                    <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                <label class="filter-label">Sort Preferences</label>
+                <select name="sort" class="sb-select" onchange="this.form.submit()">
+                    <option value="id_asc"    {% if current_sort == 'id_asc'    %}selected{% endif %}>Recommended</option>
+                    <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Rate: Low to High</option>
+                    <option value="price_desc"{% if current_sort == 'price_desc'%}selected{% endif %}>Rate: High to Low</option>
                 </select>
             </div>
 
-            <!-- Categories -->
             <div class="filter-group">
-                <label class="filter-group-label">Category</label>
-                <ul class="category-list">
-                    <li class="category-item {% if current_category == 'all' %}active{% endif %}">
-                        <a href="?q={{ current_search }}&category=all&sort={{ current_sort }}">All Categories</a>
+                <label class="filter-label">Quick Search</label>
+                <input type="text" name="q" class="sb-search" placeholder="Type model..." value="{{ current_search }}" onchange="this.form.submit()">
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">Categories</label>
+                <ul class="cat-list">
+                    <li class="cat-item {% if not current_category or current_category == 'all' %}active{% endif %}">
+                        <a href="?q={{ current_search }}&sort={{ current_sort }}">All Selection</a>
                     </li>
                     {% for cat in categories %}
-                    <li class="category-item {% if current_category == cat %}active{% endif %}">
+                    <li class="cat-item {% if current_category == cat %}active{% endif %}">
                         <a href="?q={{ current_search }}&category={{ cat }}&sort={{ current_sort }}">{{ cat }}</a>
                     </li>
                     {% endfor %}
                 </ul>
             </div>
-            
+
             <input type="hidden" name="category" value="{{ current_category }}">
-            
-            <button type="submit" style="width: 100%; padding: 12px; background: #111; color: #fff; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; margin-top: 10px;">Apply Filters</button>
-            <a href="{% url 'bikes' %}" style="display: block; text-align: center; margin-top: 15px; font-size: 13px; color: #666; text-decoration: none;">Clear All</a>
+            <button type="submit" class="btn-apply">Save Preferences</button>
+            <a href="{% url 'bikes' %}" class="btn-clear">Reset All Filters</a>
         </form>
     </aside>
 
-    <!-- CONTENT AREA -->
+    <!-- BIKE CONTENT -->
     <main class="bike-content">
-        <div class="bikes-header-info">
-            <div>
-                <h1 style="font-size: 32px; font-weight: 900; color: #111; margin-bottom: 5px;">Our Fleet</h1>
-                <p style="color: #666;">Experience the road on the best machines.</p>
-            </div>
-            <div class="results-count">Showing <strong>{{ bikes|length }}</strong> results</div>
+        <div class="content-header">
+            <h1>
+                {% if current_category and current_category != 'all' %}{{ current_category }} Range
+                {% elif current_search %}Results for "{{ current_search }}"
+                {% else %}Available Fleet{% endif %}
+            </h1>
+            <div class="results-badge"><strong>{{ bikes|length }}</strong> Models Found</div>
         </div>
 
-        <div class="bike-grid-modern">
+        <div class="bike-grid">
             {% if bikes %}
                 {% for bike in bikes %}
-                <div class="bike-card-modern">
-                    <div class="bike-image-box">
-                        <img src="{% if bike.image %}{{ bike.image }}{% else %}/static/assets/image/standard.jpg{% endif %}" 
+                <div class="bike-card">
+                    <div class="card-img">
+                        <img src="{% if bike.image %}{{ bike.image }}{% else %}{% static 'assets/image/standard.jpg' %}{% endif %}"
                              alt="{{ bike.model }}"
-                             onerror="this.src='/static/assets/image/standard.jpg'">
-                        
-                        <span class="status-tag {% if bike.status == 'available' %}available{% else %}booked{% endif %}">
-                            {{ bike.status }}
+                             onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
+
+                        <span class="status-badge {% if bike.status == 'available' %}badge-available{% else %}badge-booked{% endif %}">
+                            {% if bike.status == 'available' %}Available{% else %}Reserved{% endif %}
                         </span>
-                    </div>
-                    
-                    <div class="bike-body-modern">
-                        <div class="bike-category-sm">{{ bike.category }}</div>
-                        <h3 class="bike-model-md">{{ bike.model }}</h3>
-                        
-                        <div class="bike-price-tag">
-                            NPR {{ bike.price_per_day|floatformat:0 }} <span>/ day</span>
+
+                        <div class="card-price-float">
+                            Rs. {{ bike.price_per_day|floatformat:0 }} <span>/ day</span>
                         </div>
-                        
-                        <div class="bike-actions-row">
-                            <a href="{% url 'bike_detail' bike.id %}" class="btn-action btn-view">Details</a>
-                            
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-cat">{{ bike.category }}</div>
+                        <h3 class="card-title">{{ bike.model }}</h3>
+                        <p class="card-desc">{{ bike.description|default:"Experience premium mobility with RideSathi. Each vehicle in our fleet is verified for safety and quality." }}</p>
+
+                        <div class="card-actions">
+                            <a href="{% url 'bike_detail' bike.id %}" class="btn-details">Full Specs</a>
+
                             {% if bike.status == 'available' %}
                                 {% if request.session.user_id %}
-                                    <a href="{% url 'book_bike' bike.id %}" class="btn-action btn-book">Rent Now</a>
+                                    <a href="{% url 'book_bike' bike.id %}" class="btn-rent">Reserve →</a>
                                 {% else %}
-                                    <a href="{% url 'login' %}" class="btn-action btn-book">Login to Rent</a>
+                                    <a href="{% url 'login' %}" class="btn-rent">Login to Book</a>
                                 {% endif %}
                             {% else %}
-                                <span class="btn-action btn-book disabled">Unavailable</span>
+                                <span class="btn-unavailable">Reserved</span>
                             {% endif %}
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             {% else %}
-                <div style="grid-column: 1/-1; padding: 100px 20px; text-align: center; background: #fff; border-radius: 16px; border: 1.5px dashed #dee2e6;">
-                    <h2 style="color: #111; margin-bottom: 10px;">No bikes matched your search</h2>
-                    <p style="color: #666;">Try adjusting your filters or search keywords.</p>
-                    <a href="{% url 'bikes' %}" style="display: inline-block; margin-top: 20px; color: #e42222; font-weight: 700; text-decoration: none;">View All Bikes &rarr;</a>
+                <div class="empty-state">
+                    <span class="empty-icon">🏍</span>
+                    <h3>No models match your search</h3>
+                    <p>We're constantly updating our fleet. Try adjusting your filters or browse our full selection.</p>
+                    <a href="{% url 'bikes' %}" class="btn-reset">Show All Models</a>
                 </div>
             {% endif %}
         </div>
     </main>
 </div>
+
+<script>
+    // Auto-dismiss toasts after 5 seconds
+    document.querySelectorAll('.toast').forEach(t => {
+        setTimeout(() => { t.style.animation = 'toastOut 0.4s ease forwards'; setTimeout(() => t.remove(), 400); }, 5000);
+    });
+</script>
+<style>
+    @keyframes toastOut { to { opacity: 0; transform: translateX(80px) scale(0.9); } }
+</style>
 
 {% endblock %}

@@ -1,9 +1,23 @@
-/* GLOBAL */
+/* GLOBAL PREMIUM LIGHT THEME Variables */
+:root {
+    --bg-light: #ffffff;
+    --bg-subtle: #f8f9fa;
+    --bg-card: #ffffff;
+    --accent-red: #c4161c;
+    --accent-red-hover: #a01015;
+    --text-primary: #1a1a1a;
+    --text-secondary: #555555;
+    --text-muted: #888888;
+    --border-subtle: #eeeeee;
+    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
+}
+
 body {
     margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #ffffff;
-    color: #000;
+    font-family: 'Outfit', 'Inter', Arial, sans-serif;
+    background-color: var(--bg-light);
+    color: var(--text-primary);
 }
 
 /* --- HEADER (Reference UI) --- */

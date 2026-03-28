@@ -16,4 +16,5 @@ urlpatterns = [
     path("payment-failure/", views.payment_failure, name="payment_failure"),
     path("my-bookings/",   views.my_bookings, name="my_bookings"),
     path("admin-dashboard/", views.admin_dashboard, name="admin_dashboard"),
+    path("confirm-booking/<int:booking_id>/<str:action>/", views.confirm_booking, name="confirm_booking"),
 ]
