@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.core.files.storage import FileSystemStorage  # NEW: used to save uploaded files
 import hashlib  # used to hash passwords (basic security)
 import random
@@ -220,8 +221,18 @@ def forgot_password(request):
             request.session["reset_email"] = email
             request.session["reset_otp"] = otp
             
-            # Since SMTP is Increment 3, we show the OTP on screen for testing
-            messages.info(request, f"TEST OTP (Will be emailed later): {otp}")
+            # ATTEMPT TO SEND REAL EMAIL
+            try:
+                subject = "RideSathi - Password Reset OTP"
+                message = f"Hello,\n\nYour OTP for resetting your RideSathi password is: {otp}\n\nDo not share this code with anyone."
+                send_mail(subject, message, 'ridesathi.nepal@gmail.com', [email], fail_silently=False)
+                
+                messages.success(request, f"OTP sent to {email}. Please check your inbox.")
+            except Exception as e:
+                # Fallback if the user hasn't configured Gmail App Passwords yet (so FYP testing doesn't break)
+                print(f"FAILED TO SEND EMAIL: {e}")
+                messages.info(request, f"TEST OTP (Email failed, update settings.py later): {otp}")
+                
             return redirect("reset_password")
         else:
             messages.error(request, "Email not found in our system.")
