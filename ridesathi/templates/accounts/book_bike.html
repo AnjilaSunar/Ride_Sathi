@@ -9,7 +9,7 @@
     .booking-wrapper { max-width: 1000px; width: 100%; display: flex; gap: 30px; flex-wrap: wrap; align-items: flex-start; }
     
     /* LEFT SIDE: FORM */
-    .booking-form-card { flex: 1; min-width: 320px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .booking-form-card { flex: 1; min-width: 320px; background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     .booking-form-header { background: #c4161c; padding: 25px 30px; color: #fff; }
     .booking-form-header h2 { margin: 0 0 5px 0; font-size: 22px; font-weight: 700; }
     .booking-form-header p { margin: 0; font-size: 14px; opacity: 0.9; }
@@ -17,7 +17,7 @@
     .booking-form-body { padding: 30px; }
     .form-group { margin-bottom: 20px; }
     .form-group label { display: block; font-size: 14px; color: #333; font-weight: 600; margin-bottom: 8px; }
-    .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; outline: none; background: #fff; }
+    .form-control { width: 100%; padding: 12px 15px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 15px; outline: none; background: #fff; transition: border-color 0.2s; }
     .form-control:focus { border-color: #c4161c; }
     .form-control[disabled] { background: #f3f4f6; color: #111; font-weight: 500; cursor: not-allowed; border-color: #e5e7eb; }
     
@@ -28,7 +28,7 @@
     /* RIGHT SIDE: BIKE INFO & COST */
     .booking-summary-col { flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 20px; }
     
-    .bike-preview-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; }
+    .bike-preview-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     .bike-preview-img { height: 220px; background: #eee; }
     .bike-preview-img img { width: 100%; height: 100%; object-fit: cover; }
     .bike-preview-body { padding: 20px; }
@@ -37,7 +37,7 @@
     .bike-preview-price { font-size: 18px; font-weight: 700; color: #c4161c; margin: 0; }
     .bike-preview-price span { font-size: 14px; color: #666; font-weight: 400; }
 
-    .cost-calculation-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 25px; text-align: center; color: #555; }
+    .cost-calculation-box { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 25px; text-align: center; color: #555; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
     .cost-calculation-box.active { text-align: left; background: #fff; border-color: #c4161c; }
     .cost-detail { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 10px; color: #444; }
     .cost-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: 700; color: #111; margin-top: 15px; padding-top: 15px; border-top: 1px dashed #d1d5db; }
@@ -50,26 +50,50 @@
         <!-- LEFT SIDE: Booking Form -->
         <div class="booking-form-card">
             <div class="booking-form-header">
-                <h2>Booking Form</h2>
-                <p>Fill in your rental details</p>
+                <h2>Booking Details</h2>
+                <p>Please provide your information for verification</p>
             </div>
             <div class="booking-form-body">
-                <form method="POST">
+                <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label>Selected Bike</label>
-                        <input type="text" class="form-control" value="{{ bike.model }}" disabled>
-                    </div>
                     
-                    <div class="form-group">
-                        <label>Start Date</label>
-                        <input type="date" id="start_date" name="start_date" class="form-control" required onchange="calculateCost()">
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Start Date</label>
+                            <input type="date" id="start_date" name="start_date" class="form-control" required onchange="calculateCost()">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>End Date</label>
+                            <input type="date" id="end_date" name="end_date" class="form-control" required onchange="calculateCost()">
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label>End Date</label>
-                        <input type="date" id="end_date" name="end_date" class="form-control" required onchange="calculateCost()">
+                        <label>Phone Number</label>
+                        <input type="text" name="phone" class="form-control" placeholder="98XXXXXXXX" required>
                     </div>
+
+                    <div class="form-group">
+                        <label>Current Address</label>
+                        <textarea name="address" class="form-control" rows="2" placeholder="Kathmandu, Nepal" required></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 15px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Document Type</label>
+                            <select name="doc_type" class="form-control" required>
+                                <option value="driving_license">Driving License</option>
+                                <option value="citizenship">Citizenship Card</option>
+                                <option value="passport">Passport</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Upload Document</label>
+                            <input type="file" name="document" class="form-control" accept=".jpg, .jpeg, .png, .pdf" required>
+                        </div>
+                    </div>
+
+                    <p style="font-size: 12px; color: #666; margin-top: -10px; margin-bottom: 20px;">* Your identity is shared with us for safety and verification purposes.</p>
 
                     <button type="submit" class="btn-submit" id="book-btn" disabled>Confirm Booking</button>
                 </form>
@@ -81,31 +105,30 @@
             <!-- Bike Card -->
             <div class="bike-preview-card">
                 <div class="bike-preview-img">
-                    <img src="{{ bike.image }}" alt="{{ bike.model }}" onerror="this.src='{% static 'assets/image/electric.jpg' %}'">
+                    <img src="{{ bike.image }}" alt="{{ bike.model }}" onerror="this.src='{% static "assets/image/electric.jpg" %}'">
                 </div>
                 <div class="bike-preview-body">
                     <h2 class="bike-preview-title">{{ bike.model }}</h2>
-                    <p class="bike-preview-meta">{{ bike.category }} | 155cc</p>
+                    <p class="bike-preview-meta">{{ bike.category }} | Premium Model</p>
                     <p class="bike-preview-price">NPR {{ bike.price_per_day }} <span>/ day</span></p>
-                    <!-- Hidden price for JS calculation -->
                     <span id="bike-price-val" style="display:none;">{{ bike.price_per_day }}</span>
                 </div>
             </div>
 
-            <!-- Cost Calculation -->
+            <!-- Cost Calculation Box -->
             <div class="cost-calculation-box" id="cost-box">
-                <p style="margin: 0; font-size: 14px;" id="cost-placeholder">Select start and end dates to see the calculated cost.</p>
+                <p style="margin: 0; font-size: 14px;" id="cost-placeholder">Select your dates to see the total cost.</p>
                 <div id="cost-details" style="display: none;">
                     <div class="cost-detail">
-                        <span>Rate per day</span>
+                        <span>Daily Rate</span>
                         <span>NPR <span id="calc-rate">{{ bike.price_per_day }}</span></span>
                     </div>
                     <div class="cost-detail">
-                        <span>Total Days</span>
+                        <span>Number of Days</span>
                         <span id="calc-days">0</span>
                     </div>
                     <div class="cost-total">
-                        <span>Total Cost</span>
+                        <span>Calculated Total</span>
                         <span class="total-val">NPR <span id="calc-total">0</span></span>
                     </div>
                 </div>
@@ -115,33 +138,30 @@
     </div>
 </section>
 
-<!-- JavaScript to calculatecost when user picks dates -->
 <script>
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("start_date").setAttribute("min", today);
-    document.getElementById("end_date").setAttribute("min", today);
+    // Set minimal dates for the date pickers
+    const todayStr = new Date().toISOString().split('T')[0];
+    document.getElementById("start_date").setAttribute("min", todayStr);
+    document.getElementById("end_date").setAttribute("min", todayStr);
 
     function calculateCost() {
-        const startDateVal = document.getElementById("start_date").value;
-        const endDateVal = document.getElementById("end_date").value;
+        const startVal = document.getElementById("start_date").value;
+        const endVal = document.getElementById("end_date").value;
         const pricePerDay = parseFloat(document.getElementById("bike-price-val").innerText);
         const bookBtn = document.getElementById("book-btn");
-        
         const costBox = document.getElementById("cost-box");
         const placeholder = document.getElementById("cost-placeholder");
         const details = document.getElementById("cost-details");
 
-        if (startDateVal && endDateVal) {
-            const startStr = new Date(startDateVal);
-            const endStr = new Date(endDateVal);
-            const diffTime = endStr - startStr;
+        if (startVal && endVal) {
+            const startDate = new Date(startVal);
+            const endDate = new Date(endVal);
+            const diffTime = endDate - startDate;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
 
             if (diffDays > 0) {
                 document.getElementById("calc-days").innerText = diffDays;
                 document.getElementById("calc-total").innerText = (diffDays * pricePerDay).toFixed(2);
-                
-                // Show calculations
                 costBox.classList.add('active');
                 placeholder.style.display = 'none';
                 details.style.display = 'block';
@@ -149,12 +169,11 @@
             } else {
                 costBox.classList.remove('active');
                 placeholder.style.display = 'block';
-                placeholder.innerText = "Invalid Dates selected. End date must be after Start date.";
+                placeholder.innerText = "End date must be after Start date.";
                 details.style.display = 'none';
                 bookBtn.disabled = true;
             }
         }
     }
 </script>
-
 {% endblock %}
