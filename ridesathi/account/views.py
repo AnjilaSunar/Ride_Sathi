@@ -181,6 +181,9 @@ def login(request):
             request.session["username"]  = user["username"]
             request.session["user_role"] = user["role"]
             messages.success(request, f"Welcome back, {user['username']}!")
+            
+            if user["role"] == "admin":
+                return redirect("admin_dashboard")
             return redirect("home")
         else:
             messages.error(request, "Invalid username or password.")
@@ -197,6 +200,17 @@ def logout(request):
     request.session.flush()  # clears everything saved in session
     messages.success(request, "You have been logged out.")
     return redirect("login")
+
+
+# ─────────────────────────────────────────────
+# ADMIN DASHBOARD (Placeholder)
+# ─────────────────────────────────────────────
+def admin_dashboard(request):
+    if request.session.get("user_role") != "admin":
+        messages.error(request, "Access Denied. Admins only.")
+        return redirect("home")
+    
+    return render(request, "accounts/admin_dashboard.html")
 
 
 # ─────────────────────────────────────────────
