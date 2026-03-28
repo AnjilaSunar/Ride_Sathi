@@ -3,163 +3,106 @@
 {% block title %}My Bookings | RideSathi{% endblock %}
 
 {% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
-    .dashboard-page { 
-        background-color: #ffffff; 
-        font-family: 'Outfit', sans-serif; 
-        min-height: 100vh;
-        color: #1a1a1a;
-        padding: 80px 5%;
-    }
+<!-- System Breadcrumb -->
+<div class="container">
+    <div class="system-breadcrumb">
+        <a href="{% url 'home' %}">Home</a> / <span>Your Rental History</span>
+    </div>
+</div>
 
-    .dashboard-container { max-width: 1300px; margin: 0 auto; }
-    
-    .dashboard-header { margin-bottom: 70px; }
-    .dashboard-header h1 { font-size: 56px; font-weight: 900; letter-spacing: -2px; margin-bottom: 15px; color: #111; line-height: 1; }
-    .dashboard-header p { color: #888; font-size: 18px; font-weight: 500; }
-
-    .bookings-grid { 
-        display: grid; 
-        grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); 
-        gap: 40px; 
-    }
-
-    .p-booking-card {
-        background: #ffffff;
-        border: 1px solid #eee;
-        border-radius: 40px;
-        overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-    }
-    .p-booking-card:hover { 
-        transform: translateY(-15px); 
-        border-color: #c4161c;
-        box-shadow: 0 40px 80px rgba(0,0,0,0.1);
-    }
-
-    .p-card-header { position: relative; height: 260px; overflow: hidden; }
-    .p-card-header img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1); }
-    .p-booking-card:hover .p-card-header img { transform: scale(1.1); }
-    
-    .p-status-badge {
-        position: absolute; top: 30px; right: 30px; 
-        padding: 10px 24px; border-radius: 100px;
-        font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px;
-        background: #fff; border: 1px solid #eee; box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        z-index: 2;
-    }
-    .status-pending { color: #f59e0b; }
-    .status-confirmed, .status-paid { color: #22c55e; }
-    .status-cancelled { color: #ef4444; }
-
-    .p-card-body { padding: 40px; }
-    .p-card-title { font-size: 26px; font-weight: 900; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; color: #111; letter-spacing: -0.5px; }
-    .p-booking-id { font-size: 12px; color: #ccc; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; }
-
-    .p-info-row { display: flex; justify-content: space-between; margin-bottom: 18px; font-size: 15px; color: #666; font-weight: 500; }
-    .p-info-label { font-weight: 600; color: #999; text-transform: uppercase; letter-spacing: 1px; font-size: 11px; }
-    .p-info-value { color: #1a1a1a; font-weight: 700; }
-
-    .p-card-footer { 
-        padding: 35px 40px; background: #fdfdfd;
-        border-top: 1px solid #f5f5f5;
-        display: flex; justify-content: space-between; align-items: center;
-    }
-    .p-total-price { font-size: 24px; font-weight: 900; color: #111; letter-spacing: -1px; }
-    .p-total-price span { font-size: 13px; color: #999; font-weight: 600; display: block; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
-
-    .p-btn-action {
-        padding: 16px 30px; border-radius: 18px; 
-        text-decoration: none; font-size: 14px; font-weight: 800; transition: all 0.3s;
-        border: 2px solid #eee; color: #111;
-    }
-    .p-btn-action:hover { background: #111; color: #fff; border-color: #111; transform: translateY(-3px); }
-    .p-btn-pay { background: #c4161c; border-color: #c4161c; color: #fff; box-shadow: 0 10px 20px rgba(196, 22, 28, 0.2); }
-    .p-btn-pay:hover { background: #a01015; border-color: #a01015; }
-
-    .empty-state { 
-        text-align: center; padding: 150px 50px; 
-        background: #fdfdfd; border-radius: 50px; 
-        border: 2px dashed #eee; 
-    }
-    .empty-state h3 { font-size: 32px; font-weight: 900; margin-bottom: 20px; color: #111; }
-    .empty-state p { color: #888; margin-bottom: 45px; max-width: 450px; margin-left: auto; margin-right: auto; font-size: 17px; line-height: 1.6; }
-    .btn-explore { 
-        display: inline-block; padding: 22px 50px; background: #c4161c; color: #fff; 
-        text-decoration: none; border-radius: 20px; font-weight: 800; font-size: 18px; transition: all 0.4s;
-        box-shadow: 0 15px 35px rgba(196, 22, 28, 0.2);
-    }
-    .btn-explore:hover { background: #a01015; transform: scale(1.05); box-shadow: 0 25px 50px rgba(196, 22, 28, 0.3); }
-
-    @media (max-width: 1000px) {
-        .bookings-grid { grid-template-columns: 1fr; }
-    }
-</style>
-
-<section class="dashboard-page">
-    <div class="dashboard-container">
-        <div class="dashboard-header">
-            <h1>My Activity</h1>
-            <p>Track your active reservations and review your journey history.</p>
-        </div>
-
-        {% if bookings %}
-        <div class="bookings-grid">
-            {% for b in bookings %}
-            <div class="p-booking-card">
-                <div class="p-card-header">
-                    <img src="{{ b.image }}" alt="{{ b.model }}" onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
-                    <span class="p-status-badge status-{{ b.status }}">
-                        {{ b.status }}
-                    </span>
-                </div>
-                <div class="p-card-body">
-                    <div class="p-card-title">
-                        {{ b.model }}
-                        <span class="p-booking-id">#BS-{{ b.id }}</span>
-                    </div>
-                    
-                    <div class="p-info-row">
-                        <span class="p-info-label">Pick-up Date</span>
-                        <span class="p-info-value">{{ b.start_date }}</span>
-                    </div>
-                    <div class="p-info-row">
-                        <span class="p-info-label">Return Date</span>
-                        <span class="p-info-value">{{ b.end_date }}</span>
-                    </div>
-                    <div class="p-info-row">
-                        <span class="p-info-label">Duration</span>
-                        <span class="p-info-value">{{ b.total_days }} Day{% if b.total_days != 1 %}s{% endif %}</span>
-                    </div>
-                    <div class="p-info-row">
-                        <span class="p-info-label">Identity Verified</span>
-                        <span class="p-info-value" style="text-transform: capitalize;">{{ b.doc_type|replace:"_"," " }}</span>
-                    </div>
-                </div>
-
-                <div class="p-card-footer">
-                    <div class="p-total-price">
-                        <span>Paid Total</span> Rs. {{ b.total_cost|floatformat:0 }}
-                    </div>
-                    {% if b.status == 'pending' %}
-                        <a href="{% url 'payment' b.id %}" class="p-btn-action p-btn-pay">Approve & Pay</a>
-                    {% else %}
-                        <a href="#" class="p-btn-action">View Itinerary</a>
-                    {% endif %}
-                </div>
+<section class="dashboard-section py-4">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div>
+                <h1 class="h2 fw-black mb-1">Your Dashboard</h1>
+                <p class="text-muted">Manage your active rentals and booking history.</p>
             </div>
-            {% endfor %}
+            <a href="{% url 'bikes' %}" class="btn-solid-red">Book New Ride</a>
         </div>
-        {% else %}
-        <div class="empty-state">
-            <h3>Start Your Journey</h3>
-            <p>You haven't reserved any rides yet. Explore our premium fleet in Kathmandu and book your first bike today.</p>
-            <a href="{% url 'bikes' %}" class="btn-explore">Browse Premium Fleet →</a>
+
+        <div class="row">
+            {% if bookings %}
+                {% for b in bookings %}
+                <div class="col-12 mb-4">
+                    <div class="system-card p-0 overflow-hidden">
+                        <div class="row g-0">
+                            <!-- Bike Info Section -->
+                            <div class="col-md-3 border-end">
+                                <div class="p-4 text-center bg-light h-100">
+                                    <div class="text-uppercase small fw-bold text-muted mb-2">Booking Reference</div>
+                                    <div class="h5 fw-bold mb-3">#RS-{{ b.id }}</div>
+                                    <div class="system-card p-0 overflow-hidden shadow-none border" style="height: 120px; border-radius: 12px;">
+                                        <img src="{{ b.image }}" alt="{{ b.model }}" class="w-100 h-100 object-fit-cover">
+                                    </div>
+                                    <div class="fw-bold mt-3 h5">{{ b.model }}</div>
+                                </div>
+                            </div>
+
+                            <!-- Schedule Section -->
+                            <div class="col-md-5">
+                                <div class="p-4">
+                                    <div class="row text-start">
+                                        <div class="col-6 mb-4">
+                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Pick up date</label>
+                                            <div class="h5 mb-0 fw-bold">{{ b.start_date }}</div>
+                                        </div>
+                                        <div class="col-6 mb-4">
+                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Return date</label>
+                                            <div class="h5 mb-0 fw-bold">{{ b.end_date }}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Total Amount Paid</label>
+                                            <div class="h5 mb-0 fw-bold text-red">Rs. {{ b.total_price }}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Status</label>
+                                            <span class="badge-system {% if b.payment_status == 'paid' %}badge-available{% else %}badge-booked{% endif %}">
+                                                {{ b.payment_status|upper }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Action Section -->
+                            <div class="col-md-4 d-flex align-items-center justify-content-center border-start bg-light">
+                                <div class="text-center p-4">
+                                    {% if b.payment_status == 'pending' %}
+                                        <a href="{% url 'payment' b.id %}" class="btn-solid-red w-100 mb-2">Complete Payment</a>
+                                        <p class="small text-muted mb-0">Secure eSewa transaction required</p>
+                                    {% else %}
+                                        <div class="text-success fw-bold mb-3 d-flex align-items-center gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                            </svg>
+                                            Booking Confirmed
+                                        </div>
+                                        <button class="btn btn-outline-secondary w-100">Download Invoice</button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <div class="system-card py-5">
+                        <div class="h1 opacity-25 mb-4">🏍</div>
+                        <h3>You haven't booked any rides yet</h3>
+                        <p class="text-muted mb-4">When you book a ride, your rental detail will appear here.</p>
+                        <a href="{% url 'bikes' %}" class="btn-solid-red px-5">Start Browsing</a>
+                    </div>
+                </div>
+            {% endif %}
         </div>
-        {% endif %}
     </div>
 </section>
+
+<style>
+    .fw-black { font-weight: 900; letter-spacing: -1px; }
+    .cursor-not-allowed { cursor: not-allowed; }
+</style>
+
 {% endblock %}

@@ -3,218 +3,108 @@
 {% block title %}Book {{ bike.model }} | RideSathi{% endblock %}
 
 {% block content %}
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
 
-    .booking-page { 
-        background: #ffffff; 
-        font-family: 'Outfit', sans-serif; 
-        min-height: 100vh;
-        color: #1a1a1a;
-        padding: 80px 5%;
-    }
-
-    .booking-wrapper { 
-        max-width: 1200px; 
-        margin: 0 auto;
-        display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 60px;
-        align-items: start;
-    }
-
-    /* ── FORM CARD ── */
-    .p-form-card {
-        background: #ffffff;
-        border: 1px solid #eee;
-        border-radius: 40px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.05);
-    }
-    .p-form-header {
-        background: linear-gradient(135deg, #c4161c, #a01015);
-        padding: 50px;
-        color: #fff;
-    }
-    .p-form-header h2 { margin: 0 0 10px; font-size: 32px; font-weight: 900; }
-    .p-form-header p { margin: 0; font-size: 16px; opacity: 0.9; font-weight: 500; }
-
-    .p-form-body { padding: 50px; }
-    
-    .p-group { margin-bottom: 30px; }
-    .p-group label { display: block; font-size: 12px; font-weight: 800; color: #999; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; }
-    
-    .p-input {
-        width: 100%; padding: 18px 24px; 
-        background: #f8f9fa; 
-        border: 1px solid #eee;
-        border-radius: 18px; color: #1a1a1a; font-size: 16px; font-family: inherit;
-        transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); box-sizing: border-box;
-    }
-    .p-input:focus { border-color: #c4161c; background: #fff; outline: none; box-shadow: 0 0 0 4px rgba(196, 22, 28, 0.05); }
-    .p-input::placeholder { color: #ccc; }
-
-    .p-btn-submit {
-        width: 100%; padding: 22px; background: #c4161c; color: #fff;
-        font-size: 18px; font-weight: 800; border: none; border-radius: 20px;
-        cursor: pointer; transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); margin-top: 15px;
-        box-shadow: 0 15px 35px rgba(196, 22, 28, 0.25);
-    }
-    .p-btn-submit:hover { transform: translateY(-5px); box-shadow: 0 25px 50px rgba(196, 22, 28, 0.4); background: #a01015; }
-    .p-btn-submit:disabled { background: #f3f4f6; color: #9ca3af; cursor: not-allowed; box-shadow: none; }
-
-    /* ── SUMMARY SIDE ── */
-    .p-summary-side { display: flex; flex-direction: column; gap: 30px; }
-
-    .p-bike-mini {
-        background: #ffffff; border: 1px solid #eee;
-        border-radius: 30px; overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-    }
-    .p-bike-mini img { width: 100%; height: 250px; object-fit: cover; }
-    .p-bike-mini-info { padding: 35px; }
-    .p-mini-title { font-size: 24px; font-weight: 900; margin-bottom: 8px; color: #111; }
-    .p-mini-meta { color: #888; font-size: 15px; margin-bottom: 20px; font-weight: 500; }
-    .p-mini-price { font-size: 20px; font-weight: 800; color: #c4161c; }
-
-    .p-cost-box {
-        background: #fdfdfd; border: 1px solid #eee;
-        border-radius: 30px; padding: 40px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.02);
-    }
-    .p-cost-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 16px; color: #666; font-weight: 500; }
-    .p-cost-total { 
-        display: flex; justify-content: space-between; margin-top: 25px; 
-        padding-top: 25px; border-top: 2px dashed #eee;
-        font-size: 24px; font-weight: 900; color: #111;
-    }
-    .p-cost-total span:last-child { color: #c4161c; }
-
-    @media (max-width: 1000px) {
-        .booking-wrapper { grid-template-columns: 1fr; }
-    }
-</style>
-
-<div class="booking-page">
-    <div class="booking-wrapper">
-        <!-- Form -->
-        <div class="p-form-card">
-            <div class="p-form-header">
-                <h2>Reservation</h2>
-                <p>Complete the details below to secure your ride.</p>
-            </div>
-            <div class="p-form-body">
-                <form method="POST" enctype="multipart/form-data">
-                    {% csrf_token %}
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="p-group">
-                            <label>Pick-up Date</label>
-                            <input type="date" id="start_date" name="start_date" class="p-input" required onchange="calculateCost()">
-                        </div>
-                        <div class="p-group">
-                            <label>Return Date</label>
-                            <input type="date" id="end_date" name="end_date" class="p-input" required onchange="calculateCost()">
-                        </div>
-                    </div>
-
-                    <div class="p-group">
-                        <label>Phone Number</label>
-                        <input type="text" name="phone" class="p-input" placeholder="+977 98XXXXXXXX" required>
-                    </div>
-
-                    <div class="p-group">
-                        <label>Residential Address</label>
-                        <textarea name="address" class="p-input" rows="2" placeholder="Your current location in Kathmandu" required></textarea>
-                    </div>
-
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div class="p-group">
-                            <label>ID Document</label>
-                            <select name="doc_type" class="p-input" required>
-                                <option value="driving_license">Driving License</option>
-                                <option value="citizenship">Citizenship Card</option>
-                                <option value="passport">Passport</option>
-                            </select>
-                        </div>
-                        <div class="p-group">
-                            <label>Upload File</label>
-                            <input type="file" name="document" class="p-input" accept=".jpg, .jpeg, .png, .pdf" required>
-                        </div>
-                    </div>
-
-                    <p style="font-size: 13px; color: #999; margin: 10px 0 35px; line-height: 1.6;">* We process your verification data securely in compliance with the local safety standards.</p>
-
-                    <button type="submit" class="p-btn-submit" id="book-btn" disabled>Confirm Reservation →</button>
-                </form>
-            </div>
-        </div>
-
-        <!-- Summary -->
-        <div class="p-summary-side">
-            <div class="p-bike-mini">
-                <img src="{{ bike.image }}" alt="{{ bike.model }}" onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
-                <div class="p-bike-mini-info">
-                    <h3 class="p-mini-title">{{ bike.model }}</h3>
-                    <p class="p-mini-meta">{{ bike.category }} · Premium Fleet</p>
-                    <p class="p-mini-price">Rs. {{ bike.price_per_day|floatformat:0 }} <span>/ day</span></p>
-                    <span id="bike-price-val" style="display:none;">{{ bike.price_per_day }}</span>
-                </div>
-            </div>
-
-            <div class="p-cost-box" id="cost-box">
-                <div id="cost-placeholder" style="text-align: center; color: #999; font-size: 15px; font-weight: 500;">
-                    Select your journey dates to view the pricing summary
-                </div>
-                <div id="cost-details" style="display: none;">
-                    <div class="p-cost-row">
-                        <span>Daily Rental Rate</span>
-                        <span>Rs. {{ bike.price_per_day|floatformat:0 }}</span>
-                    </div>
-                    <div class="p-cost-row">
-                        <span>Journey Duration</span>
-                        <span><span id="calc-days">0</span> Days</span>
-                    </div>
-                    <div class="p-cost-total">
-                        <span>Total Estimated</span>
-                        <span>Rs. <span id="calc-total">0</span></span>
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- System Breadcrumb -->
+<div class="container">
+    <div class="system-breadcrumb">
+        <a href="{% url 'home' %}">Home</a> / <a href="{% url 'bikes' %}">Bikes</a> / <span>Booking {{ bike.model }}</span>
     </div>
 </div>
 
+<section class="booking-section py-5">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Booking Form Column -->
+            <div class="col-lg-8">
+                <div class="system-card">
+                    <h3 class="h4 mb-4 border-bottom pb-3">Reservation Details</h3>
+                    
+                    <form method="POST" id="bookingForm">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6 text-start">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Pickup Date</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control py-3" required style="border-radius: 12px;">
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Return Date</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control py-3" required style="border-radius: 12px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-5">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Vehicle Information</label>
+                            <div class="system-card bg-light border-0 py-3 px-4 d-flex align-items-center gap-4">
+                                <img src="{% if bike.image %}{{ bike.image }}{% else %}{% static 'assets/image/standard.jpg' %}{% endif %}" 
+                                     alt="Bike" style="width: 100px; height: 70px; object-fit: cover; border-radius: 10px;">
+                                <div>
+                                    <div class="fw-bold">{{ bike.model }}</div>
+                                    <div class="text-muted small">Category: {{ bike.category }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid pt-3 border-top">
+                            <button type="submit" class="btn-solid-red py-3 h5 mb-0">Proceed to Confirmation →</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Booking Summary Side Column -->
+            <div class="col-lg-4">
+                <div class="system-card bg-light-red border-0">
+                    <h5 class="fw-bold mb-4">Estimated Rental Cost</h5>
+                    
+                    <div class="d-flex justify-content-between mb-3 text-muted">
+                        <span>Daily Rate</span>
+                        <span class="fw-bold text-dark">Rs. {{ bike.price_per_day }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3 text-muted">
+                        <span>Rental Duration</span>
+                        <span id="rentalDays" class="fw-bold text-dark">0 days</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-4 border-top">
+                        <span class="h5 fw-bold mb-0">Total Amount</span>
+                        <span id="totalCost" class="h5 fw-bold text-red mb-0">Rs. 0</span>
+                    </div>
+
+                    <p class="small text-muted mt-4 mb-0">Final verification of total amount and document status will happen on the next screen.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- COST CALCULATION SCRIPT -->
 <script>
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("start_date").setAttribute("min", today);
-    document.getElementById("end_date").setAttribute("min", today);
+const startInput = document.getElementById('start_date');
+const endInput = document.getElementById('end_date');
+const dailyRate = {{ bike.price_per_day }};
 
-    function calculateCost() {
-        const start = document.getElementById("start_date").value;
-        const end = document.getElementById("end_date").value;
-        const price = parseFloat(document.getElementById("bike-price-val").innerText);
-        const btn = document.getElementById("book-btn");
-        const placeholder = document.getElementById("cost-placeholder");
-        const details = document.getElementById("cost-details");
+function calculateTotal() {
+    const start = new Date(startInput.value);
+    const end = new Date(endInput.value);
 
-        if (start && end) {
-            const d1 = new Date(start);
-            const d2 = new Date(end);
-            const diff = Math.ceil((d2 - d1) / (1000 * 60 * 60 * 24)) + 1;
-
-            if (diff > 0) {
-                document.getElementById("calc-days").innerText = diff;
-                document.getElementById("calc-total").innerText = (diff * price).toLocaleString();
-                placeholder.style.display = 'none';
-                details.style.display = 'block';
-                btn.disabled = false;
-            } else {
-                placeholder.style.display = 'block';
-                placeholder.innerText = "Check-out date must be after check-in date";
-                details.style.display = 'none';
-                btn.disabled = true;
-            }
-        }
+    if (start && end && end > start) {
+        const timeDiff = end.getTime() - start.getTime();
+        const days = Math.ceil(timeDiff / (1000 * 3600 * 24));
+        
+        document.getElementById('rentalDays').innerText = days + (days === 1 ? ' day' : ' days');
+        document.getElementById('totalCost').innerText = 'Rs. ' + (days * dailyRate);
+    } else {
+        document.getElementById('rentalDays').innerText = '0 days';
+        document.getElementById('totalCost').innerText = 'Rs. 0';
     }
+}
+
+startInput.addEventListener('change', calculateTotal);
+endInput.addEventListener('change', calculateTotal);
 </script>
+
 {% endblock %}

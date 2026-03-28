@@ -1,889 +1,167 @@
-/* GLOBAL PREMIUM LIGHT THEME Variables */
+/* 
+    RideSathi Refined "Smart System" Light Theme 
+    Base: Bootstrap + Custom Styling
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800;900&display=swap');
+
 :root {
+    --primary-red: #c4161c;
+    --primary-red-hover: #a01015;
     --bg-light: #ffffff;
-    --bg-subtle: #f8f9fa;
-    --bg-card: #ffffff;
-    --accent-red: #c4161c;
-    --accent-red-hover: #a01015;
-    --text-primary: #1a1a1a;
-    --text-secondary: #555555;
-    --text-muted: #888888;
-    --border-subtle: #eeeeee;
-    --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-    --shadow-md: 0 10px 30px rgba(0,0,0,0.08);
+    --bg-alt: #f8f9fa;
+    --text-dark: #1a1a1a;
+    --text-muted: #6c757d;
+    --border-color: #dee2e6;
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    --card-shadow-hover: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 body {
-    margin: 0;
-    font-family: 'Outfit', 'Inter', Arial, sans-serif;
     background-color: var(--bg-light);
-    color: var(--text-primary);
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
 }
 
-/* --- HEADER (Reference UI) --- */
-.site-header {
-    background-color: white;
-    padding: 15px 40px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
 }
 
-.header-container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1400px;
-    margin: 0 auto;
-}
+/* ── COMMON UI COMPONENTS ── */
 
-/* LOGO */
-.logo a {
-    font-size: 26px;
-    font-weight: 800;
-    text-decoration: none;
-    letter-spacing: -0.5px;
-}
-.logo-red { color: #c4161c; }
-.logo-dark { color: #333; }
-
-/* CENTER NAVIGATION */
-.nav-center {
-    display: flex;
-    gap: 30px;
-}
-
-.nav-center a {
-    color: #555;
-    text-decoration: none;
-    font-size: 15px;
-    font-weight: 600;
-    padding-bottom: 5px;
-    transition: color 0.3s ease;
-}
-
-.nav-center a:hover {
-    color: #c4161c;
-}
-
-.nav-center a.active {
-    color: #c4161c;
-    border-bottom: 2px solid #c4161c;
-}
-
-/* RIGHT BUTTONS */
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.nav-user {
-    font-weight: 600;
-    color: #444;
-}
-
-.btn-outline-red {
-    border: 2px solid #c4161c;
-    color: #c4161c;
-    padding: 8px 20px;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.btn-outline-red:hover {
-    background-color: #c4161c;
-    color: white;
-}
-
+/* Buttons */
 .btn-solid-red {
-    background-color: #c4161c;
-    color: white;
-    padding: 10px 22px;
-    text-decoration: none;
-    border-radius: 4px;
+    background-color: var(--primary-red);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
     font-weight: 600;
-    transition: background-color 0.3s ease;
+    padding: 10px 24px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
 }
 
 .btn-solid-red:hover {
-    background-color: #a01015;
-}
-
-.btn-dark-mode {
-    border: 1px solid #ccc;
-    background: transparent;
-    color: #555;
-    padding: 8px 16px;
-    border-radius: 20px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-}
-/* --- HERO SECTION --- */
-.hero-section {
-    height: 85vh;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    padding: 0 10%;
-}
-
-.hero-content {
-    max-width: 600px;
-    color: white;
-}
-
-.hero-title {
-    font-size: 58px;
-    font-weight: 800;
-    margin-bottom: 20px;
-    letter-spacing: -1px;
-}
-
-.text-red {
-    color: #c4161c;
-}
-
-.hero-desc {
-    font-size: 18px;
-    line-height: 1.6;
-    margin-bottom: 40px;
-    color: #f0f0f0;
-}
-
-.btn-large {
-    padding: 16px 36px;
-    font-size: 18px;
-}
-
-
-/* --- FEATURES SECTION --- */
-.features-section {
-    padding: 100px 5%;
-    background-color: #fff;
-    text-align: center;
-}
-
-.section-heading {
-    max-width: 800px;
-    margin: 0 auto 60px;
-}
-
-.subtitle-red {
-    color: #c4161c;
-    font-weight: 700;
-    font-size: 14px;
-    letter-spacing: 1px;
-    display: block;
-    margin-bottom: 10px;
-}
-
-.section-heading h2 {
-    font-size: 38px;
-    color: #222;
-    margin-bottom: 20px;
-    font-weight: 800;
-}
-
-.section-heading p {
-    color: #666;
-    font-size: 16px;
-}
-
-.features-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.feature-card {
-    background-color: #f9f9f9;
-    padding: 40px 30px;
-    border-radius: 8px;
-    border: 1px solid #eee;
-    text-align: left;
-}
-
-.feature-badge {
-    color: #c4161c;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    display: inline-block;
-    margin-bottom: 20px;
-}
-
-.feature-card p {
-    color: #555;
-    line-height: 1.6;
-    font-size: 15px;
-    margin: 0;
-}
-
-
-/* --- CTA SECTION --- */
-.cta-section {
-    background-color: #c4161c;
-    padding: 100px 20px;
-    text-align: center;
-    color: white;
-}
-
-.cta-content {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.cta-content h2 {
-    font-size: 42px;
-    font-weight: 800;
-    margin-bottom: 25px;
-}
-
-.cta-content p {
-    font-size: 18px;
-    line-height: 1.6;
-    margin-bottom: 40px;
+    background-color: var(--primary-red-hover);
     color: #fff;
-    opacity: 0.9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(196, 22, 28, 0.2);
 }
 
-.cta-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-}
-
-.btn-solid-white {
-    background-color: white;
-    color: #c4161c;
-    padding: 14px 32px;
+.btn-outline-red {
+    background-color: transparent;
+    color: var(--primary-red);
+    border: 2px solid var(--primary-red);
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 8px 22px;
+    transition: all 0.3s ease;
     text-decoration: none;
-    border-radius: 4px;
-    font-weight: 700;
-    transition: background-color 0.3s ease;
-}
-
-.btn-solid-white:hover {
-    background-color: #f0f0f0;
-}
-
-.btn-outline-white {
-    border: 2px solid white;
-    color: white;
-    padding: 12px 30px;
-    text-decoration: none;
-    border-radius: 4px;
-    font-weight: 700;
-    transition: background-color 0.3s ease;
-}
-
-.btn-outline-white:hover {
-    background-color: white;
-    color: #c4161c;
-}
-
-/* --- FOOTER (Reference UI) --- */
-.site-footer {
-    background-color: #fafafa;
-    color: #444;
-    padding: 60px 40px 20px;
-    border-top: 1px solid #eaeaea;
-}
-
-.footer-container {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr;
-    gap: 50px;
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.footer-col .logo {
-    margin-bottom: 15px;
-}
-
-.footer-col p {
-    font-size: 14px;
-    line-height: 1.6;
-    color: #666;
-    max-width: 300px;
-}
-
-.footer-col h4 {
-    color: #333;
-    font-size: 14px;
-    margin-bottom: 20px;
-    font-weight: 700;
-}
-
-.footer-col a {
-    color: #666;
-    text-decoration: none;
-    display: block;
-    margin-bottom: 12px;
-    font-size: 14px;
-    transition: color 0.3s ease;
-}
-
-.footer-col a:hover {
-    color: #c4161c;
-}
-
-.contact-col p {
-    margin: 0 0 12px 0;
-    font-size: 14px;
-    color: #666;
-}
-
-.footer-bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    max-width: 1200px;
-    margin: 50px auto 0;
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
-    color: #888;
-    font-size: 13px;
-}
-/* BIKE & CATEGORY IMAGES */
-.bike-card img,
-.category-card img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;   /* IMPORTANT */
-    margin-bottom: 12px;
-    border-radius: 4px;
-}
-
-.bike-card h3,
-.category-card h3 {
-    margin: 0;
-}
-.btn-secondary {
     display: inline-block;
-    margin-top: 12px;
-    padding: 10px 22px;
-    background-color: #c4161c;
-    color: white;
-    text-decoration: none;
-    font-size: 14px;
-    border-radius: 4px;
 }
 
-.btn-secondary:hover {
-    background-color: #a31217;
-}
-.bike-card,
-.category-card {
-    text-align: center;
-}
-/* AUTH (LOGIN & REGISTER) */
-.auth-container {
-    max-width: 420px;
-    margin: 80px auto;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    text-align: center;
+.btn-outline-red:hover {
+    background-color: var(--primary-red);
+    color: #fff;
 }
 
-.auth-container h2 {
-    margin-bottom: 20px;
+/* Cards */
+.system-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s ease;
 }
 
-.auth-container input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 14px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+.system-card:hover {
+    box-shadow: var(--card-shadow-hover);
 }
 
-.auth-container button {
-    width: 100%;
-    padding: 12px;
+/* ── LAYOUT ── */
+
+/* Sidebar Navigation (Dashboard) */
+.dashboard-sidebar {
+    background: #fff;
+    border-right: 1px solid var(--border-color);
+    height: 100vh;
+    padding: 30px 20px;
+    position: sticky;
+    top: 0;
 }
 
-.auth-link {
-    margin-top: 15px;
-}
-
-.auth-link a {
-    color: #c4161c;
-    text-decoration: none;
-}
-
-.error-msg {
-    color: red;
-    margin-bottom: 10px;
-}
-
-/*  ABOUT US PAGE */
-
-
-.about-main {
-    max-width: 1200px;
-    margin: 80px auto;
-    padding: 0 20px;
-    display: grid;
-    grid-template-columns: 1.2fr 1fr;
-    gap: 40px;
+.sidebar-link {
+    display: flex;
     align-items: center;
-}
-
-/* Left Text */
-.about-text h2 {
-    font-size: 32px;
-    margin-bottom: 15px;
-}
-
-.about-text p {
-    color: #555;
-    line-height: 1.7;
-    margin-bottom: 12px;
-}
-
-/* Right Image */
-.about-image img {
-    width: 100%;
-    height: 320px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-}
-
-/* Divider */
-.about-divider {
-    width: 80%;
-    margin: 70px auto;
-    border: none;
-    border-top: 1px solid #ddd;
-}
-
-/* Feature Boxes */
-.about-features {
-    max-width: 1100px;
-    margin: 0 auto 80px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
-    padding: 0 20px;
-}
-
-.feature-box {
-    background: #fff;
-    padding: 30px;
-    text-align: center;
-    border-radius: 8px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-.feature-box h3 {
-    color: #c4161c;
-    margin-bottom: 10px;
-}
-
-.feature-box p {
-    color: #555;
-    line-height: 1.6;
-}
-
-/* Responsive */
-@media (max-width: 900px) {
-    .about-main {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-
-    .about-image img {
-        height: 260px;
-    }
-
-    .about-features {
-        grid-template-columns: 1fr;
-    }
-}
-
-/*  DJANGO MESSAGES */
-
-.messages {
-    max-width: 600px;
-    margin: 20px auto;
-    text-align: center;
-}
-
-.message {
-    padding: 12px 20px;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    font-size: 14px;
-}
-
-.message.success {
-    background: #d4edda;
-    color: #155724;
-}
-
-.message.error {
-    background: #f8d7da;
-    color: #721c24;
-}
-
-/* ─── BIKES PAGE ─── */
-.page-hero {
-    background-color: #111;
-    color: white;
-    text-align: center;
-    padding: 50px 20px;
-}
-
-.page-hero h1 { font-size: 36px; margin-bottom: 8px; }
-.page-hero p  { color: #aaa; font-size: 16px; }
-
-.bikes-section {
-    padding: 50px 60px;
-}
-
-/* Override the home .bike-grid for the bikes page */
-.bikes-section .bike-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-    margin-top: 0;
-}
-
-.bikes-section .bike-card {
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 0;
-    overflow: hidden;
-    text-align: left;
-    transition: box-shadow 0.2s;
-}
-
-.bikes-section .bike-card:hover {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-
-.bike-img-wrap {
-    position: relative;
-}
-
-.bike-img-wrap img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-    display: block;
-}
-
-.badge-available {
-    position: absolute;
-    top: 8px;
-    left: 8px;
-    background: #28a745;
-    color: white;
-    font-size: 11px;
-    padding: 3px 8px;
-    border-radius: 20px;
-}
-
-.bike-info {
-    padding: 14px 16px;
-}
-
-.bike-info h3  { margin: 0 0 6px; font-size: 16px; }
-.bike-category { color: #888; font-size: 13px; margin: 4px 0; }
-.bike-price    { color: #c4161c; font-weight: bold; font-size: 15px; margin: 4px 0; }
-.bike-desc     { color: #555; font-size: 13px; margin: 6px 0 12px; }
-
-.btn-view {
-    display: inline-block;
-    padding: 8px 18px;
-    background-color: #c4161c;
-    color: white;
+    padding: 12px 18px;
+    color: var(--text-muted);
     text-decoration: none;
-    border-radius: 4px;
-    font-size: 13px;
-}
-
-.btn-view:hover { background-color: #a31217; }
-
-.no-bikes {
-    grid-column: 1 / -1;
-    text-align: center;
-    color: #888;
-    padding: 40px;
-}
-
-/* ─── BIKE DETAIL PAGE ─── */
-.bike-detail-section {
-    padding: 60px;
-    max-width: 1100px;
-    margin: 0 auto;
-}
-
-.bike-detail-card {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 50px;
-    align-items: start;
-    background: #fff;
-    border: 1px solid #ddd;
     border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-.bike-detail-img img {
-    width: 100%;
-    height: 350px;
-    object-fit: cover;
-    display: block;
-}
-
-.bike-detail-info {
-    padding: 30px 30px 30px 0;
-}
-
-.bike-detail-info h2    { font-size: 28px; margin-bottom: 16px; }
-.bike-detail-info p     { margin: 10px 0; color: #444; }
-
-.bike-detail-actions {
-    margin-top: 24px;
-    display: flex;
-    gap: 14px;
-    flex-wrap: wrap;
-}
-
-/* ─── NAVBAR USER ─── */
-.nav-user {
-    color: #f0f0f0;
-    margin-left: 28px;
-    font-size: 14px;
-}
-
-.btn-logout {
-    background-color: #c4161c;
-    color: white !important;
-    padding: 6px 16px;
-    border-radius: 4px;
-    margin-left: 14px;
-    font-size: 14px;
-}
-
-.btn-logout:hover {
-    background-color: #a31217;
-}
-
-@media (max-width: 900px) {
-    .bikes-section .bike-grid     { grid-template-columns: repeat(2, 1fr); }
-    .bike-detail-card             { grid-template-columns: 1fr; }
-    .bike-detail-info             { padding: 20px; }
-    .bikes-section                { padding: 30px 20px; }
-}
-
-/* ─── BOOKING PAGE ─── */
-.booking-section {
-    padding: 60px 40px;
-    background-color: #f8f8f8;
-}
-
-.booking-container {
-    max-width: 900px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 40px;
-    background: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-.booking-bike-info {
-    text-align: center;
-    border-right: 1px solid #ddd;
-    padding-right: 40px;
-}
-
-.booking-bike-info img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
-    border-radius: 6px;
-    margin-bottom: 20px;
-}
-
-.booking-bike-info h2 { font-size: 24px; margin-bottom: 10px; }
-
-.booking-form-box {
-    padding-left: 20px;
-}
-
-.booking-form-box h2 {
-    margin-bottom: 24px;
-    color: #c4161c;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-group label {
-    display: block;
     margin-bottom: 8px;
-    font-weight: bold;
+    font-weight: 500;
+    transition: all 0.2s;
 }
 
-.form-group input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+.sidebar-link:hover, .sidebar-link.active {
+    background: rgba(196, 22, 28, 0.05);
+    color: var(--primary-red);
 }
 
-.cost-summary {
-    background: #fdfdfd;
-    padding: 20px;
-    border: 1px dashed #c4161c;
-    border-radius: 4px;
-    margin: 24px 0;
-    text-align: center;
-}
-
-.cost-summary p { margin: 8px 0; font-size: 16px; }
-.cost-summary .final-cost { font-size: 20px; font-weight: bold; color: #c4161c; }
-
-.btn-block {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    border: none;
-    cursor: pointer;
-}
-
-.btn-block:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
-    .booking-container { grid-template-columns: 1fr; }
-    .booking-bike-info { border-right: none; border-bottom: 1px solid #ddd; padding-right: 0; padding-bottom: 30px; }
-    .booking-form-box  { padding-left: 0; padding-top: 30px; }
-}
-
-/* ─── DOCUMENT UPLOAD PAGE ─── */
-.upload-section {
-    padding: 80px 40px;
-    background-color: #f8f8f8;
-    min-height: 60vh;
-}
-
-.upload-container {
+/* ── eSewa Integration ── */
+.payment-card {
     max-width: 500px;
-    margin: 0 auto;
-    background: white;
-    padding: 40px;
-    border-radius: 8px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-    text-align: left;
-}
-
-.upload-container h2 {
-    color: #c4161c;
-    margin-bottom: 10px;
-    text-align: center;
-}
-
-.upload-container p {
-    text-align: center;
-    color: #666;
-    margin-bottom: 30px;
-}
-
-.upload-form select,
-.upload-form input[type="file"] {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background: #fafafa;
-}
-
-/* ─── PAYMENT PAGE SIMULATION ─── */
-.payment-section {
-    padding: 80px 40px;
-    background-color: #f4f4f4;
-    min-height: 70vh;
-}
-
-.payment-container {
-    max-width: 450px;
-    margin: 0 auto;
-    background: white;
-    border-top: 5px solid #60bb46; /* eSewa green color */
-    border-radius: 6px;
+    margin: 40px auto;
+    background: #fff;
+    border-top: 5px solid #60bb46; /* eSewa Green */
+    border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-}
-
-.payment-header {
-    text-align: center;
-    border-bottom: 2px dashed #eee;
-    padding-bottom: 20px;
-    margin-bottom: 20px;
-}
-
-.payment-header h1 { margin: 10px 0; }
-.payment-header img { 
-    height: 50px; 
-    object-fit: contain; 
-}
-
-.payment-details {
-    background: #fdfdfd;
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    margin-bottom: 20px;
-}
-
-.payment-details p {
-    display: flex;
-    justify-content: space-between;
-    margin: 8px 0;
-}
-
-.payment-details .amount {
-    font-size: 18px;
-    font-weight: bold;
-    color: #c4161c;
+    box-shadow: var(--card-shadow);
 }
 
 .btn-esewa {
-    width: 100%;
-    background-color: #60bb46; /* eSewa green */
-    color: white;
-    padding: 14px;
+    background-color: #60bb46;
+    color: #fff;
     border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
+    border-radius: 8px;
+    padding: 14px;
+    width: 100%;
+    font-weight: 700;
+    transition: background 0.2s;
 }
 
 .btn-esewa:hover {
     background-color: #4b9436;
 }
 
+/* ── UTILITIES ── */
+.text-red { color: var(--primary-red); }
+.bg-light-red { background-color: rgba(196, 22, 28, 0.05); }
+
+/* Custom Breadcrumb */
+.system-breadcrumb {
+    padding: 20px 0;
+    font-size: 14px;
+    color: var(--text-muted);
+}
+
+.system-breadcrumb a {
+    color: var(--primary-red);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* Badges */
+.badge-system {
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-available { background: rgba(34, 197, 94, 0.1); color: #22c55e; }
+.badge-booked    { background: rgba(239, 68, 68, 0.1);  color: #ef4444; }
