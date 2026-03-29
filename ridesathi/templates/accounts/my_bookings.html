@@ -26,14 +26,15 @@
                 {% for b in bookings %}
                 <div class="col-12 mb-4">
                     <div class="system-card p-0 overflow-hidden">
-                        <div class="row g-0">
+                        <div class="row g-0 align-items-center">
                             <!-- Bike Info Section -->
                             <div class="col-md-3 border-end">
                                 <div class="p-4 text-center bg-light h-100">
-                                    <div class="text-uppercase small fw-bold text-muted mb-2">Booking Reference</div>
-                                    <div class="h5 fw-bold mb-3">#RS-{{ b.id }}</div>
-                                    <div class="system-card p-0 overflow-hidden shadow-none border" style="height: 120px; border-radius: 12px;">
-                                        <img src="{{ b.image }}" alt="{{ b.model }}" class="w-100 h-100 object-fit-cover">
+                                    <div class="text-uppercase small fw-bold text-muted mb-2">Ref: #RS-{{ b.id }}</div>
+                                    <div class="system-card p-0 overflow-hidden shadow-none border mx-auto" style="height: 100px; width: 140px; border-radius: 12px;">
+                                        <img src="{% if b.image %}{{ b.image }}{% else %}{% static 'assets/image/pulsar_ns200_rental_1774704818476.png' %}{% endif %}" 
+                                             alt="{{ b.model }}" class="w-100 h-100 object-fit-cover"
+                                             onerror="this.src='{% static 'assets/image/pulsar_ns200_rental_1774704818476.png' %}'">
                                     </div>
                                     <div class="fw-bold mt-3 h5">{{ b.model }}</div>
                                 </div>
@@ -42,18 +43,18 @@
                             <!-- Schedule Section -->
                             <div class="col-md-5">
                                 <div class="p-4">
-                                    <div class="row text-start">
-                                        <div class="col-6 mb-4">
-                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Pick up date</label>
-                                            <div class="h5 mb-0 fw-bold">{{ b.start_date }}</div>
-                                        </div>
-                                        <div class="col-6 mb-4">
-                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Return date</label>
-                                            <div class="h5 mb-0 fw-bold">{{ b.end_date }}</div>
+                                    <div class="row text-start g-3">
+                                        <div class="col-6">
+                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Pick up</label>
+                                            <div class="fw-bold">{{ b.start_date }}</div>
                                         </div>
                                         <div class="col-6">
-                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Total Amount Paid</label>
-                                            <div class="h5 mb-0 fw-bold text-red">Rs. {{ b.total_price }}</div>
+                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Return</label>
+                                            <div class="fw-bold">{{ b.end_date }}</div>
+                                        </div>
+                                        <div class="col-6">
+                                            <label class="small text-muted text-uppercase fw-bold d-block mb-1">Total Amount</label>
+                                            <div class="fw-bold text-red">Rs. {{ b.total_price }}</div>
                                         </div>
                                         <div class="col-6">
                                             <label class="small text-muted text-uppercase fw-bold d-block mb-1">Status</label>
@@ -66,16 +67,14 @@
                             </div>
 
                             <!-- Action Section -->
-                            <div class="col-md-4 d-flex align-items-center justify-content-center border-start bg-light">
-                                <div class="text-center p-4">
+                            <div class="col-md-4 d-flex align-items-center justify-content-center border-start h-100 py-4 bg-light">
+                                <div class="text-center px-4 w-100" style="max-width: 250px;">
                                     {% if b.payment_status == 'pending' %}
-                                        <a href="{% url 'payment' b.id %}" class="btn-solid-red w-100 mb-2">Complete Payment</a>
-                                        <p class="small text-muted mb-0">Secure eSewa transaction required</p>
+                                        <a href="{% url 'payment' b.id %}" class="btn-solid-red w-100 mb-2 py-2">Complete Payment</a>
+                                        <p class="small text-muted mb-0">Secure eSewa transaction</p>
                                     {% else %}
-                                        <div class="text-success fw-bold mb-3 d-flex align-items-center gap-2">
-                                            Booking Confirmed
-                                        </div>
-                                        <button class="btn btn-outline-secondary w-100">Download Invoice</button>
+                                        <div class="text-success small fw-bold mb-3">Booking Confirmed</div>
+                                        <button class="btn btn-outline-secondary btn-sm w-100 py-2" style="border-radius: 8px;">Download Invoice</button>
                                     {% endif %}
                                 </div>
                             </div>
