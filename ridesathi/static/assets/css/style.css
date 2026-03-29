@@ -175,7 +175,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .hero-section {
     position: relative;
-    height: 85vh;
+    min-height: 90vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -185,15 +185,21 @@ h1, h2, h3, h4, h5, h6 {
     text-align: center;
     color: white;
     width: 100%;
-    margin-top: -1px; /* Avoid gap with navbar */
+    margin-top: 0;
+    overflow: hidden;
 }
 
-.hero-content {
-    width: 100%;
-    max-width: 900px;
-    padding: 0 30px;
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.6) 100%);
+    z-index: 1;
+}
+
+.hero-section > .container {
+    position: relative;
     z-index: 2;
-    margin: 0 auto;
 }
 
 .hero-title {

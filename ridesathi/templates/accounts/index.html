@@ -5,12 +5,23 @@
 {% block content %}
 
 <!-- HERO SECTION -->
-<section class="hero-section"
-    style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('{% static 'assets/image/hero_xpulse_200_rental_1774704860350.png' %}');">
-    <div class="hero-content">
-        <h1 class="hero-title">Ride Smart with <br><span class="text-red">Ride</span>Sathi</h1>
-        <p class="hero-desc">Your premium bike rental partner. Explore the beauty of Nepal with our well-maintained fleet.</p>
-        <a href="{% url 'bikes' %}" class="btn-solid-red">Browse Bikes</a>
+<section class="hero-section d-flex align-items-center justify-content-center text-center"
+    style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% static 'assets/image/hero_xpulse_200_rental_1774704860350.png' %}'); background-size: cover; background-position: center;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="display-1 fw-black text-white mb-4" style="line-height: 1.1; text-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+                    Ride Smart with <br><span class="text-red">Ride</span>Sathi
+                </h1>
+                <p class="lead text-white mb-5 mx-auto" style="max-width: 700px; font-weight: 500; opacity: 0.9; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                    Your premium bike rental partner in Nepal. Easy, affordable, and reliable mobility for every journey.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'bikes' %}" class="btn-solid-red btn-lg px-5 py-3 shadow-lg">Browse Our Fleet</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-5 py-3 fw-bold" style="border-radius: 12px; border-width: 2px;">Join Us</a>
+                </div>
+            </div>
+        </div>
     </div>
 </section>
 
