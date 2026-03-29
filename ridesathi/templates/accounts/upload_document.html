@@ -3,18 +3,17 @@
 {% block title %}Upload Document | RideSathi{% endblock %}
 
 {% block content %}
-<section class="upload-section">
-    <div class="upload-container">
-        <h2> Upload Your Driving License / ID</h2>
-        <p>Before you can rent a bike, we need to verify your identity.</p>
+<div class="auth-wrapper" style="background-color: var(--bg-alt); min-height: 80vh;">
+    <div class="auth-card" style="max-width: 550px;">
+        <h2 class="h3 mb-2">Verify Identity</h2>
+        <p class="text-muted mb-4">Before you can rent a bike, we need to verify your driving credentials.</p>
 
-        <!-- IMPORTANT: enctype="multipart/form-data" is required for file uploads -->
-        <form method="POST" enctype="multipart/form-data" class="upload-form">
+        <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             
-            <div class="form-group">
-                <label for="doc_type">Document Type</label>
-                <select name="doc_type" id="doc_type" required>
+            <div class="mb-3">
+                <label class="form-label small fw-bold text-muted text-uppercase">Document Type</label>
+                <select name="doc_type" class="form-select py-3" required style="border-radius: 12px; border: 1.5px solid var(--border-color);">
                     <option value="" disabled selected>Select an option</option>
                     <option value="driving_license">Driving License</option>
                     <option value="citizenship">Citizenship Card</option>
@@ -22,13 +21,13 @@
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="document">Choose File (Image or PDF)</label>
-                <input type="file" name="document" id="document" accept=".jpg, .jpeg, .png, .pdf" required>
+            <div class="mb-4">
+                <label class="form-label small fw-bold text-muted text-uppercase">Choose File (Image or PDF)</label>
+                <input type="file" name="document" class="form-control" accept=".jpg, .jpeg, .png, .pdf" required>
             </div>
 
-            <button type="submit" class="btn-primary btn-block" style="margin-top: 20px;">Upload Document</button>
+            <button type="submit" class="btn-solid-red w-100 py-3 fw-bold">Upload Verification Documents</button>
         </form>
     </div>
-</section>
+</div>
 {% endblock %}

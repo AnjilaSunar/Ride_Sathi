@@ -3,181 +3,47 @@
 {% block title %}Booking Confirmed | RideSathi{% endblock %}
 
 {% block content %}
-<style>
-    body { background: #0f0f0f; font-family: 'Inter', sans-serif; }
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Booking Confirmed | RideSathi{% endblock %}
 
-    .success-section {
-        min-height: 90vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 60px 20px;
-    }
-
-    .success-card {
-        background: #1a1a1a;
-        border: 1px solid #2a2a2a;
-        border-radius: 16px;
-        width: 100%;
-        max-width: 480px;
-        overflow: hidden;
-        box-shadow: 0 25px 60px rgba(0,0,0,0.6);
-        text-align: center;
-    }
-
-    .success-header {
-        background: linear-gradient(135deg, #1a2f1a 0%, #0d1f0d 100%);
-        padding: 40px 30px;
-        border-bottom: 1px solid #2a2a2a;
-    }
-
-    .checkmark {
-        width: 70px;
-        height: 70px;
-        background: linear-gradient(135deg, #60bb46, #3d8b2a);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 20px auto;
-        font-size: 32px;
-        box-shadow: 0 0 30px rgba(96,187,70,0.3);
-        animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes popIn {
-        from { transform: scale(0); opacity: 0; }
-        to   { transform: scale(1); opacity: 1; }
-    }
-
-    .success-header h1 {
-        color: #fff;
-        font-size: 22px;
-        font-weight: 800;
-        margin: 0 0 6px 0;
-    }
-    .success-header p {
-        color: #888;
-        font-size: 14px;
-        margin: 0;
-    }
-
-    .invoice-body { padding: 28px; }
-
-    .invoice-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #222;
-        font-size: 14px;
-    }
-    .invoice-row:last-child { border-bottom: none; }
-    .invoice-row .label { color: #888; }
-    .invoice-row .value { color: #fff; font-weight: 600; }
-    .invoice-row.total-row .label { color: #aaa; font-size: 15px; font-weight: 700; }
-    .invoice-row.total-row .value { color: #60bb46; font-size: 18px; font-weight: 900; }
-
-    .status-badge {
-        display: inline-block;
-        background: rgba(96,187,70,0.15);
-        color: #60bb46;
-        border: 1px solid rgba(96,187,70,0.3);
-        padding: 3px 12px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-    }
-
-    .action-buttons {
-        padding: 0 28px 28px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    }
-
-    .btn-primary {
-        display: block;
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #c4161c, #8f0f14);
-        color: #fff;
-        text-decoration: none;
-        border-radius: 10px;
-        font-size: 15px;
-        font-weight: 700;
-        transition: opacity 0.2s, transform 0.1s;
-        box-sizing: border-box;
-    }
-    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); color: #fff; }
-
-    .btn-secondary {
-        display: block;
-        width: 100%;
-        padding: 14px;
-        background: transparent;
-        color: #888;
-        text-decoration: none;
-        border: 1px solid #333;
-        border-radius: 10px;
-        font-size: 14px;
-        font-weight: 600;
-        transition: border-color 0.2s, color 0.2s;
-        box-sizing: border-box;
-    }
-    .btn-secondary:hover { border-color: #555; color: #bbb; }
-</style>
-
-<section class="success-section">
-    <div class="success-card">
-
-        <!-- Success Header -->
-        <div class="success-header">
-            <div class="checkmark">✓</div>
-            <h1>Booking Confirmed!</h1>
-            <p>Your payment was successful. Enjoy the ride!</p>
+{% block content %}
+<div class="auth-wrapper" style="background-color: var(--bg-alt); min-height: 80vh;">
+    <div class="auth-card text-center" style="max-width: 500px;">
+        <div class="mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-circle mb-3" style="width: 80px; height: 80px;">
+                <span class="display-6 fw-bold">✓</span>
+            </div>
+            <h1 class="h3 fw-black">Booking Confirmed!</h1>
+            <p class="text-muted">Your payment was successful. Enjoy the ride!</p>
         </div>
 
-        <!-- Invoice Details -->
-        <div class="invoice-body">
-            <div class="invoice-row">
-                <span class="label">Booking ID</span>
-                <span class="value">#{{ booking.id }}</span>
+        <div class="system-card bg-light border-0 p-4 mb-4 text-start">
+            <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted small fw-bold">Booking ID</span>
+                <span class="fw-bold">#RS-{{ booking.id }}</span>
             </div>
-            <div class="invoice-row">
-                <span class="label">Duration</span>
-                <span class="value">{{ booking.total_days }} day{% if booking.total_days != 1 %}s{% endif %}</span>
+            <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted small fw-bold">Duration</span>
+                <span class="fw-bold">{{ booking.total_days }} day{% if booking.total_days != 1 %}s{% endif %}</span>
             </div>
-            <div class="invoice-row">
-                <span class="label">Start Date</span>
-                <span class="value">{{ booking.start_date }}</span>
+            <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted small fw-bold">Schedule</span>
+                <span class="fw-bold">{{ booking.start_date }} to {{ booking.end_date }}</span>
             </div>
-            <div class="invoice-row">
-                <span class="label">End Date</span>
-                <span class="value">{{ booking.end_date }}</span>
-            </div>
-            <div class="invoice-row">
-                <span class="label">Payment Method</span>
-                <span class="value">eSewa</span>
-            </div>
-            <div class="invoice-row">
-                <span class="label">Status</span>
-                <span class="value"><span class="status-badge">Confirmed</span></span>
-            </div>
-            <div class="invoice-row total-row">
-                <span class="label">Amount Paid</span>
-                <span class="value">NPR {{ booking.total_cost }}</span>
+            <div class="d-flex justify-content-between pt-3">
+                <span class="text-muted small fw-bold mb-0">Total Paid</span>
+                <span class="h5 fw-bold text-red mb-0">NPR {{ booking.total_cost }}</span>
             </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <a href="{% url 'bikes' %}" class="btn-primary">Browse More Bikes</a>
-            <a href="{% url 'home' %}" class="btn-secondary">Back to Home</a>
+        <div class="d-grid gap-3">
+            <a href="{% url 'bikes' %}" class="btn-solid-red py-3">Browse More Bikes</a>
+            <a href="{% url 'home' %}" class="btn-outline-red py-3">Back to Home</a>
         </div>
-
     </div>
-</section>
+</div>
+{% endblock %}
+
+<!-- Success Card and Details removed in favor of Refactored Version -->
 {% endblock %}
