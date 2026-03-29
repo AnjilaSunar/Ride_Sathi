@@ -78,9 +78,9 @@
                             <div class="system-card h-100 p-0 overflow-hidden">
                                 <!-- Image Wrapper -->
                                 <div class="bike-img-container">
-                                    <img src="{% if bike.image %}{{ bike.image }}{% else %}{% static 'assets/image/standard.jpg' %}{% endif %}"
+                                    <img src="{% if bike.image %}{{ bike.image }}{% else %}{% static 'assets/image/pulsar_ns200_rental_1774704818476.png' %}{% endif %}"
                                          alt="{{ bike.model }}" 
-                                         onerror="this.src='{% static 'assets/image/standard.jpg' %}'">
+                                         onerror="this.src='{% static 'assets/image/pulsar_ns200_rental_1774704818476.png' %}'">
                                     
                                     <span class="badge-system {% if bike.status == 'available' %}badge-available{% else %}badge-booked{% endif %}" 
                                           style="position: absolute; top: 20px; left: 20px;">
@@ -105,18 +105,20 @@
                                         <div class="row g-2">
                                             <div class="col-6 mb-1">
                                                 <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">Transmission</div>
-                                                <div class="small fw-bold text-dark">{% if bike.category == 'Scooter' or bike.category == 'Electric' %}Automatic{% else %}Manual{% endif %}</div>
+                                                <div class="small fw-bold text-dark">
+                                                    {% if bike.category|lower == 'scooter' or bike.category|lower == 'electric' %}Automatic{% else %}Manual{% endif %}
+                                                </div>
                                             </div>
                                             <div class="col-6 mb-1">
                                                 <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">Engine/Power</div>
                                                 <div class="small fw-bold text-dark">
-                                                    {% if bike.category == 'Electric' %}Smart Electric{% else %}Certified Fuel{% endif %}
+                                                    {% if bike.category|lower == 'electric' %}Smart Electric{% else %}Certified Fuel{% endif %}
                                                 </div>
                                             </div>
                                             <div class="col-12">
                                                 <div class="small fw-bold text-muted text-uppercase" style="font-size: 10px;">Best For</div>
                                                 <div class="small fw-bold text-dark">
-                                                    {% if bike.category == 'Scooter' %}City Commute{% elif bike.category == 'Electric' %}Eco-Commute{% elif bike.category == 'Standard' %}Highway & City{% elif bike.category == 'Dirt/Off-road' %}Adventure & Trails{% endif %}
+                                                    {% if bike.category|lower == 'scooter' %}City Commute{% elif bike.category|lower == 'electric' %}Eco-Commute{% elif bike.category|lower == 'standard' %}Highway & City{% elif bike.category|lower == 'dirt/off-road' %}Adventure & Trails{% else %}All Roads{% endif %}
                                                 </div>
                                             </div>
                                         </div>
