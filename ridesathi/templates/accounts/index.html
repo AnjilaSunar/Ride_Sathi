@@ -6,53 +6,54 @@
 
 <!-- HERO SECTION -->
 <section class="hero-section"
-    style="background-image: linear-gradient(to right, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 100%), url('{% static 'assets/image/bike8.jpg' %}');">
+    style="background-image: linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%), url('{% static 'assets/image/bike8.jpg' %}');">
     <div class="hero-content">
-        <h1 class="hero-title"><span class="text-red">Ride</span>Sathi</h1>
-        <p class="hero-desc">Easy, affordable and reliable bike rental system. Choose your bike, pick your dates, and
-            get on the road.</p>
-        <a href="{% url 'bikes' %}" class="btn-solid-red btn-large">Browse Bikes</a>
+        <h1 class="hero-title">Ride Smart with <br><span class="text-red">Ride</span>Sathi</h1>
+        <p class="hero-desc">Easy, affordable and reliable bike rental system. Choose your bike, pick your dates, and get on the road.</p>
+        <a href="{% url 'bikes' %}" class="btn-solid-red">Browse Bikes</a>
     </div>
 </section>
 
-<!-- FEATURES SECTION -->
-<section class="features-section">
-    <div class="section-heading">
-        <span class="subtitle-red">WHY CHOOSE RIDESATHI</span>
-        <h2>Simple. Affordable. Reliable.</h2>
-        <p>Everything you need for a smooth bike rental experience in one platform.</p>
-    </div>
-
-    <div class="features-grid">
-        <div class="feature-card">
-            <span class="feature-badge">EASY BOOKING</span>
-            <p>Book your preferred bike in just a few simple steps. Select your bike, choose your dates, and confirm. No
-                complicated process.</p>
+<!-- FEATURES SECTION (MATCHING SCREENSHOT) -->
+<section class="features-section py-5 px-4" style="background-color: #fff;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="text-red fw-bold text-uppercase small" style="letter-spacing: 1px;">Why Choose RideSathi</span>
+            <h2 class="fw-black mt-2">Simple. Affordable. Reliable.</h2>
+            <p class="text-muted mx-auto" style="max-width: 600px;">Everything you need for a smooth bike rental experience in one platform.</p>
         </div>
 
-        <div class="feature-card">
-            <span class="feature-badge">AFFORDABLE PRICING</span>
-            <p>Competitive daily rental rates to fit every budget. Transparent pricing with no hidden charges. Pay only
-                for what you use.</p>
-        </div>
-
-        <div class="feature-card">
-            <span class="feature-badge">SECURE SYSTEM</span>
-            <p>Your data and payments are fully protected. Verified bikes, documented rentals, and a reliable support
-                system you can trust.</p>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="feature-card-old p-4 h-100 text-start" style="background: #f8f9fa; border-radius: 12px; border: 1px solid #eee;">
+                    <span class="badge-red mb-3">EASY BOOKING</span>
+                    <p class="small text-muted mb-0">Book your preferred bike in just a few simple steps. Select your bike, choose your dates, and confirm. No complicated process.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card-old p-4 h-100 text-start" style="background: #f8f9fa; border-radius: 12px; border: 1px solid #eee;">
+                    <span class="badge-red mb-3">AFFORDABLE PRICING</span>
+                    <p class="small text-muted mb-0">Competitive daily rental rates to fit every budget. Transparent pricing with no hidden charges. Pay only for what you use.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card-old p-4 h-100 text-start" style="background: #f8f9fa; border-radius: 12px; border: 1px solid #eee;">
+                    <span class="badge-red mb-3">SECURE SYSTEM</span>
+                    <p class="small text-muted mb-0">Your data and payments are fully protected. Verified bikes, documented rentals, and a reliable support system you can trust.</p>
+                </div>
+            </div>
         </div>
     </div>
 </section>
 
-<!-- CTA SECTION -->
-<section class="cta-section">
-    <div class="cta-content">
-        <h2>Ready to Start Your Journey?</h2>
-        <p>Join thousands of riders who trust RideSathi for their daily commute and weekend adventures. Register today
-            for free.</p>
-        <div class="cta-buttons">
-            <a href="{% url 'register' %}" class="btn-solid-white">Create Free Account</a>
-            <a href="{% url 'bikes' %}" class="btn-outline-white">View Bikes</a>
+<!-- CTA SECTION (MATCHING SCREENSHOT) -->
+<section class="cta-section py-5 text-center" style="background-color: var(--primary-red); color: #fff;">
+    <div class="container py-4">
+        <h2 class="fw-black mb-3">Ready to Start Your Journey?</h2>
+        <p class="mb-5 mx-auto" style="max-width: 700px; opacity: 0.9;">Join thousands of riders who trust RideSathi for their daily commute and weekend adventures. Register today for free.</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'register' %}" class="btn bg-white text-danger fw-bold px-4 py-2" style="border-radius: 8px;">Create Free Account</a>
+            <a href="{% url 'bikes' %}" class="btn border-white text-white fw-bold px-4 py-2" style="border-radius: 8px;">View Bikes</a>
         </div>
     </div>
 </section>
