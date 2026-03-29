@@ -4,48 +4,43 @@
 
 {% block content %}
 
-<!-- ABOUT MAIN SECTION -->
-<section class="about-main">
-
-    <!-- LEFT CONTENT -->
-    <div class="about-text">
-        <h2>Welcome to RideSathi</h2>
-        <p>
-            RideSathi is a bike rental management system.
-            Our platform connects riders with a wide range of bikes including scooters,
-            electric bikes, standard motorcycles, and off-road bikes.
-        </p>
-        <p>
-            We aim to simplify the rental process by providing a reliable, affordable,
-            and user-friendly system that allows users to browse and book bikes online.
+<section class="about-hero py-5 text-center" style="background-color: var(--bg-alt); margin-bottom: 60px; border-bottom: 1px solid var(--border-color);">
+    <div class="container py-5">
+        <h1 class="display-4 fw-black mb-3">Welcome to RideSathi</h1>
+        <p class="lead text-muted mx-auto" style="max-width: 700px;">
+            A Smart Bike Rental System designed for the modern rider. Connecting you with premium mobility across scooty, electric, standard, and off-road categories.
         </p>
     </div>
-
-    <!-- RIGHT IMAGE -->
-    <div class="about-image">
-        <img src="{% static 'assets/image/bike5.jpg' %}" alt="About RideSathi">
-    </div>
-
 </section>
 
-<hr class="about-divider">
-
-<!-- FEATURES SECTION -->
-<section class="about-features">
-    <div class="feature-box">
-        <h3>Our Mission</h3>
-        <p>To make bike rentals simple, affordable, and accessible for everyone.</p>
+<div class="container mb-5">
+    <div class="row g-5 align-items-center">
+        <div class="col-lg-6">
+            <h2 class="h3 fw-bold mb-4">Our Mission</h2>
+            <p class="text-muted leading-relaxed mb-4">
+                RideSathi aims to simplify the rental process by providing a reliable, affordable, and user-friendly system. Whether you're commuting in the city or exploring off-road trails, we have the perfect gear for your journey.
+            </p>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <div class="system-card h-100 p-4">
+                        <h4 class="h5 fw-bold mb-2">Reliable</h4>
+                        <p class="small text-muted mb-0">Every vehicle is strictly verified for safety and quality standards.</p>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="system-card h-100 p-4">
+                        <h4 class="h5 fw-bold mb-2">Accessible</h4>
+                        <p class="small text-muted mb-0">Affordable pricing with a smooth, 100% digital booking experience.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="system-card p-0 overflow-hidden" style="border-radius: 20px; box-shadow: var(--shadow-sm);">
+                <img src="{% static 'assets/image/media__1774695690999.png' %}" alt="RideSathi Fleet" class="w-100 h-100 object-fit-cover" style="min-height: 400px;">
+            </div>
+        </div>
     </div>
-
-    <div class="feature-box">
-        <h3>Why Choose RideSathi</h3>
-        <p>Reliable bikes, fair pricing, and a smooth booking experience.</p>
-    </div>
-
-    <div class="feature-box">
-        <h3>Our Services</h3>
-        <p>Scooters, electric bikes, standard bikes, and off-road motorcycles.</p>
-    </div>
-</section>
+</div>
 
 {% endblock %}
