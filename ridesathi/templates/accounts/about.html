@@ -4,19 +4,11 @@
 
 {% block content %}
 
-<!-- HERO SECTION FOR ABOUT -->
-<section class="hero-section" 
-    style="background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% static 'assets/image/mountain_hero.png' %}');">
-    <div class="hero-content text-center">
-        <h1 class="hero-title text-white">About <span class="text-red">Ride</span>Sathi</h1>
-        <p class="hero-desc text-white">Your trusted partner for bike rentals and mountain adventures.</p>
-    </div>
-</section>
-
-<div class="container py-5">
+<div class="container py-5" style="margin-top: 60px;">
     <div class="row align-items-center g-5 py-5">
         <div class="col-lg-6">
-            <h2 class="fw-black mb-4">Welcome to RideSathi</h2>
+            <h1 class="display-3 fw-black text-uppercase mb-4">Welcome to <span class="text-red">Ride</span>Sathi</h1>
+            <p class="lead fw-bold text-dark mb-4">Your ultimate partner for premium bike rentals in Kathmandu.</p>
             <p class="text-muted leading-relaxed mb-4">
                 RideSathi is a smart bike rental management system designed to connect riders with high-quality mobility. 
                 Whether you need a quick scooter for city errands or a rugged off-road machine for mountain trails, 
@@ -29,7 +21,7 @@
         </div>
         <div class="col-lg-6">
             <div class="rounded-4 overflow-hidden shadow-lg border">
-                <img src="{% static 'assets/image/mountain_hero2.png' %}" alt="Mountain Bike" class="w-100 h-100 object-fit-cover" style="min-height: 400px;">
+                <img src="{% static 'assets/image/welcome_bike.jpg' %}" alt="RideSathi Premium" class="w-100 h-100 object-fit-cover" style="min-height: 500px;">
             </div>
         </div>
     </div>
