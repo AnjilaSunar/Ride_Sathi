@@ -1,0 +1,90 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Verify Documents | RideSathi{% endblock %}
+
+{% block content %}
+<style>
+    .fw-black { font-weight: 900; }
+    .dash-tab {
+        text-decoration: none;
+        color: #666;
+        font-weight: 700;
+        font-size: 17px;
+        padding-bottom: 12px;
+        position: relative;
+        transition: all 0.3s;
+    }
+    .dash-tab:hover { color: #c4161c; }
+    .dash-tab.active { color: #c4161c; }
+    .dash-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #c4161c;
+    }
+</style>
+
+<div style="background-color: #f8f9fa; min-height: 100vh; padding-top: 60px; padding-bottom: 80px;">
+    <div class="container text-start">
+        
+        <!-- Navigation Tabs -->
+        <div class="d-flex border-bottom mb-5" style="gap: 40px;">
+            <a href="{% url 'profile' %}" class="dash-tab">My Profile</a>
+            <a href="{% url 'my_bookings' %}" class="dash-tab">My Bookings</a>
+            <a href="{% url 'upload_document' %}" class="dash-tab active">My Documents</a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-9">
+                <div class="card border-0 shadow-sm" style="border-radius: 4px;">
+                    <div class="card-body p-4 p-md-5">
+                        <div class="mb-5">
+                            <h4 class="fw-black mb-1" style="font-family: 'Outfit', sans-serif;">Identity Verification</h4>
+                            <p class="text-muted small">Upload your driving license and ID below.</p>
+                        </div>
+                        
+                        <form method="POST" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            
+                            <div class="row g-4 mb-5">
+                                <!-- Driving License -->
+                                <div class="col-md-6 text-start">
+                                    <div class="p-4" style="background-color: #fff; border: 1.5px solid #eee; border-radius: 4px;">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h6 class="fw-bold m-0" style="font-size: 14px;">Driving License</h6>
+                                            {% if user.license_document %}
+                                                <a href="/media/{{ user.license_document }}" target="_blank" class="text-dark small fw-bold text-decoration-underline" style="font-size: 10px;">[ View Current ]</a>
+                                            {% endif %}
+                                        </div>
+                                        <input type="file" name="license_file" class="form-control form-control-sm shadow-none" accept=".jpg, .jpeg, .png, .pdf" style="border-radius: 4px;">
+                                    </div>
+                                </div>
+
+                                <!-- ID / Citizenship -->
+                                <div class="col-md-6 text-start">
+                                    <div class="p-4" style="background-color: #fff; border: 1.5px solid #eee; border-radius: 4px;">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            <h6 class="fw-bold m-0" style="font-size: 14px;">Citizenship / ID Card</h6>
+                                            {% if user.id_document %}
+                                                <a href="/media/{{ user.id_document }}" target="_blank" class="text-dark small fw-bold text-decoration-underline" style="font-size: 10px;">[ View Current ]</a>
+                                            {% endif %}
+                                        </div>
+                                        <input type="file" name="id_file" class="form-control form-control-sm shadow-none" accept=".jpg, .jpeg, .png, .pdf" style="border-radius: 4px;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn px-5 py-3 w-100 fw-bold" style="background-color: #c4161c; color: #fff; border-radius: 4px; border: none; font-size: 15px;">
+                                Update Documents
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

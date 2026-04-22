@@ -1,0 +1,308 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Home | RideSathi{% endblock %}
+
+{% block content %}
+
+<!-- Hero section -->
+<section class="hero-section d-flex align-items-center justify-content-center text-center"
+    style="min-height: 75vh; background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('{% static 'assets/image/bike8.jpg' %}'); background-size: cover; background-position: center top; background-repeat: no-repeat;">
+    <div class="container" style="position: relative; z-index: 10;">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <h1 class="fw-black text-white mb-2" style="line-height: 1.2; text-shadow: 0 5px 15px rgba(0,0,0,0.3); font-size: 3rem;">
+                    Ride Smart with <span class="text-red">RideSathi</span>
+                </h1>
+                <p class="text-white mb-4 mx-auto" style="max-width: 600px; font-weight: 500; opacity: 0.95; text-shadow: 0 2px 8px rgba(0,0,0,0.3); font-size: 1.1rem;">
+                    Easy, affordable and reliable bike rental system.
+                </p>
+                <div class="d-flex justify-content-center gap-3">
+                    <a href="{% url 'bikes' %}" class="btn-solid-red px-4 py-3 shadow-lg" style="font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Explore Bikes</a>
+                    <a href="{% url 'register' %}" class="btn btn-outline-white px-4 py-3 fw-bold shadow-lg" style="font-weight: 800; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;">Join Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Home page specific styles */
+    :root {
+        --coffee-cream: #faf7f2;
+        --rs-primary: #c4161c;
+        --rs-dark: #111111;
+    }
+
+    body {
+        background-color: #fff !important;
+    }
+
+    .custom-wide-container {
+        max-width: 1700px !important;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    /* Category Bar */
+    .category-bar {
+        background-color: #fafafa;
+        padding: 60px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .category-item {
+        text-align: center;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        text-decoration: none !important;
+        color: #333;
+        display: block;
+        padding: 20px;
+        border-radius: 20px;
+    }
+
+    .category-item:hover {
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        transform: translateY(-8px);
+    }
+    
+    .category-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 2rem;
+        color: var(--rs-primary);
+        transition: 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+    }
+
+    .category-item:hover .category-icon-wrapper {
+        background: var(--rs-primary);
+        color: #fff;
+        border-color: var(--rs-primary);
+    }
+
+    .category-label {
+        font-weight: 800;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #111;
+    }
+
+    /* Massive Card Style Ported from bikes.html (User's Favorite) */
+    .massive-ride-card {
+        background: #ffffff !important;
+        border: 1px solid #eeeeee !important;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+        text-align: left;
+    }
+
+    .massive-ride-card:hover {
+        transform: translateY(-10px) !important;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12) !important;
+        border-color: #ddd !important;
+    }
+
+    .massive-img-box {
+        background: #ffffff !important;
+        height: 240px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #f8f8f8;
+        padding: 35px !important;
+        position: relative;
+    }
+
+    .massive-content {
+        padding: 30px 40px !important;
+    }
+
+    .massive-title {
+        font-size: 24px !important;
+        font-weight: 800;
+        color: #111111 !important;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+    }
+
+    .massive-price {
+        font-size: 22px !important;
+        color: var(--rs-primary) !important;
+        font-weight: 800;
+        margin-bottom: 25px;
+    }
+
+    .massive-description {
+        font-size: 14px;
+        line-height: 1.7;
+        color: #555555 !important;
+        margin-bottom: 30px;
+    }
+
+    .massive-badge {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        padding: 8px 18px;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 800;
+        background: #fff;
+        color: #111;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        text-transform: uppercase;
+        z-index: 10;
+        letter-spacing: 0.5px;
+    }
+
+    .btn-massive {
+        padding: 15px 20px;
+        border-radius: 12px;
+        font-weight: 800;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        text-align: center;
+    }
+
+    .badge-available-light { background: #e6fffa !important; color: #319795 !important; }
+    .badge-booked-light { background: #fff5f5 !important; color: #c53030 !important; }
+
+    /* Highlight Banner */
+    .lifestyle-banner {
+        background-color: var(--coffee-cream);
+        padding: 80px 0;
+        margin: 60px 0;
+    }
+
+    /* Testimonials */
+    .testimonial-card {
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: left;
+    }
+
+    .user-img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin-right: 15px;
+    }
+
+    .stars {
+        color: #ffc107;
+        font-size: 0.9rem;
+    }
+
+    /* Newsletter Bar */
+    .newsletter-section {
+        background: url('{% static "assets/image/bike8.jpg" %}') center center / cover;
+        position: relative;
+        padding: 100px 0;
+        color: #fff;
+        text-align: center;
+    }
+
+    .newsletter-section::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        z-index: 1;
+    }
+
+    .newsletter-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .newsletter-input {
+        background: rgba(255,255,255,0.9);
+        border: none;
+        padding: 15px 25px;
+        border-radius: 50px 0 0 50px;
+        width: 300px;
+        max-width: 100%;
+    }
+
+    .newsletter-btn {
+        background: #222;
+        color: #fff;
+        border: none;
+        padding: 15px 35px;
+        border-radius: 0 50px 50px 0;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+</style>
+
+<!-- Featured bikes collection -->
+<section class="py-5" style="background: #f5f5f5; min-height: 80vh;">
+    <div class="custom-wide-container py-5">
+        <div class="text-center mb-5">
+            <span class="text-red fw-bold text-uppercase small" style="letter-spacing: 2px;">Fresh Arrivals</span>
+            <h2 class="fw-black mt-2" style="font-size: 2.2rem; letter-spacing: -1px;">Newly Added Bikes</h2>
+        </div>
+
+        <div class="row g-5">
+            {% if featured_bikes %}
+                {% for bike in featured_bikes %}
+                <div class="col-lg-4 col-md-6">
+                    <div class="massive-ride-card">
+                        <div class="massive-img-box">
+                            <img src="{% if bike.image %}/media/{{ bike.image }}{% else %}https://placehold.co/600x400/fdfdfd/333?text={{ bike.model|urlencode }}{% endif %}" 
+                                style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="{{ bike.model }}">
+                            <span class="massive-badge {% if bike.status == 'available' %}badge-available-light{% else %}badge-booked-light{% endif %}"
+                                style="top: 20px; right: 20px;">
+                                {% if bike.status == 'available' %}Available{% else %}Booked{% endif %}
+                            </span>
+                        </div>
+
+                        <div class="massive-content">
+                            <div class="massive-title">{{ bike.model }}</div>
+                            <div class="massive-price">Rs. {{ bike.price_per_day|floatformat:0 }} <small style="color: #666; font-weight: normal; font-size: 14px;">/ day</small></div>
+
+                            <p class="massive-description">
+                                {{ bike.description|default:"A premium vehicle maintained to the highest standards. Perfect for exploring Pokhara with comfort and style." }}
+                            </p>
+
+                            <div class="d-flex gap-3">
+                                <a href="{% url 'bike_detail' bike.id %}" class="btn-massive btn btn-outline-dark flex-grow-1" style="border-color: #ddd;">View Details</a>
+                                {% if bike.status == 'available' %}
+                                <a href="{% if request.session.user_id %}{% url 'book_bike' bike.id %}{% else %}{% url 'login' %}{% endif %}" 
+                                   class="btn-massive btn-solid-red flex-grow-1">Rent Now</a>
+                                {% else %}
+                                <button class="btn-massive btn btn-light flex-grow-1 text-muted" disabled style="background: #f1f1f1; border: 1px solid #eee;">Currently Booked</button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center py-5">
+                    <p class="text-muted fs-5">Our collection is refreshing. Check back soon!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

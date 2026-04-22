@@ -1,0 +1,57 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Sign In | RideSathi{% endblock %}
+
+{% block content %}
+<div class="auth-page-variant">
+    <div class="auth-elite-card">
+        <!-- Left Side: Image Content -->
+        <div class="auth-card-side-img"
+            style="background: url('{% static 'assets/image/register3.png' %}') center center / cover no-repeat; align-items: flex-start; padding-top: 80px; border-right: none;">
+            <!-- Centered Message (Higher Position) -->
+            <div class="text-center px-5" style="z-index: 5;">
+                <h2 class="fw-black text-white mb-3"
+                    style="font-size: 2.8rem; line-height: 1.1; text-shadow: 0 4px 15px rgba(0,0,0,0.5);">Ready for the
+                    Road?</h2>
+                <p class="text-white-50 fw-bold mb-0"
+                    style="font-size: 16px; line-height: 1.6; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">Welcome back to
+                    RideSathi. High-performance mobility and 24/7 roadside support are just a sign-in away.</p>
+            </div>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="auth-card-side-form">
+            <div class="auth-form-header mb-5">
+                <h2 class="h2 fw-black mb-1">Welcome Back</h2>
+                <p class="text-muted">Sign in to access your account.</p>
+            </div>
+
+            <form method="POST" novalidate>
+                {% csrf_token %}
+
+                <div class="mb-4">
+                    <label class="form-label text-uppercase text-muted small fw-black">Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="Enter your email address"
+                        required autofocus>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="form-label text-uppercase text-muted small fw-black mb-0">Password</label>
+                        <a href="#" class="small text-red text-decoration-none fw-bold">Forgot?</a>
+                    </div>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+
+
+                <button type="submit" class="btn-solid-red w-100 py-3 mb-4 rounded-pill shadow-sm">Log In</button>
+
+                <div class="text-center small fw-bold text-muted">
+                    Not a member? <a href="{% url 'register' %}"
+                        class="text-red text-decoration-none border-bottom border-danger">Register here</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

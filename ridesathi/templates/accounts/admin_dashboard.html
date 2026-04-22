@@ -1,0 +1,1413 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | RideSathi</title>
+
+{# Load Google Fonts — same as the rest of the site (style.css) #}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+/* Main styles and root variables */
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --red:#c4161c;         /* RideSathi brand red */
+  --red-d:#a01015;       /* Darker red for hover */
+  --red-p:#fff5f5;       /* Light red background */
+  --red-m:#fee2e2;       /* Medium red background */
+  --ink:#121212;         /* Main text color */
+  --ink2:#1c2030;        /* Sidebar dark background */
+  --ink3:#374151;        /* Table text color */
+  --muted:#64748b;       /* Secondary/helper text */
+  --muted2:#94a3b8;      /* Very faint text */
+  --line:#e2e8f0;        /* Border color */
+  --line2:#f8f9fa;       /* Light background */
+  --bg:#f8f9fa;          /* Page background */
+  --surface:#ffffff;     /* Card background */
+  --amber:#b45309;       /* Warning/pending color */
+  --amber-p:#fffbeb;     /* Warning background */
+  --slate:#475569;       /* Subtle dark color */
+  --slate-p:#f1f5f9;     /* Slate background */
+  --charcoal:#2d3748;    /* Avatar backgrounds */
+  --sw:240px;            /* Sidebar width */
+  --hh:62px;             /* Topbar height */
+}
+
+/* General body styling */
+body{
+  font-family:'Inter',sans-serif;   /* Same font as other pages */
+  background:var(--bg);
+  color:var(--ink);
+  display:flex;
+  min-height:100vh;
+  font-size:15px;
+  -webkit-font-smoothing:antialiased;
+}
+/* All headings use Outfit — same as style.css rule */
+h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;color:var(--ink)}
+
+/* Sidebar area */
+.sidebar{
+  width:var(--sw);background:var(--ink2);
+  position:fixed;top:0;left:0;height:100vh;
+  display:flex;flex-direction:column;z-index:200;overflow-y:auto;
+}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+.sb-brand{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,.07)}
+.sb-logo{font-family:'Outfit',sans-serif;font-size:22px;font-weight:900;letter-spacing:-0.5px;line-height:1}
+.sb-logo .r{color:var(--red)}.sb-logo .w{color:#fff}
+.sb-role{margin-top:5px;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.28)}
+.sb-nav{padding:12px 8px;flex:1}
+.sb-item{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px;border-radius:7px;
+  font-family:'Inter',sans-serif;font-size:13.5px;font-weight:500;
+  color:rgba(255,255,255,.5);
+  text-decoration:none;transition:all .15s;margin-bottom:2px;cursor:pointer;
+}
+.sb-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.9)}
+.sb-item.active{background:var(--red);color:#fff;font-weight:600}
+.sb-badge{background:rgba(255,255,255,.15);color:#fff;font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
+.sb-item.active .sb-badge{background:rgba(255,255,255,.3)}
+.sb-divider{height:1px;background:rgba(255,255,255,.06);margin:8px 12px}
+.sb-footer{padding:8px;border-top:1px solid rgba(255,255,255,.07)}
+
+/* ── Main Content Area ───────────────────────────────────── */
+.main-wrap{margin-left:var(--sw);flex:1;display:flex;flex-direction:column;min-height:100vh}
+
+/* Top navigation bar */
+.topbar{
+  height:var(--hh);background:var(--surface);
+  border-bottom:1.5px solid var(--line);
+  display:flex;align-items:center;padding:0 26px;
+  position:sticky;top:0;z-index:100;gap:12px;
+}
+.topbar-title{font-family:'Outfit',sans-serif;font-size:17px;font-weight:800;color:var(--ink);flex:1;letter-spacing:-0.3px}
+.prof-chip{display:flex;align-items:center;gap:8px;background:var(--line2);border:1.5px solid var(--line);border-radius:50px;padding:4px 14px 4px 4px}
+.prof-av{width:28px;height:28px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;font-family:'Outfit',sans-serif}
+.prof-name{font-size:13px;font-weight:600;color:var(--ink)}
+.topbar-link{font-size:13px;font-weight:600;color:var(--muted);text-decoration:none;padding:6px 14px;border:1.5px solid var(--line);border-radius:7px;background:var(--line2);transition:all .15s;white-space:nowrap}
+.topbar-link:hover{color:var(--red);border-color:var(--red)}
+
+/* Content section switching logic */
+.content-area{flex:1}
+.section{display:none;padding:26px;animation:fadeUp .2s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.phd{margin-bottom:20px;display:flex;align-items:center;justify-content:space-between}
+.phd-sub{font-size:13.5px;color:var(--muted)}
+
+/* Dashboard stats cards */
+.kpi-row{display:grid;gap:12px;margin-bottom:18px}
+.k6{grid-template-columns:repeat(6,1fr)}
+.k3{grid-template-columns:repeat(3,1fr)}
+.kpi{background:var(--surface);border-radius:8px;border:1px solid var(--line);padding:18px 20px;transition:box-shadow .2s,transform .2s}
+.kpi:hover{box-shadow:0 4px 16px rgba(0,0,0,.05);transform:translateY(-2px)}
+.kpi-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px}
+.kpi-val{font-size:26px;font-weight:800;color:var(--ink);font-family:'Outfit',sans-serif;line-height:1}
+.kpi-sub{font-size:12px;color:var(--muted2);margin-top:5px}
+
+/* Main content cards */
+.card{background:var(--surface);border-radius:8px;border:1px solid var(--line);overflow:hidden;margin-bottom:14px}
+.card-hd{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+.card-hd h5{font-family:'Outfit',sans-serif;font-size:14.5px;font-weight:800;color:var(--ink);margin:0}
+.card-bd{padding:20px}
+.chart-row{display:grid;grid-template-columns:1.4fr 1fr;gap:12px;margin-bottom:14px}
+
+/* Data tables formatting */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--line2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);padding:10px 16px;border-bottom:1.5px solid var(--line);white-space:nowrap}
+tbody td{padding:11px 16px;border-bottom:1px solid var(--line2);vertical-align:middle;color:var(--ink3);font-size:14px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--bg)}
+
+/* Status and role badges */
+.badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.b-pending{background:var(--amber-p);color:var(--amber)}
+.b-confirmed{background:#dcfce7;color:#15803d}
+.b-cancelled{background:var(--red-m);color:var(--red)}
+.b-available{background:#dcfce7;color:#15803d}
+.b-booked{background:var(--slate-p);color:var(--slate)}
+.b-customer{background:var(--slate-p);color:var(--slate)}
+.b-admin{background:var(--red-p);color:var(--red)}
+
+/* Action buttons styling */
+.act-btns{display:flex;gap:5px}
+/* Green confirm button */
+.bc{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .14s}
+.bc:hover{background:#15803d;color:#fff}
+/* Red cancel button */
+.bx{background:var(--red-p);color:var(--red);border:1px solid var(--red-m);padding:4px 10px;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .14s}
+.bx:hover{background:var(--red);color:#fff}
+/* Primary solid red button */
+.btn-primary{background:var(--red);color:#fff;border:none;padding:8px 18px;border-radius:8px;font-size:13.5px;font-weight:700;cursor:pointer;text-decoration:none;transition:all .15s;font-family:'Inter',sans-serif}
+.btn-primary:hover{background:var(--red-d);color:#fff}
+/* Ghost/outline button */
+.btn-ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line);padding:7px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;text-decoration:none;transition:all .14s;font-family:'Inter',sans-serif}
+.btn-ghost:hover{background:var(--line2);color:var(--ink)}
+.lnk{color:var(--red);font-weight:600;font-size:13px;text-decoration:none;cursor:pointer}
+.lnk:hover{text-decoration:underline}
+
+/* Page layout centering */
+.dash-container{
+  max-width:1240px;
+  margin:0 auto;
+  width:100%;
+}
+
+@media (max-width:1200px){
+  .dash-container{padding:0 20px}
+}
+
+/* Small utility classes */
+.bike-img{width:52px;height:38px;object-fit:cover;border-radius:7px;border:1px solid var(--line)}
+.bike-ph{width:52px;height:38px;border-radius:7px;border:1px solid var(--line);background:var(--line2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--muted2)}
+/* Small circular avatar with user's first letter */
+.uav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;font-family:'Outfit',sans-serif}
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.cat-pill{background:var(--line2);border:1.5px solid var(--line);border-radius:10px;padding:18px;transition:all .15s}
+.cat-pill:hover{border-color:var(--red);background:var(--red-p)}
+.cat-n{font-family:'Outfit',sans-serif;font-size:14px;font-weight:800;color:var(--ink)}
+.cat-s{font-size:12px;color:var(--muted);margin-top:3px}
+/* Pending item row in the sidebar pending panel */
+.pi-item{display:flex;align-items:center;padding:11px 18px;border-bottom:1px solid var(--line2);gap:12px}
+.pi-item:last-child{border-bottom:none}
+.pi-item:hover{background:var(--bg)}
+.empty{text-align:center;padding:44px 20px}
+.empty p{font-size:14px;color:var(--muted)}
+
+/* Toast message alerts */
+.toast-stack{position:fixed;top:70px;right:18px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast-msg{padding:11px 18px;border-radius:10px;font-size:14px;font-weight:600;box-shadow:0 4px 14px rgba(0,0,0,.1);animation:slideIn .25s ease;border-left:4px solid}
+.toast-msg.success{background:#f0fdf4;color:#166534;border-color:#16a34a}
+.toast-msg.error{background:#fff5f5;color:#991b1b;border-color:#c4161c}
+@keyframes slideIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:translateX(0)}}
+
+/* Add bike dialog modal */
+.modal-content{border-radius:14px;border:none;box-shadow:0 20px 50px rgba(0,0,0,.12)}
+.modal-header{border-bottom:1px solid var(--line);padding:17px 22px}
+.modal-body{padding:22px}
+.modal-footer{border-top:1px solid var(--line);padding:13px 22px}
+.modal-title{font-family:'Outfit',sans-serif;font-size:16px;font-weight:800}
+.form-control:focus,.form-select:focus{border-color:var(--red);box-shadow:0 0 0 3px rgba(196,22,28,.07);outline:none}
+
+/* Pagination styles */
+.pg-wrap{display:flex;align-items:center;justify-content:center;gap:6px;padding:16px 20px;background:var(--surface);border-top:1px solid var(--line)}
+.pg-btn{display:flex;align-items:center;justify-content:center;min-width:32px;height:32px;padding:0 8px;border-radius:6px;border:1.5px solid var(--line);background:var(--surface);color:var(--muted);font-size:12.5px;font-weight:600;text-decoration:none;transition:all .15s}
+.pg-btn:hover{border-color:var(--red);color:var(--red);background:var(--red-p)}
+.pg-btn.active{background:var(--red);border-color:var(--red);color:#fff}
+.pg-btn.disabled{opacity:.4;pointer-events:none;background:var(--line2)}
+.pg-inf{font-size:12.5px;color:var(--muted);margin:0 10px;font-weight:500}
+
+/* Mobile Responsiveness for Admin Dashboard */
+@media (max-width: 992px) {
+  :root { --sw: 0px; }
+  .sidebar { 
+    left: -280px; 
+    width: 280px; 
+    transition: left 0.3s ease; 
+    box-shadow: 10px 0 30px rgba(0,0,0,0.1);
+  }
+  .sidebar.open { left: 0; }
+  .main-wrap { margin-left: 0; }
+  .topbar { padding: 0 15px; }
+  .kpi-row.k6, .kpi-row.k3 { grid-template-columns: repeat(2, 1fr); }
+  .chart-row { grid-template-columns: 1fr; }
+  .prof-name { display: none; }
+  .topbar-link { display: none; } /* Hide redundant links on mobile */
+  .dash-container { padding: 0 12px; }
+  .section { padding: 15px; }
+  .phd { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .cat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 576px) {
+  .kpi-row.k6, .kpi-row.k3 { grid-template-columns: 1fr; }
+  .cat-grid { grid-template-columns: 1fr; }
+  .topbar-title { font-size: 15px; }
+}
+
+/* Sidebar Toggle Overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 150;
+}
+.sidebar-overlay.active { display: block; }
+</style>
+</head>
+<body>
+<div class="sidebar-overlay" id="sbOverlay" onclick="toggleSidebar()"></div>
+
+{# ═══════════════════════════════ SIDEBAR ═══════════════════════════════ #}
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><span class="r">Ride</span><span class="w">Sathi</span></div>
+    <div class="sb-role">Admin Panel</div>
+  </div>
+
+  <div class="sb-nav">
+    {# Each link calls show() in JS to switch which section is visible #}
+    <a class="sb-item active" onclick="show('overview',this)">Dashboard</a>
+    <a class="sb-item" onclick="show('bookings',this)">
+      Bookings
+      {# Show the number of pending bookings next to "Bookings" if any #}
+      {% if pending_count > 0 %}
+        <span class="sb-badge">{{ pending_count }}</span>
+      {% endif %}
+    </a>
+    <a class="sb-item" onclick="show('bikes',this)">Bike Management</a>
+    <a class="sb-item" onclick="show('categories',this)">Categories</a>
+
+    <div class="sb-divider"></div>
+
+    <a class="sb-item" onclick="show('users',this)">Customers</a>
+    <a class="sb-item" onclick="show('documents',this)">Documents</a>
+
+    <div class="sb-divider"></div>
+
+    <a class="sb-item" onclick="show('payments',this)">Payments</a>
+    <a class="sb-item" onclick="show('invoices',this)">Invoices</a>
+    <a class="sb-item" onclick="show('reports',this)">Reports &amp; Analytics</a>
+  </div>
+
+  <div class="sb-footer">
+    <a class="sb-item" href="{% url 'home' %}">View Site</a>
+    <a class="sb-item" href="{% url 'logout' %}">Logout</a>
+  </div>
+</aside>
+
+
+{# ═══════════════════════════════ MAIN AREA ═══════════════════════════════ #}
+<div class="main-wrap">
+
+  {# ── Top Bar ── #}
+  <div class="topbar">
+    {# Hamburger for mobile #}
+    <button class="btn d-lg-none border-0 p-0 me-3" onclick="toggleSidebar()">
+      <i class="bi bi-list fs-2"></i>
+    </button>
+    {# This title changes dynamically when you switch sections (see JS below) #}
+    <div class="topbar-title" id="ttitle">Dashboard Overview</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <a class="topbar-link" href="{% url 'home' %}">View Site</a>
+      {# Show logged-in admin's first letter and username #}
+      <div class="prof-chip">
+        <div class="prof-av">{{ request.session.user_name|first|upper }}</div>
+        <div class="prof-name">{{ request.session.user_name }}</div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Flash Messages (success/error toasts) ── #}
+  {% if messages %}
+  <div class="toast-stack">
+    {% for message in messages %}
+      <div class="toast-msg {{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <div class="content-area">
+    <div class="dash-container">
+
+  {# ═══════════════════════ SECTION: OVERVIEW ═══════════════════════ #}
+  <div class="section active" id="section-overview">
+
+    <div class="phd">
+      <p class="phd-sub">Welcome back, <strong>{{ request.session.user_name }}</strong>. Here's your system snapshot.</p>
+    </div>
+
+    {# ── 6 KPI Summary Cards ── #}
+    {# Each card shows one number from the database (passed from views.py) #}
+    <div class="kpi-row k6">
+
+      <div class="kpi">
+        <div class="kpi-lbl">Total Bikes</div>
+        <div class="kpi-val">{{ total_bikes_count }}</div>
+        <div class="kpi-sub">Total inventory</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-lbl">Available</div>
+        <div class="kpi-val">{{ available_bikes_count }}</div>
+        <div class="kpi-sub">Ready to book</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-lbl">Rented Out</div>
+        <div class="kpi-val">{{ rented_bikes_count }}</div>
+        <div class="kpi-sub">On current trips</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-lbl">Waiting Approval</div>
+        <div class="kpi-val" style="color:var(--amber)">{{ pending_count }}</div>
+        <div class="kpi-sub">Needs attention</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-lbl">All Bookings</div>
+        <div class="kpi-val">{{ total_bookings_count }}</div>
+        <div class="kpi-sub">Full history</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-lbl">Total Earnings</div>
+        <div class="kpi-val" style="color:var(--red)">{{ total_revenue|floatformat:0 }}</div>
+        <div class="kpi-sub">NPR confirmed</div>
+      </div>
+
+    </div>
+
+    {# ── Charts (Chart.js — data comes from views.py as JSON) ── #}
+    <div class="chart-row">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd"><h5>Bookings by Category</h5></div>
+        <div class="card-bd" style="position:relative">
+            <canvas id="catChart" height="170"></canvas>
+            {# Show this message if no bookings exist in the database #}
+            {% if not bookings %}
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-weight:600;font-size:13px">No data for this week</div>
+            {% endif %}
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd"><h5>Booking Status</h5></div>
+        <div class="card-bd" style="position:relative">
+            <canvas id="stChart" height="170"></canvas>
+            {% if not bookings %}
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-weight:600;font-size:13px">Waiting for data</div>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+
+    {# ── Bike Inventory Category Info Pills ── #}
+    <div class="card">
+      <div class="card-hd"><h5>Bike Management by Category</h5></div>
+      <div class="card-bd">
+        <div class="cat-grid">
+          <div class="cat-pill"><div class="cat-n">Scooter</div><div class="cat-s">Honda Dio, TVS Ntorq, Suzuki Access</div></div>
+          <div class="cat-pill"><div class="cat-n">Electric</div><div class="cat-s">Yatri, NIU, Segway, Ather</div></div>
+          <div class="cat-pill"><div class="cat-n">Standard</div><div class="cat-s">Pulsar, Yamaha MT, Royal Enfield</div></div>
+          <div class="cat-pill"><div class="cat-n">Dirt / Off-road</div><div class="cat-s">Honda XR, CRF, Hero Xpulse</div></div>
+        </div>
+      </div>
+    </div>
+
+    {# ── Two side-by-side panels: Recent Bookings + Pending Approvals ── #}
+    <div style="display:grid;grid-template-columns:1.6fr 1fr;gap:14px">
+
+      {# Recent Bookings table (shows latest 7) #}
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd">
+          <h5>Recent Bookings</h5>
+          <a class="lnk" onclick="show('bookings',document.querySelectorAll('.sb-item')[1])">View all →</a>
+        </div>
+        <div class="tw">
+          <table>
+            <thead>
+              <tr><th>#</th><th>Customer Name</th><th>Bike</th><th>Cost</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              {# Loop through bookings, show only the first 7 #}
+              {% for b in bookings|slice:":7" %}
+              <tr>
+                <td style="color:var(--muted);font-size:13px">#{{ b.id }}</td>
+                <td><strong>{{ b.full_name }}</strong></td>
+                <td style="font-size:13px">{{ b.model }}</td>
+                <td style="font-size:13px">{{ b.total_cost|floatformat:0 }}</td>
+                <td><span class="badge b-{{ b.status }}">{{ b.status|capfirst }}</span></td>
+                <td>
+                </td>
+              </tr>
+              {# If no bookings exist at all #}
+              {% empty %}
+              <tr><td colspan="5"><div class="empty"><p>No bookings yet.</p></div></td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {# Pending Approvals panel (quick actions) #}
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd">
+          <h5>Pending Approvals</h5>
+          <span class="badge b-pending">{{ pending_count }}</span>
+        </div>
+
+        {# If no pending bookings, show a "caught up" message #}
+        {% if pending_count == 0 %}
+          <div class="empty"><p>All caught up!</p></div>
+        {% else %}
+          {# Loop all bookings, only show the ones with 'pending' status #}
+          {% for b in bookings %}
+            {% if b.status == 'pending' %}
+            <div class="pi-item">
+              {# Small avatar circle with first letter of customer name #}
+              <div class="uav" style="background:var(--amber)">{{ b.full_name|first|upper }}</div>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.full_name }}</div>
+                <div style="font-size:12px;color:var(--muted)">{{ b.model }} · {{ b.start_date }}</div>
+              </div>
+              {# Confirm / Cancel action buttons — link to confirm_booking view #}
+              <div style="display:flex;gap:5px">
+                <a href="{% url 'confirm_booking' b.id 'confirm' %}" class="bc">Confirm</a>
+                <a href="{% url 'confirm_booking' b.id 'cancel' %}" class="bx">Cancel</a>
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      </div>
+
+    </div>
+  </div><!-- /overview -->
+
+
+  {# ═══════════════════════ SECTION: BOOKINGS ═══════════════════════ #}
+  <div class="section" id="section-bookings">
+    <div class="phd"><p class="phd-sub">Confirm or cancel customer rental bookings.</p></div>
+
+    <div class="card">
+      <div class="card-hd" style="flex-wrap:wrap;gap:10px">
+        <h5>All Bookings ({{ bookings|length }})</h5>
+        {# Filter controls — search box + status dropdown #}
+        <div style="display:flex;gap:8px;margin-left:auto;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;background:var(--line2);border:1.5px solid var(--line);border-radius:7px;padding:6px 12px">
+            {# ft() is defined in JS below — filters table rows by text #}
+            <input id="bSearch" placeholder="Search..." onkeyup="ft('bkTbl','bSearch')" style="border:none;background:transparent;font-size:13px;outline:none;font-family:'Inter',sans-serif;width:130px">
+          </div>
+          {# fs() filters the table by booking status #}
+          <select onchange="fs(this.value)" style="border:1.5px solid var(--line);border-radius:7px;padding:6px 12px;font-size:13px;font-family:'Inter',sans-serif;background:#fff;color:var(--ink);outline:none;cursor:pointer">
+            <option value="">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="tw">
+        <table id="bkTbl">
+          <thead>
+            <tr>
+              <th>#</th><th>Customer Name</th><th>Bike</th><th>Dates/Days</th>
+              <th>Cost (NPR)</th><th>Status</th><th>Identity Docs</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {# Loop over every booking from the database #}
+            {% for b in bookings %}
+            {# data-status is used by the JS filter function fs() #}
+            <tr data-status="{{ b.status }}">
+              <td style="color:var(--muted);font-size:13px">#{{ b.id }}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div class="uav" style="background:var(--charcoal)">{{ b.full_name|first|upper }}</div>
+                  <strong>{{ b.full_name }}</strong>
+                </div>
+              </td>
+              <td><strong>{{ b.model }}</strong></td>
+              <td>
+                <div style="font-size:13px">{{ b.start_date }} to {{ b.end_date }}</div>
+                <div style="font-size:11px;color:var(--muted)">{{ b.total_days }} days</div>
+              </td>
+              <td style="font-weight:700">Rs. {{ b.total_cost|floatformat:0 }}</td>
+              <td><span class="badge b-{{ b.status }}">{{ b.status|capfirst }}</span></td>
+              <td>
+                <div style="display:flex;flex-direction:column;gap:3px">
+                  {% if b.id_document %}
+                    <a href="/media/{{ b.id_document }}" target="_blank" class="lnk" style="font-size:11px">View ID Card</a>
+                  {% endif %}
+                  {% if b.license_document %}
+                    <a href="/media/{{ b.license_document }}" target="_blank" class="lnk" style="font-size:11px">View License</a>
+                  {% endif %}
+                  {% if not b.id_document and not b.license_document %}
+                    <span style="font-size:11px;color:var(--muted2)">No Docs</span>
+                  {% endif %}
+                </div>
+              </td>
+              <td>
+                {# Only show action buttons if booking is 'pending' or 'confirmed' #}
+                {% if b.status == 'pending' %}
+                  <div class="act-btns">
+                    <a href="{% url 'confirm_booking' b.id 'confirm' %}" class="bc">Confirm</a>
+                    <a href="{% url 'confirm_booking' b.id 'cancel' %}" class="bx">Cancel</a>
+                  </div>
+                {% elif b.status == 'confirmed' %}
+                  <a href="{% url 'confirm_booking' b.id 'cancel' %}" class="bx">Cancel</a>
+                {% else %}
+                  <span style="font-size:12px;color:var(--muted2)">—</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="11"><div class="empty"><p>No bookings found.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /bookings -->
+
+
+  {# ═══════════════════════ SECTION: BIKE MANAGEMENT ═══════════════════════ #}
+  <div class="section" id="section-bikes">
+    <div class="phd">
+      <p class="phd-sub">Manage your rental bikes and availability.</p>
+      {# Opens the Add Bike modal (Bootstrap 5 modal trigger) #}
+      <button class="btn-primary" data-bs-toggle="modal" data-bs-target="#addBikeModal">Add Bike</button>
+    </div>
+
+    {# 3 bike summary KPIs #}
+    <div class="kpi-row k3">
+      <div class="kpi">
+        <div class="kpi-lbl">Total Bikes</div>
+        <div class="kpi-val">{{ total_bikes_count }}</div>
+        <div class="kpi-sub">Total inventory</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Available</div>
+        <div class="kpi-val" style="color:var(--red)">{{ available_bikes_count }}</div>
+        <div class="kpi-sub">Ready to book</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Rented Out</div>
+        <div class="kpi-val" style="color:var(--amber)">{{ rented_bikes_count }}</div>
+        <div class="kpi-sub">On trips</div>
+      </div>
+    </div>
+
+    {# Bikes table with search #}
+    <div class="card">
+      <div class="card-hd">
+        <h5>All Bikes ({{ bikes.paginator.count }})</h5>
+        <div style="display:flex;align-items:center;background:var(--line2);border:1.5px solid var(--line);border-radius:7px;padding:6px 12px">
+          <input id="bikeS" placeholder="Search bikes..." onkeyup="ft('bikeTbl','bikeS')" style="border:none;background:transparent;font-size:13px;outline:none;font-family:'Inter',sans-serif;width:130px">
+        </div>
+      </div>
+      <div class="tw">
+        <table id="bikeTbl">
+          <thead>
+            <tr><th>#</th><th>Image</th><th>Model</th><th>Category</th><th>Price/Day (NPR)</th><th>Status</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for bike in bikes %}
+            <tr>
+              <td style="color:var(--muted);font-size:13px">{{ bike.id }}</td>
+              <td>
+                {% if bike.image %}
+                  <img src="/media/{{ bike.image }}" class="bike-img" alt="{{ bike.model }}"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                  <div class="bike-ph" style="display:none">No Img</div>
+                {% else %}
+                  <div class="bike-ph">No Img</div>
+                {% endif %}
+              </td>
+              <td><strong>{{ bike.model }}</strong></td>
+              <td><span class="badge" style="background:var(--line2);color:var(--ink3)">{{ bike.category }}</span></td>
+              <td><strong>{{ bike.price_per_day|floatformat:0 }}</strong></td>
+              <td><span class="badge b-{{ bike.status }}">{{ bike.status|capfirst }}</span></td>
+              <td>
+                <div style="display:flex;gap:6px">
+                  {# Edit button — opens the edit modal for this bike #}
+                  <button class="btn-ghost" style="padding:4px 12px;font-size:12px"
+                    data-bs-toggle="modal" data-bs-target="#editBikeModal"
+                    onclick="openEditModal(
+                      {{ bike.id }},
+                      '{{ bike.model|escapejs }}',
+                      '{{ bike.category|escapejs }}',
+                      '{{ bike.price_per_day }}',
+                      '{{ bike.description|escapejs }}',
+                      '{{ bike.status }}'
+                    )">Edit</button>
+
+                  {# Delete button #}
+                  <a href="{% url 'delete_bike' bike.id %}"
+                     onclick="return confirm('Delete {{ bike.model }}? This cannot be undone.')"
+                     class="btn-ghost" style="padding:4px 12px;font-size:12px;color:#c0392b">Delete</a>
+                </div>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7"><div class="empty"><p>No bikes in inventory yet. Add one above.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% if bikes.paginator.num_pages > 1 %}
+      <div class="pg-wrap">
+        {% if bikes.has_previous %}
+          <a href="?tab=bikes&bike_page=1" class="pg-btn">« First</a>
+          <a href="?tab=bikes&bike_page={{ bikes.previous_page_number }}" class="pg-btn">Prev</a>
+        {% else %}
+          <span class="pg-btn disabled">Prev</span>
+        {% endif %}
+
+        <span class="pg-inf">Page <strong>{{ bikes.number }}</strong> of {{ bikes.paginator.num_pages }}</span>
+
+        {% if bikes.has_next %}
+          <a href="?tab=bikes&bike_page={{ bikes.next_page_number }}" class="pg-btn">Next</a>
+          <a href="?tab=bikes&bike_page={{ bikes.paginator.num_pages }}" class="pg-btn">Last »</a>
+        {% else %}
+          <span class="pg-btn disabled">Next</span>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div><!-- /bikes -->
+
+
+  {# ═══════════════════════ EDIT BIKE MODAL ═══════════════════════ #}
+  <div class="modal fade" id="editBikeModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <div class="modal-title">Edit Bike Details</div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <form id="editBikeForm" method="POST" action="" enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label">Model Name</label>
+                <input type="text" name="model" id="edit_model" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Category</label>
+                <select name="category" id="edit_category" class="form-select">
+                  {% for cat in categories %}
+                    <option value="{{ cat.name }}">{{ cat.name }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Price / Day (NPR)</label>
+                <input type="number" name="price_per_day" id="edit_price" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Status</label>
+                <select name="status" id="edit_status" class="form-select">
+                  <option value="available">Available</option>
+                  <option value="booked">Booked</option>
+                  <option value="maintenance">Maintenance</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Current Image</label>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:8px">Leave empty to keep existing image</div>
+                <input type="file" name="image" class="form-control" accept="image/*">
+              </div>
+              <div class="col-12">
+                <label class="form-label">Description</label>
+                <textarea name="description" id="edit_description" class="form-control" rows="4"></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openEditModal(id, model, category, price, description, status) {
+      // Clean up description if it is the string "None"
+      const cleanDesc = (description === 'None' || !description) ? '' : description;
+      
+      document.getElementById('edit_model').value = model;
+      document.getElementById('edit_category').value = category;
+      document.getElementById('edit_price').value = Math.round(price);
+      document.getElementById('edit_description').value = cleanDesc;
+      document.getElementById('edit_status').value = status;
+      document.getElementById('editBikeForm').action = '/edit-bike/' + id + '/';
+      
+      // Bootstrap 5 modal is handled by data-bs-toggle, no need to manually show here
+      // but we ensure the form action is set before it opens.
+    }
+  </script>
+
+
+
+  {# ═══════════════════════ SECTION: CUSTOMERS ═══════════════════════ #}
+  <div class="section" id="section-users">
+    <div class="phd"><p class="phd-sub">All registered customers on RideSathi.</p></div>
+
+    <div class="card">
+      <div class="card-hd">
+        <h5>Customers ({{ total_users_count }})</h5>
+        <div style="display:flex;align-items:center;background:var(--line2);border:1.5px solid var(--line);border-radius:7px;padding:6px 12px">
+          <input id="uSearch" placeholder="Search..." onkeyup="ft('uTbl','uSearch')" style="border:none;background:transparent;font-size:13px;outline:none;font-family:'Inter',sans-serif;width:130px">
+        </div>
+      </div>
+      <div class="tw">
+        <table id="uTbl">
+          <thead>
+            <tr><th>#ID</th><th>Customer Name</th><th>Email</th><th>Role</th><th>Joined</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            {# Loop every user from the database (excluding admins — filtered in views.py) #}
+            {% for user in users %}
+            <tr>
+              <td style="color:var(--muted);font-size:13px">#{{ user.id }}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div class="uav" style="background:var(--charcoal)">{{ user.full_name|first|upper }}</div>
+                  <strong>{{ user.full_name }}</strong>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:13px">{{ user.email }}</td>
+              {# Role badge — admin = red, customer = slate #}
+              <td>
+                <span class="badge {% if user.role == 'admin' %}b-admin{% else %}b-customer{% endif %}">
+                  {{ user.role|capfirst }}
+                </span>
+              </td>
+              <td style="font-size:13px;color:var(--muted)">
+                {# Show date only if created_at exists #}
+                {% if user.created_at %}{{ user.created_at|date:"M d, Y" }}{% else %}—{% endif %}
+              </td>
+              <td>
+                {# Delete button with confirmation — only for non-admin users #}
+                {% if user.role != 'admin' %}
+                <a href="{% url 'delete_user' user.id %}" 
+                   onclick="return confirm('WARNING: This will permanently delete this user and ALL their bookings, payments, and documents. Continue?')"
+                   class="btn-ghost" style="padding:4px 12px;font-size:12px;color:#c0392b">Delete</a>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6"><div class="empty"><p>No customers yet.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /users -->
+
+
+  {# ═══════════════════════ SECTION: DOCUMENTS ═══════════════════════ #}
+  <div class="section" id="section-documents">
+    <div class="phd"><p class="phd-sub">Review uploaded customer ID / license documents.</p></div>
+
+    <div class="card">
+      <div class="card-hd">
+        <h5>All Customer Documents</h5>
+        <p style="font-size:12px;color:var(--muted);margin:0">Documents uploaded by all registered users.</p>
+      </div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Customer Name</th><th>Email</th><th>ID Card</th><th>License</th></tr>
+          </thead>
+          <tbody>
+            {% for d in user_documents %}
+            <tr>
+              <td>
+                <div style="display:flex;align-items:center;gap:8px">
+                  <div class="uav" style="background:var(--charcoal)">{{ d.full_name|first|upper }}</div>
+                  <strong>{{ d.full_name }}</strong>
+                </div>
+              </td>
+              <td style="color:var(--muted);font-size:13px">{{ d.email }}</td>
+              <td>
+                {% if d.id_document %}
+                  <a href="/media/{{ d.id_document }}" target="_blank" class="lnk" style="font-size:12px">View ID</a>
+                {% else %}
+                  <span style="color:var(--muted);font-size:12px">Not Uploaded</span>
+                {% endif %}
+              </td>
+              <td>
+                {% if d.license_document %}
+                  <a href="/media/{{ d.license_document }}" target="_blank" class="lnk" style="font-size:12px">View License</a>
+                {% else %}
+                  <span style="color:var(--muted);font-size:12px">Not Uploaded</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4"><div class="empty"><p>No user documents archived yet.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:24px">
+      <div class="card-hd"><h5>Booking-Linked Documents</h5></div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>#Booking</th><th>Customer Name</th><th>Bike</th><th>Doc Type</th><th>View</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {# Loop bookings, only show rows where a document was uploaded #}
+            {% for b in bookings %}
+              {% if b.id_document %}
+              <tr>
+                <td style="color:var(--muted);font-size:13px">#{{ b.id }}</td>
+                <td><strong>{{ b.full_name }}</strong></td>
+                <td>{{ b.model }}</td>
+                <td>
+                  <a href="/media/{{ b.id_document }}" target="_blank" class="lnk" style="font-size:12px">View ID</a>
+                </td>
+                <td>
+                  <a href="/media/{{ b.license_document }}" target="_blank" class="lnk" style="font-size:12px">View License</a>
+                </td>
+                <td><span class="badge b-{{ b.status }}">{{ b.status|capfirst }}</span></td>
+              </tr>
+              {% endif %}
+            {% endfor %}
+            {# If no bookings exist with documents #}
+            {% if not bookings %}
+            <tr><td colspan="6"><div class="empty"><p>No documents uploaded yet.</p></div></td></tr>
+            {% endif %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /documents -->
+
+
+  {# ═══════════════════════ SECTION: PAYMENTS ═══════════════════════ #}
+  <div class="section" id="section-payments">
+    <div class="phd"><p class="phd-sub">Payment records for all bookings.</p></div>
+
+    <div class="kpi-row k3">
+      <div class="kpi">
+        <div class="kpi-lbl">Total Revenue</div>
+        <div class="kpi-val" style="color:var(--red)">{{ total_revenue|floatformat:0 }}</div>
+        <div class="kpi-sub">NPR earned</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Paid Bookings</div>
+        <div class="kpi-val">{{ completed_payments_count }}</div>
+        <div class="kpi-sub">Confirmed</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Pending</div>
+        <div class="kpi-val" style="color:var(--amber)">{{ pending_count }}</div>
+        <div class="kpi-sub">Awaiting payment</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><h5>Payment Records</h5></div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>#Booking</th><th>Customer Name</th><th>Bike</th><th>Amount (NPR)</th><th>Payment</th><th>Status</th></tr>
+          </thead>
+          <tbody>
+            {% for b in bookings %}
+            <tr>
+              <td style="color:var(--muted);font-size:13px">#{{ b.id }}</td>
+              <td><strong>{{ b.full_name }}</strong></td>
+              <td>{{ b.model }}</td>
+              <td><strong>{{ b.total_cost|floatformat:0 }}</strong></td>
+              <td>
+                {# Map booking status to a payment label #}
+                {% if b.status == 'confirmed' %}
+                  <span class="badge b-confirmed">Paid</span>
+                {% elif b.status == 'cancelled' %}
+                  <span class="badge b-cancelled">Cancelled</span>
+                {% else %}
+                  <span class="badge b-pending">Pending</span>
+                {% endif %}
+              </td>
+              <td><span class="badge b-{{ b.status }}">{{ b.status|capfirst }}</span></td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6"><div class="empty"><p>No payment records.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /payments -->
+
+
+  {# ═══════════════════════ SECTION: INVOICES ═══════════════════════ #}
+  <div class="section" id="section-invoices">
+    <div class="phd"><p class="phd-sub">PDF invoices auto-generated after payment (Increment 4).</p></div>
+
+    <div class="card">
+      <div class="card-hd"><h5>Invoice Records</h5></div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Invoice #</th><th>Customer Name</th><th>Bike</th><th>Amount (NPR)</th><th>Date</th><th>Download</th></tr>
+          </thead>
+          <tbody>
+            {# Show all historical invoices regardless of current booking status #}
+            {% for i in invoices %}
+              <tr>
+                <td style="color:var(--muted);font-size:13px">INV-{{ i.id|stringformat:"04d" }}</td>
+                <td><strong>{{ i.full_name }}</strong></td>
+                <td>{{ i.model }}</td>
+                <td><strong>Rs. {{ i.amount|floatformat:0 }}</strong></td>
+                <td style="font-size:13px;color:var(--muted)">{{ i.invoice_date|date:"M d, Y" }}</td>
+                <td>
+                  <a href="{% url 'download_invoice' i.booking_id %}" class="btn-ghost" style="padding:4px 10px;font-size:12px">Download PDF</a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6"><div class="empty"><p>No invoices have been generated yet.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /invoices -->
+
+
+  {# ═══════════════════════ SECTION: CATEGORIES ═══════════════════════ #}
+  <div class="section" id="section-categories">
+    <div class="phd">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <p class="phd-sub" style="margin:0">Manage bike classifications and categories.</p>
+        <button class="btn-primary" style="padding:10px 20px" data-bs-toggle="modal" data-bs-target="#addCategoryModal">Add Category</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-hd"><h5>Vehicle Categories</h5></div>
+      <div class="tw">
+        <table id="catTbl">
+          <thead>
+            <tr><th>#ID</th><th>Category Name</th><th>Description</th><th style="text-align:right">Actions</th></tr>
+          </thead>
+          <tbody>
+            {% for cat in categories %}
+            <tr>
+              <td style="color:var(--muted);font-size:12px">#CAT-{{ cat.id }}</td>
+              <td><strong>{{ cat.name }}</strong></td>
+              <td style="color:var(--muted);font-size:13px">{{ cat.description|default:"No description" }}</td>
+              <td style="text-align:right">
+                <a href="{% url 'delete_category' cat.id %}" 
+                   class="btn-ghost" 
+                   style="padding:6px 12px;font-size:12px;color:#c0392b"
+                   onclick="return confirm('WARNING: Are you sure you want to remove the \u0027{{ cat.name }}\u0027 category?')">Remove</a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4"><div class="empty"><p>No categories archived yet.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /categories -->
+
+
+  {# ═══════════════════════ SECTION: REPORTS ═══════════════════════ #}
+  <div class="section" id="section-reports">
+    <div class="phd"><p class="phd-sub">Business insights and operational metrics.</p></div>
+
+    <div class="kpi-row k3">
+      <div class="kpi">
+        <div class="kpi-lbl">Total Revenue</div>
+        <div class="kpi-val" style="color:var(--red)">{{ total_revenue|floatformat:0 }}</div>
+        <div class="kpi-sub">NPR earned</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Confirmed</div>
+        <div class="kpi-val">{{ completed_payments_count }}</div>
+        <div class="kpi-sub">of {{ total_bookings_count }} bookings</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-lbl">Bike Utilisation</div>
+        <div class="kpi-val">{{ rented_bikes_count }}</div>
+        <div class="kpi-sub">Bikes rented now</div>
+      </div>
+    </div>
+
+    {# ── New Trend Chart: Daily Revenue ── #}
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-hd"><h5>Revenue Trend (Last 7 Active Days)</h5></div>
+      <div class="card-bd" style="position:relative; height:260px">
+        <canvas id="revChart"></canvas>
+        {% if not revenue_trend_json or revenue_trend_json == "[]" %}
+            <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-weight:600;font-size:13px">Waiting for confirmed transactions...</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="chart-row">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd"><h5>Bookings by Category</h5></div>
+        <div class="card-bd" style="position:relative; min-height:220px">
+            <canvas id="rCatChart"></canvas>
+            {% if not bookings %}
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-weight:600;font-size:13px">No Category Data</div>
+            {% endif %}
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:0">
+        <div class="card-hd"><h5>Status Breakdown</h5></div>
+        <div class="card-bd" style="position:relative; min-height:220px">
+            <canvas id="rStChart"></canvas>
+            {% if not bookings %}
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:var(--muted);font-weight:600;font-size:13px">No Status Data</div>
+            {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="card-hd"><h5>Category Summary</h5></div>
+      <div class="tw">
+        <table>
+          <thead>
+            <tr><th>Category</th><th>Total Bookings</th></tr>
+          </thead>
+          <tbody>
+            {% for c in category_stats %}
+            <tr>
+              <td><strong>{{ c.category }}</strong></td>
+              <td>{{ c.count }}</td>
+            </tr>
+            {% empty %}
+              <tr><td colspan="2"><div class="empty"><p>No data available.</p></div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /reports -->
+
+    </div><!-- /dash-container -->
+  </div><!-- /content-area -->
+</div><!-- /main-wrap -->
+
+
+{# ═══════════════════════ ADD BIKE MODAL ═══════════════════════ #}
+{# This modal pops up when "Add Bike" button is clicked #}
+<div class="modal fade" id="addBikeModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header border-0 p-3" style="background:#000; color:#fff; border-radius:0;">
+        <div class="modal-title" style="color:#fff !important">Add New Bike</div>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      {# Form submits to add_bike view (POST request) #}
+      <form method="POST" action="{% url 'add_bike' %}" enctype="multipart/form-data">
+        {% csrf_token %} {# Django security token — always required in POST forms #}
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Bike Model *</label>
+              <input type="text" name="model" class="form-control" placeholder="e.g. Honda Dio 125" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Category *</label>
+              <select name="category" class="form-select" required>
+                <option value="">Select category</option>
+                {% for cat in categories %}
+                  <option value="{{ cat.name }}">{{ cat.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Price per Day (NPR) *</label>
+              <input type="number" name="price_per_day" class="form-control" placeholder="e.g. 1500" min="0" required>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Bike Image</label>
+              <input type="file" name="image" class="form-control" accept="image/*">
+            </div>
+            <div class="col-12">
+              <label class="form-label">Description</label>
+              <textarea name="description" class="form-control" rows="3" placeholder="Brief description..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-primary">Add Bike</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+<!-- Add Bike Modal END -->
+
+<!-- Add Category Modal -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg" style="border-radius:4px;overflow:hidden">
+      
+      <div class="modal-header border-0 p-4" style="background:#000;color:#fff;border-radius:0">
+        <h5 class="modal-title fw-bold" style="color:#fff !important">Create New Classification</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <form method="POST" action="{% url 'add_category' %}">
+        {% csrf_token %}
+        <div class="modal-body p-4 bg-white">
+          <div class="row g-4">
+            <div class="col-12">
+              <label class="form-label" style="font-weight:700;font-size:12px;text-transform:uppercase;color:var(--muted)">Category Name</label>
+              <input type="text" name="name" class="form-control" placeholder="e.g. Electric, Adventure" required>
+            </div>
+            <div class="col-12">
+              <label class="form-label" style="font-weight:700;font-size:12px;text-transform:uppercase;color:var(--muted)">Description</label>
+              <textarea name="description" class="form-control" rows="3" placeholder="Brief details about this group..."></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-0 p-4">
+          <button type="button" class="btn-ghost" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn-primary">Save Category</button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{# ══════════ CHANGE DATE MODAL ══════════ #}
+<div id="dateModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.55);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border-radius:14px;padding:32px;width:100%;max-width:400px;margin:20px;box-shadow:0 8px 40px rgba(0,0,0,0.3)">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h5 style="margin:0;font-size:17px;font-weight:700">Change Booking Date</h5>
+      <button onclick="closeDateModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">&times;</button>
+    </div>
+    <form id="dateForm" method="POST" action="">
+      {% csrf_token %}
+      <div style="margin-bottom:20px">
+        <label style="font-size:12px;font-weight:700;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:8px">New Date & Time</label>
+        <input type="datetime-local" id="new_created_at" name="created_at" class="form-control" required>
+        <p style="font-size:11px;color:var(--muted);margin-top:8px">This will update the charts and the booking start date.</p>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end">
+        <button type="button" onclick="closeDateModal()" class="btn-ghost">Cancel</button>
+        <button type="submit" class="btn-primary">Update Date</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+{# ═══════════════════════ JAVASCRIPT ═══════════════════════ #}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+// ── Section titles (shown in the top bar when you switch sections) ──
+const TITLES = {
+  overview:  'Dashboard Overview',
+  bookings:  'Booking Management',
+  bikes:     'Bike Management',
+  users:     'Customer Management',
+  documents: 'Document Verification',
+  payments:  'Payments',
+  invoices:  'Invoices',
+  reports:   'Reports & Analytics'
+};
+
+// ─── DASHBOARD NAVIGATION ───
+// This function hides the current section and shows the one you clicked.
+// sid = section id (e.g., 'overview'), el = the clicked sidebar link.
+function show(sid, el) {
+  // 1. Hide all sections by removing the 'active' class
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  
+  // 2. Show the target section by adding the 'active' class
+  const target = document.getElementById('section-' + sid);
+  if (target) target.classList.add('active');
+
+  // 3. Highlight the clicked sidebar item
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  // 4. Update the title in the top bar
+  document.getElementById('ttitle').innerText = TITLES[sid] || 'Dashboard';
+  
+  // 5. Scroll back — needed for mobile/long page experience
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  // 6. RE-INITIALIZE CHARTS IF VISIBLE
+  if (sid === 'overview' || sid === 'reports') {
+      setTimeout(initDashboardCharts, 10);
+  }
+}
+
+// ── Auto-dismiss toast messages ──────────────
+setTimeout(() => {
+  document.querySelectorAll('.toast-msg').forEach(m => {
+    m.style.transition = 'opacity .5s, transform .5s';
+    m.style.opacity = '0';
+    m.style.transform = 'translateX(16px)';
+    setTimeout(() => m.remove(), 500);
+  });
+}, 4000);
+
+// ── Date Modal Logic ──
+function openDateModal(id, current) {
+    const modal = document.getElementById('dateModal');
+    const form = document.getElementById('dateForm');
+    form.action = `/update-booking-date/${id}/`;
+    document.getElementById('new_created_at').value = current + "T12:00";
+    modal.style.display = 'flex';
+}
+function closeDateModal() {
+    document.getElementById('dateModal').style.display = 'none';
+}
+
+// ── Search/Filter ──
+function ft(tblId, inpId) {
+  const v = document.getElementById(inpId).value.toLowerCase();
+  document.querySelectorAll('#' + tblId + ' tbody tr').forEach(r => {
+    r.style.display = r.textContent.toLowerCase().includes(v) ? '' : 'none';
+  });
+}
+
+// ── Chart.js Global Config ──
+Chart.defaults.font.family = 'Inter';
+Chart.defaults.color = '#64748b';
+
+const BC = ['#c4161c','#8b1418','#ef4444','#f87171','#2d3748','#475569'];
+const SC = { pending:'#b45309', confirmed:'#2d3748', cancelled:'#c4161c' };
+
+let chartInstances = {};
+
+function initDashboardCharts() {
+    const CD = JSON.parse(document.getElementById('cd').textContent);
+    const SD = JSON.parse(document.getElementById('sd').textContent);
+    const RD = JSON.parse(document.getElementById('rd').textContent);
+
+    const render = (id, config) => {
+        if (chartInstances[id]) chartInstances[id].destroy();
+        const ctx = document.getElementById(id);
+        if (ctx) chartInstances[id] = new Chart(ctx, config);
+    };
+
+    if (document.getElementById('catChart')) {
+        render('catChart', {
+            type: 'bar',
+            data: {
+                labels: CD.map(d => d.category),
+                datasets: [{ data: CD.map(d => d.count), backgroundColor: BC, borderRadius: 6 }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true,ticks:{stepSize:1}}} }
+        });
+    }
+
+    if (document.getElementById('stChart')) {
+        render('stChart', {
+            type: 'doughnut',
+            data: {
+                labels: SD.map(d => d.status.charAt(0).toUpperCase() + d.status.slice(1)),
+                datasets: [{ data: SD.map(d => d.count), backgroundColor: SD.map(d => SC[d.status]||'#94a3b8'), borderWidth:0 }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, cutout:'70%', plugins:{legend:{position:'bottom',labels:{boxWidth:12,padding:15}}} }
+        });
+    }
+
+    if (document.getElementById('rCatChart')) {
+        render('rCatChart', {
+            type: 'bar',
+            data: {
+                labels: CD.map(d => d.category),
+                datasets: [{ label:'Bookings', data: CD.map(d => d.count), backgroundColor: '#c4161c', borderRadius: 4 }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
+        });
+    }
+
+    if (document.getElementById('rStChart')) {
+        render('rStChart', {
+            type: 'pie',
+            data: {
+                labels: SD.map(d => d.status.toUpperCase()),
+                datasets: [{ data: SD.map(d => d.count), backgroundColor: SD.map(d => SC[d.status]||'#94a3b8'), borderWidth:2, borderColor:'#fff' }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'right'}} }
+        });
+    }
+
+    if (document.getElementById('revChart')) {
+        render('revChart', {
+            type: 'line',
+            data: {
+                labels: RD.map(d => d.date),
+                datasets: [{
+                    label: 'Revenue (NPR)',
+                    data: RD.map(d => d.total),
+                    borderColor: '#c4161c',
+                    backgroundColor: 'rgba(196, 22, 28, 0.05)',
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#c4161c'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { callback: v => 'Rs.' + v } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    }
+}
+
+function toggleSidebar() {
+    const sb = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sbOverlay');
+    if (sb && overlay) {
+        sb.classList.toggle('open');
+        overlay.classList.toggle('active');
+    }
+}
+
+function initOnLoad() {
+    initDashboardCharts();
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeTab = urlParams.get('tab');
+    if (activeTab) {
+        const items = document.querySelectorAll('.sb-item');
+        items.forEach(item => {
+            if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(`'${activeTab}'`)) {
+                show(activeTab, item);
+            }
+        });
+    }
+    document.querySelectorAll('.sb-item').forEach(item => {
+        item.addEventListener('click', () => {
+            if (window.innerWidth <= 992 && document.querySelector('.sidebar').classList.contains('open')) {
+                toggleSidebar();
+            }
+        });
+    });
+}
+document.addEventListener('DOMContentLoaded', initOnLoad);
+</script>
+
+<script id="cd" type="application/json">{{ category_stats_json|safe }}</script>
+<script id="sd" type="application/json">{{ status_stats_json|safe }}</script>
+<script id="rd" type="application/json">{{ revenue_trend_json|safe }}</script>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        font-size: 13px;
+        color: #333;
+        margin: 0;
+        padding: 30px;
+    }
+
+    /* Header */
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 30px;
+        border-bottom: 3px solid #c4161c;
+        padding-bottom: 20px;
+    }
+
+    .brand-name {
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+    .brand-name .ride { color: #c4161c; }
+    .brand-name .sathi { color: #333; }
+
+    .brand-tagline {
+        font-size: 11px;
+        color: #999;
+        margin-top: 3px;
+    }
+
+    .invoice-title {
+        text-align: right;
+    }
+
+    .invoice-title h2 {
+        font-size: 26px;
+        font-weight: 900;
+        color: #c4161c;
+        margin: 0;
+        letter-spacing: 2px;
+    }
+
+    .invoice-title p {
+        font-size: 12px;
+        color: #777;
+        margin: 4px 0 0;
+    }
+
+    /* Bill To + Invoice Details */
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 30px;
+    }
+
+    .info-box h4 {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: #999;
+        margin-bottom: 8px;
+    }
+
+    .info-box p {
+        margin: 3px 0;
+        font-size: 13px;
+        color: #333;
+    }
+
+    .info-box .name {
+        font-size: 15px;
+        font-weight: 700;
+        color: #111;
+    }
+
+    .info-right {
+        text-align: right;
+    }
+
+    /* Table */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 24px;
+    }
+
+    thead th {
+        background: #c4161c;
+        color: #fff;
+        padding: 10px 14px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        text-align: left;
+    }
+
+    thead th.right { text-align: right; }
+    thead th.center { text-align: center; }
+
+    tbody td {
+        padding: 12px 14px;
+        border-bottom: 1px solid #eee;
+        font-size: 13px;
+        color: #333;
+    }
+
+    tbody td.right { text-align: right; }
+    tbody td.center { text-align: center; }
+
+    tbody tr:nth-child(even) { background: #f9f9f9; }
+
+    /* Total */
+    .total-box {
+        text-align: right;
+        margin-bottom: 30px;
+    }
+
+    .total-box .total-row {
+        display: inline-block;
+        background: #f3f4f6;
+        border-radius: 8px;
+        padding: 14px 24px;
+        min-width: 220px;
+    }
+
+    .total-label {
+        font-size: 12px;
+        color: #777;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .total-amount {
+        font-size: 22px;
+        font-weight: 900;
+        color: #c4161c;
+        margin-top: 4px;
+    }
+
+    /* Payment status */
+    .status-paid {
+        display: inline-block;
+        background: #f0fdf4;
+        color: #16a34a;
+        font-weight: 700;
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        border: 1px solid #bbf7d0;
+        text-transform: uppercase;
+    }
+
+    .status-unpaid {
+        display: inline-block;
+        background: #fffbeb;
+        color: #d97706;
+        font-weight: 700;
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 20px;
+        border: 1px solid #fde68a;
+        text-transform: uppercase;
+    }
+
+    /* Transaction */
+    .txn-box {
+        background: #f8f9fb;
+        border: 1px solid #eee;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 30px;
+        font-size: 12px;
+        color: #777;
+    }
+
+    .txn-box span {
+        font-weight: 700;
+        color: #333;
+        font-family: monospace;
+    }
+
+    /* Footer */
+    .footer {
+        border-top: 1px solid #eee;
+        padding-top: 16px;
+        text-align: center;
+        font-size: 11px;
+        color: #aaa;
+    }
+
+    .footer strong {
+        color: #c4161c;
+    }
+</style>
+</head>
+<body>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <img src="/Users/anjilasunar/Desktop/Ride_Sathi/ridesathi/static/assets/image/Logo.webp" style="height: 60px; width: auto;">
+            <div>
+                <div class="brand-name">
+                    <span class="ride">Ride</span><span class="sathi">Sathi</span>
+                </div>
+                <div class="brand-tagline">Smart Bike Rental System — Pokhara, Nepal</div>
+            </div>
+        </div>
+        <div class="invoice-title">
+            <h2>INVOICE</h2>
+            <p>#INV-{{ booking.id|stringformat:"04d" }}</p>
+            <p>Date: {{ invoice_date }}</p>
+        </div>
+    </div>
+
+    <!-- BILL TO + INVOICE DETAILS -->
+    <div class="info-row">
+        <div class="info-box">
+            <h4>Bill To</h4>
+            <p class="name">{{ booking.full_name }}</p>
+            <p>{{ booking.email }}</p>
+            <p>{{ booking.phone|default:"N/A" }}</p>
+            <p>{{ booking.address|default:"N/A" }}</p>
+        </div>
+        <div class="info-box info-right">
+            <h4>Rental Details</h4>
+            <p>Pick Up: <strong>{{ booking.start_date }}</strong></p>
+            <p>Return: <strong>{{ booking.end_date }}</strong></p>
+            <p>Duration: <strong>{{ booking.total_days }} day(s)</strong></p>
+            <p>
+                Status:
+                {% if booking.payment_status == 'paid' %}
+                    <span class="status-paid">Paid</span>
+                {% else %}
+                    <span class="status-unpaid">Unpaid</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+
+    <!-- INVOICE TABLE -->
+    <table>
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th class="center">Days</th>
+                <th class="right">Rate/Day</th>
+                <th class="right">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <strong>{{ booking.model }}</strong><br>
+                    <span style="font-size:11px; color:#999">{{ booking.category }} Rental</span>
+                </td>
+                <td class="center">{{ booking.total_days }}</td>
+                <td class="right">NPR {{ booking.price_per_day|floatformat:0 }}</td>
+                <td class="right"><strong>NPR {{ booking.total_cost|floatformat:0 }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- TOTAL -->
+    <div class="total-box">
+        <div class="total-row">
+            <div class="total-label">Total Amount</div>
+            <div class="total-amount">NPR {{ booking.total_cost|floatformat:0 }}</div>
+        </div>
+    </div>
+
+    <!-- TRANSACTION ID -->
+    {% if booking.transaction_id %}
+    <div class="txn-box">
+        Khalti Transaction ID: <span>{{ booking.transaction_id }}</span>
+    </div>
+    {% endif %}
+
+    <!-- FOOTER -->
+    <div class="footer">
+        <p>Thank you for choosing <strong>RideSathi</strong>!</p>
+        <p>Pokhara, Nepal &nbsp;|&nbsp; info@ridesathi.com &nbsp;|&nbsp; +977-9800000000</p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,73 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}About Us | RideSathi{% endblock %}
+
+{% block content %}
+
+<div class="container py-5" style="margin-top: 60px;">
+    <div class="row align-items-center g-5 py-5">
+        <div class="col-lg-6">
+            <h1 class="display-3 fw-black text-uppercase mb-4">Welcome to <span class="text-red">Ride</span>Sathi</h1>
+            <p class="lead fw-bold text-dark mb-4">Your ultimate partner for premium bike rentals in Pokhara.</p>
+            <p class="text-muted leading-relaxed mb-4">
+                RideSathi is a smart bike rental management system designed to connect riders with high-quality mobility. 
+                Whether you need a quick scooter for city errands or a rugged off-road machine for mountain trails, 
+                we provide a seamless, digital-first experience.
+            </p>
+            <p class="text-muted mb-0">
+                Our mission is to make rentals simple, affordable, and accessible. We believe in transparency, 
+                safety, and the joy of the open road.
+            </p>
+        </div>
+        <div class="col-lg-6">
+            <div class="rounded-4 overflow-hidden shadow-lg border">
+                <img src="{% static 'assets/image/welcome_bike.jpg' %}" alt="RideSathi Premium" class="w-100 h-100 object-fit-cover" style="min-height: 500px;">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- EXPANDED MISSION BOXES (6 BOXES TOTAL) -->
+<section class="py-5" style="background-color: #fafafa; border-top: 1px solid #f0f0f0;">
+    <div class="container py-5">
+        <!-- First Row -->
+        <div class="row g-4 text-center mb-4">
+            <div class="col-md-4">
+                <div class="bg-white p-5 rounded-4 shadow-sm h-100 border-0 transition-transform" style="transition: transform 0.3s ease;">
+                    <h3 class="h5 fw-black text-danger mb-3 text-uppercase" style="letter-spacing: 1px;">OUR MISSION</h3>
+                    <p class="text-muted mb-0" style="font-size: 14.5px; line-height: 1.8;">
+                        To redefine urban mobility by making premium rentals accessible, affordable, and safer for every rider in Pokhara.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-white p-5 rounded-4 shadow-sm h-100 border-0 transition-transform" style="transition: transform 0.3s ease;">
+                    <h3 class="h5 fw-black text-danger mb-3 text-uppercase" style="letter-spacing: 1px;">WHY RIDESATHI</h3>
+                    <p class="text-muted mb-0" style="font-size: 14.5px; line-height: 1.8;">
+                        Expertly maintained vehicles, transparent pricing, and a seamless digital booking process built on trust.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="bg-white p-5 rounded-4 shadow-sm h-100 border-0 transition-transform" style="transition: transform 0.3s ease;">
+                    <h3 class="h5 fw-black text-danger mb-3 text-uppercase" style="letter-spacing: 1px;">OUR SERVICES</h3>
+                    <p class="text-muted mb-0" style="font-size: 14.5px; line-height: 1.8;">
+                        Dynamic rental options across Scooters, Electric bikes, Standard cruisers, and specialized Dirt bikes.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    .transition-transform:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.08) !important;
+    }
+</style>
+
+{% endblock %}

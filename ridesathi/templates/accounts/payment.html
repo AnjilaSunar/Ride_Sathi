@@ -1,0 +1,58 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Payment | RideSathi{% endblock %}
+
+{% block content %}
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Payment | RideSathi{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="background-color: var(--bg-alt); min-height: 80vh;">
+    <div class="auth-card p-0 overflow-hidden" style="max-width: 500px;">
+        <!-- eSewa Header -->
+        <div class="p-4 text-center" style="background: linear-gradient(135deg, #60bb46 0%, #3d8b2a 100%);">
+            <div class="h3 fw-black text-white mb-0">eSewa</div>
+            <p class="text-white opacity-75 small mb-0">Secure Payment Simulation</p>
+        </div>
+
+        <div class="p-4">
+            <div class="system-card bg-light border-0 p-3 mb-4">
+                <h6 class="text-uppercase small fw-bold text-muted mb-3">Booking Summary</h6>
+                <div class="d-flex justify-content-between small py-1">
+                    <span class="text-muted">Vehicle</span>
+                    <span class="fw-bold">{{ bike.model|default:"Premium Bike" }}</span>
+                </div>
+                <div class="d-flex justify-content-between small py-1">
+                    <span class="text-muted">Duration</span>
+                    <span class="fw-bold">{{ booking.total_days }} days</span>
+                </div>
+                <div class="d-flex justify-content-between pt-3 mt-2 border-top">
+                    <span class="fw-bold">Total to Pay</span>
+                    <span class="h5 fw-bold text-success mb-0">NPR {{ booking.total_cost }}</span>
+                </div>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label small fw-bold text-muted text-uppercase">eSewa Mobile Number / ID</label>
+                    <input type="text" name="esewa_id" class="form-control" placeholder="98XXXXXXXX" required>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label small fw-bold text-muted text-uppercase">eSewa MPIN / Password</label>
+                    <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 py-3 fw-bold mb-3" style="border-radius: 12px; background: #60bb46; border: none;">Pay NPR {{ booking.total_cost }}</button>
+                <div class="text-center">
+                    <a href="{% url 'my_bookings' %}" class="text-muted small text-decoration-none fw-bold">Cancel and go back</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Payment UI removed in favor of Refactored Version -->
+{% endblock %}

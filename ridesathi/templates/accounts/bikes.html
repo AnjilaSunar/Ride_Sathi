@@ -1,0 +1,267 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Available Rides | RideSathi{% endblock %}
+
+{% block content %}
+
+<style>
+    /* Premium Soft Light Theme Layout (Restored) */
+    body {
+        background-color: #f8f9fa !important;
+    }
+
+    .custom-wide-container {
+        max-width: 1700px !important;
+        margin: 0 auto;
+        padding: 0 40px;
+    }
+
+    /* Massive Card: Clean & Floating (First State) */
+    .massive-ride-card {
+        background: #ffffff !important;
+        border: 1px solid #eeeeee !important;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+        height: 100%;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+    }
+
+    .massive-ride-card:hover {
+        transform: translateY(-10px) !important;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.12) !important;
+        border-color: #ddd !important;
+    }
+
+    .massive-img-box {
+        background: #ffffff !important;
+        height: 240px !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #f8f8f8;
+        padding: 35px !important;
+        position: relative;
+    }
+
+    .massive-content {
+        padding: 30px 40px !important;
+    }
+
+    .massive-title {
+        font-size: 24px !important;
+        font-weight: 800;
+        color: #111111 !important;
+        margin-bottom: 10px;
+        letter-spacing: -0.5px;
+    }
+
+    .massive-price {
+        font-size: 22px !important;
+        color: var(--rs-primary) !important;
+        font-weight: 800;
+        margin-bottom: 25px;
+    }
+
+    .massive-description {
+        font-size: 14px;
+        line-height: 1.7;
+        color: #555555 !important;
+        margin-bottom: 30px;
+    }
+
+    /* Soft Filter Inputs */
+    .dark-filter-input {
+        background: #fff !important;
+        border: 1.5px solid #eee !important;
+        color: #333 !important;
+        border-radius: 50px;
+    }
+
+    .dark-filter-input:focus {
+        border-color: var(--primary-red) !important;
+        box-shadow: none;
+    }
+</style>
+
+<!-- Refined Header with Full Width Expanded Content -->
+<section class="py-5 border-bottom" style="background: #ffffff;">
+    <div class="custom-wide-container">
+        <h1 class="fs-4 fw-black text-dark mb-4" style="letter-spacing: -0.5px;">Premium Bike & Scooter Rental in
+            Pokhara</h1>
+        <div class="row">
+            <div class="col-12">
+                <p class="text-dark mb-4"
+                    style="font-size: 16px; line-height: 1.8; text-align: justify; font-weight: 500;">
+                    Explore Pokhara at your own pace with Ride Sathi, the city’s most reliable and affordable vehicle
+                    rental service. Whether you are a tourist looking to discover the hidden gems of the valley or a
+                    local needing a stylish and reliable ride for daily commute, we offer an extensive collection
+                    ranging from fuel-efficient scooters to powerful mountain motorcycles. Our mission is to provide you
+                    with a convenient, exciting, and hassle-free way to navigate Pokhara's scenic routes, from the
+                    heights of Sarangkot to the serene banks of Fewa Lake. With meticulously maintained vehicles and a
+                    seamless booking process, your adventure starts here.
+                </p>
+                <div class="row g-4 mt-2">
+                    <div class="col-lg-3 col-md-6">
+                        <span class="text-dark fw-bold"><i class="bi bi-check-circle-fill text-danger me-2"></i>Affordable Pricing</span>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <span class="text-dark fw-bold"><i class="bi bi-check-circle-fill text-danger me-2"></i>Well Maintained Vehicles</span>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <span class="text-dark fw-bold"><i class="bi bi-check-circle-fill text-danger me-2"></i>24/7 Roadside Support</span>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <span class="text-dark fw-bold"><i class="bi bi-check-circle-fill text-danger me-2"></i>Easy Online Booking</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Filter Bar -->
+<section class="py-4 border-bottom sticky-top rs-filter-bar"
+    style="top: 110px; z-index: 1000; background: #ffffff; border-color: #eee !important;">
+    <div class="custom-wide-container">
+        <form action="{% url 'bikes' %}" method="GET" class="row g-2">
+            <div class="col-lg-3">
+                <input type="text" name="q" class="form-control dark-filter-input py-2" placeholder="Search model..."
+                    value="{{ current_search }}">
+            </div>
+            <div class="col-lg-2">
+                <select name="category" class="form-select dark-filter-input py-2" onchange="this.form.submit()">
+                    <option value="all">All Categories</option>
+                    {% for cat in categories %}
+                    <option value="{{ cat }}" {% if current_category == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select name="status" class="form-select dark-filter-input py-2" onchange="this.form.submit()">
+                    <option value="all" {% if current_status == 'all' %}selected{% endif %}>Status: All</option>
+                    <option value="available" {% if current_status == 'available' %}selected{% endif %}>Status: Available
+                    </option>
+                    <option value="reserved" {% if current_status == 'reserved' %}selected{% endif %}>Status: Booked
+                    </option>
+                </select>
+            </div>
+            <div class="col-lg-2">
+                <select name="sort" class="form-select dark-filter-input py-2" onchange="this.form.submit()">
+                    <option value="id_asc" {% if current_sort == 'id_asc' %}selected{% endif %}>Sort By</option>
+                    <option value="price_asc" {% if current_sort == 'price_asc' %}selected{% endif %}>Lowest Price
+                    </option>
+                    <option value="price_desc" {% if current_sort == 'price_desc' %}selected{% endif %}>Highest Price
+                    </option>
+                </select>
+            </div>
+            <div class="col-lg-3">
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-dark w-100 py-2"
+                        style="border-radius: 50px; font-weight: 700;">Apply Filter</button>
+                    <a href="{% url 'bikes' %}" class="btn btn-outline-secondary w-100 py-2"
+                        style="border-radius: 50px; font-weight: 700;">Reset</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- 3-Column Wider Grid -->
+<section class="py-5" style="background: #f5f5f5; min-height: 80vh;">
+    <div class="custom-wide-container">
+        <div class="row g-5">
+            {% if bikes %}
+            {% for bike in bikes %}
+            <div class="col-lg-4 col-md-6">
+                <div class="massive-ride-card">
+                    <div class="massive-img-box">
+                        <img src="{% if bike.image %}/media/{{ bike.image }}{% else %}https://placehold.co/600x400/fdfdfd/333?text={{ bike.model|urlencode }}{% endif %}"
+                            style="max-width: 100%; max-height: 100%; object-fit: contain;" alt="{{ bike.model }}">
+                        <span
+                            class="massive-badge {% if bike.status == 'available' %}badge-available-light{% else %}badge-booked-light{% endif %}"
+                            style="top: 20px; right: 20px;">
+                            {% if bike.status == 'available' %}Available{% else %}Booked{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="massive-content">
+                        <div class="massive-title">{{ bike.model }}</div>
+                        <div class="massive-price">Rs. {{ bike.price_per_day|floatformat:0 }} <small
+                                style="color: #666; font-weight: normal; font-size: 14px;">/ day</small></div>
+
+                        <p class="massive-description">
+                            {{ bike.description|default:"A premium vehicle maintained to the highest standards. Perfect for exploring Pokhara with comfort and style." }}
+                        </p>
+
+                        <div class="d-flex gap-3">
+                            <a href="{% url 'bike_detail' bike.id %}"
+                                class="btn btn-outline-dark btn-massive flex-grow-1" style="border-color: #ddd;">View
+                                Details</a>
+                            {% if bike.status == 'available' %}
+                            <a href="{% if request.session.user_id %}{% url 'book_bike' bike.id %}{% else %}{% url 'login' %}{% endif %}"
+                                class="btn-solid-red btn-massive flex-grow-1">Rent Now</a>
+                            {% else %}
+                            <button class="btn btn-light btn-massive flex-grow-1 text-muted" disabled
+                                style="background: #f1f1f1; border: 1px solid #eee;">Currently Booked</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="col-12 text-center py-5">
+                <h2 class="fw-black mt-4">No rides found</h2>
+                <p style="color: #666; font-weight: 700;">Adjust your filters to see more results.</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Pagination Bar -->
+        {% if bikes.has_other_pages %}
+        <nav class="mt-5 pt-4">
+            <ul class="pagination justify-content-center">
+                {% if bikes.has_previous %}
+                <li class="page-item">
+                    <a class="page-link border-0 shadow-sm mx-1 px-4 py-2 text-dark fw-bold"
+                        href="?page={{ bikes.previous_page_number }}{% if current_search %}&q={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}"
+                        style="border-radius: 50px;">Previous</a>
+                </li>
+                {% endif %}
+
+                {% for i in bikes.paginator.page_range %}
+                {% if bikes.number == i %}
+                <li class="page-item active">
+                    <span class="page-link border-0 shadow-sm mx-1 px-4 py-2 bg-dark text-white fw-bold"
+                        style="border-radius: 50px;">{{ i }}</span>
+                </li>
+                {% else %}
+                <li class="page-item">
+                    <a class="page-link border-0 shadow-sm mx-1 px-4 py-2 text-dark fw-bold"
+                        href="?page={{ i }}{% if current_search %}&q={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}"
+                        style="border-radius: 50px;">{{ i }}</a>
+                </li>
+                {% endif %}
+                {% endfor %}
+
+                {% if bikes.has_next %}
+                <li class="page-item">
+                    <a class="page-link border-0 shadow-sm mx-1 px-4 py-2 text-dark fw-bold"
+                        href="?page={{ bikes.next_page_number }}{% if current_search %}&q={{ current_search }}{% endif %}{% if current_category %}&category={{ current_category }}{% endif %}{% if current_sort %}&sort={{ current_sort }}{% endif %}{% if current_status %}&status={{ current_status }}{% endif %}"
+                        style="border-radius: 50px;">Next</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+    .fw-black {
+        font-weight: 900;
+    }
+</style>
+
+{% endblock %}

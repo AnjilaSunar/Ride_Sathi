@@ -1,0 +1,180 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}My Bookings | RideSathi{% endblock %}
+
+{% block content %}
+<style>
+    .fw-black { font-weight: 900; }
+    .dash-tab {
+        text-decoration: none;
+        color: #666;
+        font-weight: 700;
+        font-size: 17px;
+        padding-bottom: 12px;
+        position: relative;
+        transition: all 0.3s;
+    }
+    .dash-tab:hover { color: #c4161c; }
+    .dash-tab.active { color: #c4161c; }
+    .dash-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #c4161c;
+    }
+    
+    /* BOX STYLE PILLS */
+    .status-pill-box {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+</style>
+
+<section style="background: #f8f9fa; min-height: 100vh; padding-top: 60px; padding-bottom: 80px;">
+    <div class="container">
+        
+        <!-- Alerts -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show border-0 shadow-sm mb-4" role="alert" style="border-radius: 4px; font-weight: 700;">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Navigation Tabs -->
+        <div class="d-flex border-bottom mb-5" style="gap: 40px;">
+            <a href="{% url 'profile' %}" class="dash-tab">My Profile</a>
+            <a href="{% url 'my_bookings' %}" class="dash-tab active">My Bookings</a>
+            <a href="{% url 'upload_document' %}" class="dash-tab">My Documents</a>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h4 class="fw-black mb-1" style="font-family: 'Outfit', sans-serif;">Booking History</h4>
+                <p class="text-muted small">Manage your active rentals and view transaction history.</p>
+            </div>
+            <a href="{% url 'bikes' %}" class="btn px-4 fw-bold shadow-sm" style="background: #c4161c; color: #fff; border-radius: 4px;">Book New Ride</a>
+        </div>
+
+        {% if bookings %}
+            {% for b in bookings %}
+            <div style="background: #fff; border-radius: 12px; border: 1px solid #eee; overflow: hidden; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);">
+                <div class="row g-0">
+                    
+                    <!-- LEFT: Vehicle Image -->
+                    <div class="col-md-3" style="background: #fcfcfc; border-right: 1px solid #eee; padding: 24px; display: flex; align-items: center; justify-content: center;">
+                        <div style="text-align: center; width: 100%;">
+                            {% if b.image %}
+                                <img src="/media/{{ b.image }}" alt="{{ b.model }}" 
+                                     style="width: 100%; height: 110px; object-fit: contain; margin-bottom: 12px;">
+                            {% else %}
+                                <div style="height: 110px; background: #eee; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #aaa; font-weight: 700; font-size: 12px; margin-bottom: 12px;">
+                                    NO IMAGE
+                                </div>
+                            {% endif %}
+                            <div style="font-weight: 900; font-size: 18px; color: #111; margin-top: 5px;">{{ b.model }}</div>
+                            <div style="font-size: 11px; color: #c4161c; margin-top: 3px; font-weight: 800; letter-spacing: 1px;">{{ b.category|upper }}</div>
+                        </div>
+                    </div>
+
+                    <!-- MIDDLE: Booking Details -->
+                    <div class="col-md-5">
+                        <div style="padding: 28px 24px;">
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #aaa; letter-spacing: 1px; margin-bottom: 5px;">Pick Up</div>
+                                    <div style="font-weight: 700; font-size: 15px;">{{ b.start_date|date:"M d, Y" }}</div>
+                                </div>
+                                <div class="col-6">
+                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #aaa; letter-spacing: 1px; margin-bottom: 5px;">Return</div>
+                                    <div style="font-weight: 700; font-size: 15px;">{{ b.end_date|date:"M d, Y" }}</div>
+                                </div>
+                                <div class="col-6">
+                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #aaa; letter-spacing: 1px; margin-bottom: 5px;">Booking Status</div>
+                                    <span class="status-pill-box" style="
+                                        {% if b.status == 'confirmed' %}background: #f0fdf4; color: #16a34a;
+                                        {% elif b.status == 'pending' %}background: #fffbeb; color: #d97706;
+                                        {% elif b.status == 'cancelled' %}background: #fef2f2; color: #dc2626;
+                                        {% else %}background: #f3f4f6; color: #555;{% endif %}
+                                    ">
+                                        {{ b.status|upper }}
+                                    </span>
+                                </div>
+                                <div class="col-6">
+                                    <div style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: #aaa; letter-spacing: 1px; margin-bottom: 5px;">Payment</div>
+                                    <span class="status-pill-box" style="
+                                        {% if b.payment_status == 'paid' %}background: #f0fdf4; color: #16a34a;
+                                        {% else %}background: #fffbeb; color: #d97706;{% endif %}
+                                    ">
+                                        {{ b.payment_status|default:"UNPAID"|upper }}
+                                    </span>
+                                </div>
+                                <div class="col-12 mt-4 pt-3 border-top">
+                                    <div style="font-size: 12px; font-weight: 700; color: #888; margin-bottom: 4px;">TOTAL COST</div>
+                                    <div style="font-weight: 900; font-size: 24px; color: #c4161c;">Rs. {{ b.total_cost }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RIGHT: Action Button -->
+                    <div class="col-md-4" style="border-left: 1px solid #eee; background: #fafafa;">
+                        <div style="padding: 28px 24px; height: 100%; display: flex; align-items: center; justify-content: center;">
+                            <div style="text-align: center; width: 100%; max-width: 220px;">
+
+                                {% if b.payment_status == 'paid' %}
+                                    <!-- Paid — show download PDF -->
+                                    <div style="color: #111; font-weight: 800; font-size: 14px; margin-bottom: 12px;">Payment Complete</div>
+                                    <a href="{% url 'download_invoice' b.id %}"
+                                       style="display: block; border: 1.5px solid #ddd; background: #fff; color: #111; padding: 10px 20px; border-radius: 4px; text-decoration: none; font-weight: 700; font-size: 13px;">
+                                        Download PDF
+                                    </a>
+
+                                {% elif b.status == 'confirmed' %}
+                                    <!-- Admin confirmed but not paid yet -->
+                                    <a href="{% url 'initiate_payment' b.id %}"
+                                       style="display: block; background: #5c2d91; color: #fff; padding: 12px 20px; border-radius: 4px; text-decoration: none; font-weight: 800; font-size: 14px; margin-bottom: 8px;">
+                                        Pay with Khalti
+                                    </a>
+                                    <p style="font-size: 12px; color: #999; margin: 0;">Secure payment via Khalti</p>
+
+                                {% elif b.status == 'pending' %}
+                                    <!-- Waiting for admin to confirm -->
+                                    <div style="color: #d97706; font-weight: 800; font-size: 13px; margin-bottom: 8px;">Awaiting Approval</div>
+                                    <p style="font-size: 12px; color: #999; margin: 0;">Payment will be available once confirmed.</p>
+
+                                {% elif b.status == 'cancelled' %}
+                                    <div style="color: #dc2626; font-weight: 800; font-size: 13px;">Booking Cancelled</div>
+
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            {% endfor %}
+
+        {% else %}
+            <!-- No bookings yet -->
+            <div style="text-align: center; padding: 100px 20px; background: #fff; border-radius: 4px; border: 1px solid #eee;">
+                <h3 style="font-weight: 900; margin-bottom: 12px; font-family: 'Outfit', sans-serif;">NO BOOKINGS YET</h3>
+                <p style="color: #777; margin-bottom: 30px; font-weight: 500;">When you book a ride, your rental details will appear here.</p>
+                <a href="{% url 'bikes' %}" style="background: #c4161c; color: #fff; padding: 14px 40px; border-radius: 4px; text-decoration: none; font-weight: 800; text-transform: uppercase; font-size: 13px; letter-spacing: 1px;">Browse Bikes</a>
+            </div>
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

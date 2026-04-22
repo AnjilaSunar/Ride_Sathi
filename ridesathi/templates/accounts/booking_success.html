@@ -1,0 +1,49 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Booking Confirmed | RideSathi{% endblock %}
+
+{% block content %}
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Booking Confirmed | RideSathi{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper" style="background-color: var(--bg-alt); min-height: 80vh;">
+    <div class="auth-card text-center" style="max-width: 500px;">
+        <div class="mb-4">
+            <div class="d-inline-flex align-items-center justify-content-center bg-success text-white rounded-circle mb-3" style="width: 80px; height: 80px;">
+                <span class="display-6 fw-bold">✓</span>
+            </div>
+            <h1 class="h3 fw-black">Booking Confirmed!</h1>
+            <p class="text-muted">Your payment was successful. Enjoy the ride!</p>
+        </div>
+
+        <div class="system-card bg-light border-0 p-4 mb-4 text-start">
+            <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted small fw-bold">Booking ID</span>
+                <span class="fw-bold">#RS-{{ booking.id }}</span>
+            </div>
+            <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted small fw-bold">Duration</span>
+                <span class="fw-bold">{{ booking.total_days }} day{% if booking.total_days != 1 %}s{% endif %}</span>
+            </div>
+            <div class="d-flex justify-content-between py-2 border-bottom">
+                <span class="text-muted small fw-bold">Schedule</span>
+                <span class="fw-bold">{{ booking.start_date }} to {{ booking.end_date }}</span>
+            </div>
+            <div class="d-flex justify-content-between pt-3">
+                <span class="text-muted small fw-bold mb-0">Total Paid</span>
+                <span class="h5 fw-bold text-red mb-0">NPR {{ booking.total_cost }}</span>
+            </div>
+        </div>
+
+        <div class="d-grid gap-3">
+            <a href="{% url 'bikes' %}" class="btn-solid-red py-3">Browse More Bikes</a>
+            <a href="{% url 'home' %}" class="btn-outline-red py-3">Back to Home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+<!-- Success Card and Details removed in favor of Refactored Version -->
+{% endblock %}

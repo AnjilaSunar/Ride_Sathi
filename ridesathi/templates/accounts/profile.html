@@ -1,0 +1,110 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}My Profile | RideSathi{% endblock %}
+
+{% block content %}
+<div style="background-color: #f8f9fa; min-height: 100vh; padding-top: 50px; padding-bottom: 80px;">
+    <div class="container text-start">
+
+
+        <!-- Dashboard Top Navigation Tabs (New Order) -->
+        <div class="d-flex border-bottom mb-5" style="gap: 40px;">
+            <a href="{% url 'profile' %}" class="dash-tab active">My Profile</a>
+            <a href="{% url 'my_bookings' %}" class="dash-tab">My Bookings</a>
+            <a href="{% url 'upload_document' %}" class="dash-tab">My Documents</a>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4 p-md-5">
+                        <h4 class="fw-black mb-4" style="color: #111; font-family: 'Outfit', sans-serif;">Edit Personal
+                            Details</h4>
+
+                        <form method="POST" id="profileForm">
+                            {% csrf_token %}
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted text-uppercase"
+                                    style="letter-spacing: 0.5px;">Full Name *</label>
+                                <input type="text" name="full_name" class="form-control py-3 px-3 shadow-none fw-bold"
+                                    value="{{ user.full_name }}" placeholder="Enter your full name" required
+                                    style="border: 1.5px solid #eee; border-radius: 10px; background: #fff; font-size: 15px;">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted text-uppercase"
+                                    style="letter-spacing: 0.5px;">Email Address *</label>
+                                <input type="email" name="email" class="form-control py-3 px-3 shadow-none fw-bold"
+                                    value="{{ user.email }}" placeholder="Enter your email" required
+                                    style="border: 1.5px solid #eee; border-radius: 10px; background: #fff; font-size: 15px;">
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label small fw-bold text-muted text-uppercase"
+                                    style="letter-spacing: 0.5px;">Mobile Number *</label>
+                                <input type="tel" name="phone" class="form-control py-3 px-3 shadow-none fw-bold"
+                                    value="{{ user.phone|default:'' }}" placeholder="10-digit number" required
+                                    maxlength="10" minlength="10" pattern="\d{10}"
+                                    style="border: 1.5px solid #eee; border-radius: 10px; background: #fff; font-size: 15px;">
+                            </div>
+
+                            <div class="pt-3">
+                                <button type="submit" class="btn px-5 py-3 shadow-sm btn-rs-red"
+                                    style="background-color: #c4161c; color: #fff; font-weight: 800; border-radius: 10px; border: none; font-size: 15px; transition: all 0.3s;">
+                                    Save Profile Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .fw-black {
+        font-weight: 900;
+    }
+
+    .dash-tab {
+        text-decoration: none;
+        color: #666;
+        font-weight: 700;
+        font-size: 17px;
+        padding-bottom: 12px;
+        position: relative;
+        transition: all 0.3s;
+    }
+
+    .dash-tab:hover {
+        color: #c4161c;
+    }
+
+    .dash-tab.active {
+        color: #c4161c;
+    }
+
+    .dash-tab.active::after {
+        content: '';
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: #c4161c;
+    }
+
+    .form-control:focus {
+        border-color: #c4161c !important;
+        box-shadow: 0 0 0 0.25rem rgba(196, 22, 28, 0.05) !important;
+    }
+
+    .btn-rs-red:hover {
+        background-color: #a01015 !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(196, 22, 28, 0.2);
+    }
+</style>
+{% endblock %}

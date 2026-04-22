@@ -1,0 +1,420 @@
+/* RideSathi Stylesheet */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap');
+
+:root {
+    --primary-red: #c4161c;
+    --primary-red-hover: #a01015;
+    --bg-light: #ffffff;
+    --bg-alt: #f8f9fa;
+    --text-dark: #121212;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --card-shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-dark);
+    font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    color: var(--text-dark);
+}
+
+/* Basic overrides */
+.container-fluid { max-width: 1600px; }
+
+/* Buttons styles */
+.btn-solid-red {
+    background: var(--primary-red);
+    color: #fff !important;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+    border: 1px solid transparent;
+}
+
+.btn-solid-red:hover {
+    background: var(--primary-red-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(196, 22, 28, 0.2);
+}
+
+.btn-outline-red {
+    background: transparent;
+    color: var(--primary-red) !important;
+    border: 2px solid var(--primary-red);
+    padding: 10px 26px;
+    border-radius: 12px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-outline-red:hover {
+    background: var(--primary-red);
+    color: #fff !important;
+}
+
+/* Card components */
+.system-card {
+    background: #fff;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: var(--card-shadow);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.system-card:hover {
+    box-shadow: var(--card-shadow-hover);
+}
+
+/* Login and Register pages */
+.auth-page-variant {
+    min-height: calc(100vh - 95px);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    background: radial-gradient(circle at top right, #f8f9fa, #e9ecef);
+    padding: 20px 20px;
+}
+
+.auth-elite-card {
+    width: 100%;
+    max-width: 1000px;
+    background: #fff;
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+    display: flex;
+    min-height: 650px;
+}
+
+.auth-card-side-img {
+    flex: 1;
+    background-color: #fff;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-right: 1px solid #f0f0f0;
+}
+
+.auth-card-side-form {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+@media (max-width: 992px) {
+    .auth-page-variant { padding: 10px; align-items: center; }
+    .auth-elite-card { flex-direction: column; max-width: 500px; min-height: auto; border-radius: 20px; }
+    .auth-card-side-img { height: 200px; border-right: none; border-bottom: 1px solid #f0f0f0; padding-top: 40px !important; }
+    .auth-card-side-img h2 { font-size: 1.8rem !important; }
+    .auth-card-side-img p { font-size: 14px !important; }
+    .auth-card-side-form { padding: 30px 20px; }
+}
+
+.auth-logo-float {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    width: 60px;
+    z-index: 10;
+}
+
+.form-label {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.form-control {
+    padding: 12px 18px;
+    border-radius: 12px;
+    border: 1.5px solid var(--border-color);
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 4px rgba(196, 22, 28, 0.1);
+}
+
+/* Bikes list sections */
+.bike-img-container {
+    height: 240px;
+    overflow: hidden;
+    background: #f1f5f9;
+}
+
+.bike-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Professional look for products */
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.system-card:hover .bike-img-container img {
+    transform: scale(1.08);
+}
+
+/* Sidebar Filter */
+.filter-sidebar {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid var(--border-color);
+    padding: 24px;
+    position: sticky;
+    top: 100px;
+}
+
+.filter-title {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+}
+
+/* Custom badges */
+.badge-system {
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.badge-available { background: #dcfce7; color: #15803d; }
+.badge-booked    { background: #fee2e2; color: #b91c1c; }
+
+/* Home page hero section */
+
+.hero-section {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover !important;
+    background-position: center center !important;
+    background-repeat: no-repeat !important;
+    text-align: center;
+    color: white;
+    width: 100%;
+    margin-top: 0;
+    overflow: hidden;
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.6) 100%);
+    z-index: 1;
+}
+
+.hero-section > .container {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 24px;
+    line-height: 1.1;
+    text-transform: capitalize;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.5);
+}
+
+.hero-desc {
+    font-size: 1.35rem;
+    margin-bottom: 35px;
+    opacity: 0.95;
+    font-weight: 500;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+}
+
+.badge-red {
+    display: inline-block;
+    background: #c4161c;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 10px rgba(196, 22, 28, 0.2);
+}
+
+.feature-card-old {
+    background: #ffffff !important;
+    padding: 45px 35px !important;
+    border: 1px solid #f0f0f0 !important;
+    border-radius: 20px !important;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+}
+
+.feature-card-old:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+    border-color: #eee !important;
+}
+
+.btn-solid-white {
+    background: #fff;
+    color: var(--primary-red) !important;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.btn-outline-white {
+    background: transparent;
+    color: #fff !important;
+    border: 2px solid #fff;
+    padding: 10px 26px;
+    border-radius: 8px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* Extra utility classes */
+.text-red { color: var(--primary-red); }
+.spacer-y { padding: 80px 0; }
+
+/* Remove unwanted default black or grey backgrounds */
+.bg-dark, .btn-dark, footer.dark-footer {
+    display: none !important;
+}
+
+/* Large feature cards */
+
+.massive-ride-card {
+    background: #fff;
+    border: 1px solid #f1f1f1;
+    border-radius: 24px;
+    overflow: hidden;
+    padding: 0;
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+    height: 100%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+}
+
+.massive-ride-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.06);
+    border-color: #e2e2e2;
+}
+
+.massive-img-box {
+    background: #fdfdfd;
+    padding: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #f8f8f8;
+    position: relative;
+}
+
+.massive-img {
+    max-width: 100%;
+    height: 280px;
+    object-fit: contain;
+    filter: drop-shadow(0 20px 30px rgba(0,0,0,0.05));
+    transition: transform 0.6s ease;
+}
+
+.massive-ride-card:hover .massive-img {
+    transform: scale(1.05);
+}
+
+.massive-content {
+    padding: 40px;
+}
+
+.massive-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #111;
+    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+}
+
+.massive-price {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--primary-red);
+    margin-bottom: 25px;
+}
+
+.massive-description {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 35px;
+}
+
+.massive-badge {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    padding: 8px 18px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.badge-available-light { background: #ecfdf5; color: #059669; }
+.badge-booked-light { background: #fef2f2; color: #dc2626; }
+
+.btn-massive {
+    padding: 16px 32px;
+    border-radius: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+}
+
+/* Global Responsive Overrides */
+@media (max-width: 768px) {
+    .display-1 { font-size: 3rem !important; }
+    .display-3 { font-size: 2.2rem !important; }
+    .display-4 { font-size: 1.8rem !important; }
+    .rs-container, .container-balanced { padding: 0 20px !important; }
+    .spacer-y { padding: 40px 0; }
+    .massive-title { font-size: 20px !important; }
+    .massive-content { padding: 25px !important; }
+}
+
+@media (max-width: 480px) {
+    .display-1 { font-size: 2.4rem !important; }
+    .rs-navbar .navbar-brand span { font-size: 1.1rem !important; }
+}

@@ -1,0 +1,181 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}Book {{ bike.model }} | RideSathi{% endblock %}
+
+{% block content %}
+
+<!-- System Breadcrumb -->
+<div class="container mt-4">
+    <div class="small fw-bold text-muted">
+        <a href="{% url 'home' %}" class="text-decoration-none text-muted">Home</a> / 
+        <a href="{% url 'bikes' %}" class="text-decoration-none text-muted">Bikes</a> / 
+        <span class="text-dark">Booking {{ bike.model }}</span>
+    </div>
+</div>
+
+<section class="py-5">
+    <div class="container">
+        <div class="row g-4">
+            
+            <!-- Booking Form Column -->
+            <div class="col-lg-8">
+                <div class="bg-white p-4 p-md-5 shadow-sm border" style="border-radius: 4px;">
+                    <h3 class="fw-black mb-4 pb-3 border-bottom" style="font-family: 'Outfit', sans-serif; color: #111;">Reservation Details</h3>
+                    
+                    <form method="POST" id="bookingForm" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4 mb-4">
+                            <div class="col-md-6 text-start">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Pickup Date</label>
+                                <input type="date" name="start_date" id="start_date" class="form-control py-3 shadow-none fw-bold" required style="border-radius: 4px; border: 1.5px solid #eee;">
+                            </div>
+                            <div class="col-md-6 text-start">
+                                <label class="form-label small fw-bold text-muted text-uppercase">Return Date</label>
+                                <input type="date" name="end_date" id="end_date" class="form-control py-3 shadow-none fw-bold" required style="border-radius: 4px; border: 1.5px solid #eee;">
+                            </div>
+                        </div>
+
+                        {% if not has_documents %}
+                            <!-- FIRST TIME: Show Contact & Document Upload -->
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6 text-start">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Phone Number</label>
+                                    <input type="tel" name="phone" class="form-control py-3 shadow-none fw-bold" required 
+                                           maxlength="10" minlength="10" pattern="\d{10}"
+                                           style="border-radius: 4px; border: 1.5px solid #eee;" placeholder="10-digit number" value="{{ user.phone|default:'' }}">
+                                </div>
+                                <div class="col-md-6 text-start">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Address</label>
+                                    <input type="text" name="address" class="form-control py-3 shadow-none fw-bold" required 
+                                           style="border-radius: 4px; border: 1.5px solid #eee;" placeholder="e.g. Lakeside, Pokhara" value="{{ user.address|default:'' }}">
+                                </div>
+                            </div>
+
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6 text-start">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">ID Document</label>
+                                    <input type="file" name="id_document" class="form-control py-3 shadow-none" required style="border-radius: 4px; border: 1.5px solid #eee;" accept="image/*,.pdf">
+                                </div>
+                                <div class="col-md-6 text-start">
+                                    <label class="form-label small fw-bold text-muted text-uppercase">Driving License</label>
+                                    <input type="file" name="license_document" class="form-control py-3 shadow-none" required style="border-radius: 4px; border: 1.5px solid #eee;" accept="image/*,.pdf">
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="p-3 mb-4 d-flex align-items-center gap-3" style="background: #f0fdf4; border-radius: 4px;">
+                                <i class="bi bi-check-circle-fill text-success fs-4"></i>
+                                <div class="fw-bold text-success small">Verification complete! Your documents are on file.</div>
+                            </div>
+                        {% endif %}
+
+                        <div id="dateError" class="alert alert-danger d-none" style="border-radius: 4px;"></div>
+
+                        <div class="mb-5">
+                            <label class="form-label small fw-bold text-muted text-uppercase">Vehicle Selected</label>
+                            <div class="p-4 d-flex align-items-center gap-4 bg-light border" style="border-radius: 4px;">
+                                <img src="{% if bike.image %}/media/{{ bike.image }}{% else %}https://placehold.co/100x70/111/fff?text=Bike{% endif %}" 
+                                     alt="Bike" style="width: 100px; height: 70px; object-fit: contain;">
+                                <div>
+                                    <div class="fw-black h5 m-0">{{ bike.model }}</div>
+                                    <div class="text-muted small fw-bold">Daily Rate: Rs. {{ bike.price_per_day }}</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid pt-3 border-top">
+                            <button type="submit" class="btn py-3 fw-black text-uppercase shadow-sm" style="background-color: #c4161c; color: #fff; border-radius: 4px;">
+                                Proceed to Confirmation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Booking Summary -->
+            <div class="col-lg-4">
+                <div class="p-4 border shadow-sm" style="border-radius: 4px; background: #fff;">
+                    <h5 class="fw-black mb-4 border-bottom pb-2">Rental Summary</h5>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted fw-bold small">Daily Rate</span>
+                        <span class="fw-black">Rs. {{ bike.price_per_day }}</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted fw-bold small">Duration</span>
+                        <span id="rentalDays" class="fw-black">0 days</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between pt-4 border-top">
+                        <span class="h5 fw-black m-0">Total</span>
+                        <span id="totalCost" class="h5 fw-black m-0" style="color: #c4161c;">Rs. 0</span>
+                    </div>
+
+                    <p class="small text-muted mt-4 mb-0 fw-bold">The final amount will be verified during admin approval.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<script>
+const startInput = document.getElementById('start_date');
+const endInput = document.getElementById('end_date');
+const dailyRate = Number("{{ bike.price_per_day }}");
+const submitBtn = document.querySelector('#bookingForm button[type="submit"]');
+const bookedDates = JSON.parse('{{ booked_dates_json|escapejs|default:"[]" }}');
+
+const today = new Date().toISOString().split('T')[0];
+startInput.setAttribute('min', today);
+endInput.setAttribute('min', today);
+
+function isOverlapping(startStr, endStr) {
+    const start = new Date(startStr);
+    const end = new Date(endStr);
+    for (let i = 0; i < bookedDates.length; i++) {
+        const bStart = new Date(bookedDates[i].start);
+        const bEnd = new Date(bookedDates[i].end);
+        if (start <= bEnd && end >= bStart) return true;
+    }
+    return false;
+}
+
+function calculateTotal() {
+    const errorContainer = document.getElementById('dateError');
+    errorContainer.classList.add('d-none');
+    submitBtn.disabled = false;
+
+    if (startInput.value && endInput.value) {
+        const start = new Date(startInput.value);
+        const end = new Date(endInput.value);
+
+        if (isOverlapping(startInput.value, endInput.value)) {
+            errorContainer.innerText = "Sorry, this bike is already booked for these selected dates.";
+            errorContainer.classList.remove('d-none');
+            submitBtn.disabled = true;
+            return;
+        }
+
+        if (end >= start) {
+            const timeDiff = end.getTime() - start.getTime();
+            const days = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1;
+            document.getElementById('rentalDays').innerText = days + (days === 1 ? ' day' : ' days');
+            document.getElementById('totalCost').innerText = 'Rs. ' + (days * dailyRate);
+        } else {
+            errorContainer.innerText = "End date must be on or after start date.";
+            errorContainer.classList.remove('d-none');
+            submitBtn.disabled = true;
+        }
+    }
+}
+
+startInput.addEventListener('change', calculateTotal);
+endInput.addEventListener('change', calculateTotal);
+</script>
+
+<style>
+    .fw-black { font-weight: 900; }
+</style>
+{% endblock %}

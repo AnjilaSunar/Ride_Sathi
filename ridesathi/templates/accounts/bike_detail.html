@@ -1,0 +1,99 @@
+{% extends 'accounts/base.html' %}
+{% load static %}
+{% block title %}{{ bike.model }} | RideSathi{% endblock %}
+
+{% block content %}
+
+<!-- System Breadcrumb -->
+<div class="container">
+    <div class="system-breadcrumb">
+        <a href="{% url 'home' %}">Home</a> / <a href="{% url 'bikes' %}">Bikes</a> / <span>{{ bike.model }}</span>
+    </div>
+</div>
+
+<section class="bike-detail-section py-5">
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            
+            <!-- Bike Image Column -->
+            <div class="col-lg-7">
+                <div class="system-card p-0 overflow-hidden" style="border-radius: 20px;">
+                    <img src="{% if bike.image %}/media/{{ bike.image }}{% else %}https://placehold.co/700x500/111/fff?text={{ bike.model|urlencode }}{% endif %}" 
+                         alt="{{ bike.model }}" 
+                         class="w-100 h-100 object-fit-cover"
+                         style="min-height: 400px; max-height: 550px;"
+                         onerror="this.src='https://placehold.co/700x500/111/fff?text=No+Image'">
+                </div>
+            </div>
+
+            <!-- Bike Info Column -->
+            <div class="col-lg-5">
+                <div class="ps-lg-4">
+                    <span class="badge-system mb-3 d-inline-block {% if bike.status == 'available' %}badge-available{% else %}badge-booked{% endif %}">
+                        {% if bike.status == 'available' %}Available Now{% else %}Reserved{% endif %}
+                    </span>
+                    
+                    <div class="text-red fw-bold text-uppercase small mb-2">{{ bike.category }}</div>
+                    <h2 class="fw-black mb-4" style="font-size: 2.2rem;">{{ bike.model }}</h2>
+                    
+                    <div class="h3 fw-bold text-dark mb-4 border-bottom pb-4">
+                        Rs. {{ bike.price_per_day|floatformat:0 }} <small class="text-muted fw-normal" style="font-size: 16px;">/ daily rental rate</small>
+                    </div>
+
+                    <!-- Specifications Table-like View -->
+                    <div class="mb-5">
+                        <h5 class="text-uppercase small fw-bold text-muted mb-3">Technical Specifications</h5>
+                        <div class="system-card bg-light border-0 py-2 px-4">
+                            <div class="d-flex justify-content-between py-3 border-bottom">
+                                <span class="fw-bold">Transmission</span>
+                                <span class="text-muted">{% if bike.category == 'Scooter' or bike.category == 'Electric' %}Automatic{% else %}Manual 5-Speed{% endif %}</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-3 border-bottom">
+                                <span class="fw-bold">Fuel System</span>
+                                <span class="text-muted">{% if bike.category == 'Electric' %}Lithium-ion Battery{% else %}Fuel Injection (FI){% endif %}</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-3 border-bottom">
+                                <span class="fw-bold">Daily Rate</span>
+                                <span class="text-muted">Rs. {{ bike.price_per_day }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between py-3">
+                                <span class="fw-bold">System Status</span>
+                                <span class="{% if bike.status == 'available' %}text-success{% else %}text-danger{% endif %} fw-bold">{{ bike.status|title }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Description Section -->
+                    <div class="mb-5">
+                        <h5 class="text-uppercase small fw-bold text-muted mb-3">Description</h5>
+                        <p class="text-muted leading-relaxed">
+                            {{ bike.description|default:"No detailed description available for this vehicle. Please contact support for more information or book now to reserve your ride." }}
+                        </p>
+                    </div>
+
+                    <!-- Call to Action -->
+                    <div class="d-grid gap-3">
+                        {% if bike.status == 'available' %}
+                            {% if request.session.user_id %}
+                                <a href="{% url 'book_bike' bike.id %}" class="btn-solid-red text-center py-3 h5 mb-0">Book This Ride</a>
+                            {% else %}
+                                <a href="{% url 'login' %}" class="btn-solid-red text-center py-3 h5 mb-0">Sign In to Book</a>
+                            {% endif %}
+                        {% else %}
+                            <button class="btn btn-light border py-3 h5 mb-0 text-muted cursor-not-allowed" disabled>Currently Reserved</button>
+                        {% endif %}
+                        <a href="{% url 'bikes' %}" class="btn-outline-red text-center py-3">Return to Listing</a>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<style>
+    .fw-black { font-weight: 900; letter-spacing: -1.5px; }
+    .leading-relaxed { line-height: 1.8; }
+</style>
+
+{% endblock %}
